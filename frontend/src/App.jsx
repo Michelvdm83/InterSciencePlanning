@@ -6,13 +6,13 @@ import UserManagement from "./components/userManagement/UserManagement";
 export default function App() {
   return (
     <>
-      <div id="page" className="font-Effra_Rg flex h-screen w-screen flex-col">
+      <div className="font-Effra_Rg flex h-screen w-screen flex-col">
         <Navbar />
 
         <div>
           <Routes>
-            <Route path="/SSPPlanning" element={<SSPPlanning />} />
-            <Route path="/UserManagement" element={<UserManagement />} />
+            <Route path="/ssp/planning" element={<SSPPlanning />} />
+            <Route path="/gebruikers" element={<UserManagement />} />
           </Routes>
         </div>
       </div>
