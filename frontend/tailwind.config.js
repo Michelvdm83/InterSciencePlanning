@@ -4,7 +4,6 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        //for now only Effra_Lt works
         Effra_Lt: "Effra_Lt",
         Effra_Rg: "Effra_Rg",
         Effra_Md: "Effra_Md",
@@ -19,13 +18,13 @@ export default {
     themes: [
       {
         Interscience: {
-          primary: "#009ad7",
+          primary: "#009ad7", //Gas Light Blue
           "primary-content": "#DDDDDD", //can still be tweaked or deleted
-          secondary: "28265b",
+          secondary: "28265b", //Gas Dark Blue
           "secondary-content": "#DDDDDD", //can still be tweaked or deleted
-          accent: "#662483",
+          accent: "#662483", //Gas Dark Purple
           "accent-content": "#DDDDDD", //can still be tweaked or deleted
-          neutral: "#D4D4D4",
+          neutral: "#D4D4D4", //neutral light grey color to make object/componend fields
           "base-100": "#FFFFFF", //white background
         },
       },

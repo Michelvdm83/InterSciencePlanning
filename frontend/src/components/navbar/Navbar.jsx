@@ -5,7 +5,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <div className="navbar m-0 h-20 bg-primary">
+    <div className="navbar h-20 bg-primary">
       <div className="flex-1">
         <NavbarButton
           title="SSP Planning"

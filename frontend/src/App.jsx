@@ -6,7 +6,7 @@ import UserManagement from "./components/userManagement/UserManagement";
 export default function App() {
   return (
     <>
-      <div id="page" className="font-Effra_Lt flex h-screen w-screen flex-col">
+      <div id="page" className="font-Effra_Rg flex h-screen w-screen flex-col">
         <Navbar />
 
         <div>
