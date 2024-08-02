@@ -37,12 +37,12 @@ public class Employee implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(function.name()));
+    return List.of(new SimpleGrantedAuthority("ROLE_" + function.name()));
   }
 
   @Override
   public String getUsername() {
-    return name;
+    return email;
   }
 
   @Override

@@ -2,6 +2,7 @@ package com.interscience.planning.security;
 
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
+import com.interscience.planning.exceptions.NotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,10 +28,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(
-          @NonNull HttpServletRequest request,
-          @NonNull HttpServletResponse response,
-          @NonNull FilterChain filterChain)
-          throws ServletException, IOException {
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull FilterChain filterChain)
+      throws ServletException, IOException {
 
     if (SecurityContextHolder.getContext().getAuthentication() != null) {
       filterChain.doFilter(request, response);
@@ -38,23 +39,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     if (requestHasValidAuthHeader(request)) {
       getUserFromAuthorizationHeader(request.getHeader(AUTHORIZATION_HEADER_NAME))
-              .ifPresent(
-                      principal -> {
-                        UsernamePasswordAuthenticationToken authToken =
-                                new UsernamePasswordAuthenticationToken(
-                                        principal,
-                                        null,
-                                        principal.getAuthorities()
-                                );
+          .ifPresent(
+              principal -> {
+                UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                        principal, null, principal.getAuthorities());
 
-                        authToken.setDetails(
-                                new WebAuthenticationDetailsSource()
-                                        .buildDetails(request)
-                        );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-                      }
-              );
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+              });
     }
 
     filterChain.doFilter(request, response);
@@ -71,8 +65,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     return jwtService
-            .readToken(authorization.substring(AUTHORIZATION_HEADER_JWT_PREFIX.length()))
-            .filter(token -> !token.isExpired())
-            .map(token -> employeeRepository.findByEmail(token.email()).orElseThrow(RuntimeException::new));
+        .readToken(authorization.substring(AUTHORIZATION_HEADER_JWT_PREFIX.length()))
+        .filter(token -> !token.isExpired())
+        .map(
+            token ->
+                employeeRepository.findByEmail(token.email()).orElseThrow(NotFoundException::new));
   }
 }

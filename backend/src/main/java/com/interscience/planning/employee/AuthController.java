@@ -27,7 +27,7 @@ public class AuthController {
     if (password == null) throw new BadRequestException("Password is required!");
 
     Optional<Employee> possibleEmployee = employeeRepository.findByEmail(email);
-    if (possibleEmployee.isEmpty()) throw new BadRequestException("That email doesn't exist!");
+    if (possibleEmployee.isEmpty()) throw new BadRequestException("User doesn't exist!");
     Employee employee = possibleEmployee.get();
 
     if (!passwordEncoder.matches(password, employee.getPassword())) {
