@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "Effra_Lt";
+  src:
+    local("Effra_Lt"),
+    url("./assets/fonts/Effra_Lt.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Effra_Rg";
+  src:
+    local("Effra_Rg"),
+    url("./assets/fonts/Effra_Rg.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Effra_Md";
+  src:
+    local("Effra_Md"),
+    url("./assets/fonts/Effra_Md.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Effra_Bd";
+  src:
+    local("Effra_Bd"),
+    url("./assets/fonts/Effra_Bd.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Effra_Hvy";
+  src:
+    local("Effra_Hvy"),
+    url("./assets/fonts/Effra_Hvy.ttf") format("truetype");
+}
