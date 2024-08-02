@@ -11,7 +11,7 @@ export default function App() {
 
         <div>
           <Routes>
-            <Route path="/ssp/planning" element={<SSPPlanning />} />
+            <Route path="/ssp-planning" element={<SSPPlanning />} />
             <Route path="/gebruikers" element={<UserManagement />} />
           </Routes>
         </div>

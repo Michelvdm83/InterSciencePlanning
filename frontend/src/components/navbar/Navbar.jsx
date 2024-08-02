@@ -9,7 +9,7 @@ export default function Navbar() {
       <div className="flex-1">
         <NavbarButton
           title="SSP Planning"
-          onClick={() => navigate("/ssp/planning")}
+          onClick={() => navigate("/ssp-planning")}
         ></NavbarButton>
         <NavbarButton
           title="Gebruikers"
