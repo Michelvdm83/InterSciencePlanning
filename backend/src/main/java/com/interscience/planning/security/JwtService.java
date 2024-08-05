@@ -1,7 +1,6 @@
 package com.interscience.planning.security;
 
 import com.interscience.planning.employee.Employee;
-import com.interscience.planning.employee.EmployeeRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.util.*;
@@ -17,8 +16,6 @@ public class JwtService {
 
   @Value("${interscience.authentication.jwt-expiration-ms}")
   private int JWT_EXPIRATION_MS;
-
-  private final EmployeeRepository userRepository;
 
   private static final String ROLES_CLAIM_NAME = "roles";
 
