@@ -12,7 +12,17 @@ public class TaskController {
   private final TaskRepository taskRepository;
 
   @PostMapping
-  public ResponseEntity<Void> createTask() {
+  public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO createTaskDTO) {
+
+    if (createTaskDTO.name() == null) {
+      return ResponseEntity.badRequest().body("Name is required");
+    }
+
+    if (createTaskDTO.estimatedTime() == null) {
+      return ResponseEntity.badRequest().body("Estimated time is required");
+    }
+
+    taskRepository.save(new Task(createTaskDTO.name(), createTaskDTO.estimatedTime()));
     return ResponseEntity.ok().build();
   }
 }
