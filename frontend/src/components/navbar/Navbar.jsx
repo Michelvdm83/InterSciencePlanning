@@ -1,3 +1,4 @@
+import EmployeeService from "../../services/EmployeeService";
 import NavbarButton from "./NavbarButton";
 import { useNavigate } from "react-router-dom";
 
@@ -24,7 +25,15 @@ export default function Navbar() {
             className="input input-bordered w-24 md:w-auto"
           />
         </div>
-        <p>test inlogknop</p>
+        {EmployeeService.isLoggedIn() && (
+          <NavbarButton
+            title="Uitloggen"
+            onClick={() => {
+              EmployeeService.logout();
+              navigate("/inloggen");
+            }}
+          ></NavbarButton>
+        )}
       </div>
     </div>
   );
