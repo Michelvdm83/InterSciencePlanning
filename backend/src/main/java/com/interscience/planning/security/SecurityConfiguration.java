@@ -18,39 +18,3 @@ public class SecurityConfiguration {
         .build();
   }
 }
-
-/*
-@Configuration
-public class SecurityConfiguration {
-    @Bean
-    public SecretKey secretKey() {
-        return Jwts.SIG.HS256.key().build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity httpSecurity,
-            JwtAuthenticationFilter jwtAuthenticationFilter
-    ) throws Exception{
-        return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(c -> c
-                        .requestMatchers("lists").authenticated()
-                        .anyRequest().permitAll()
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.authenticationEntryPoint(
-                                new UnauthorizedEntryPoint()
-                        )
-                )
-                .build();
-    }
-}
- */

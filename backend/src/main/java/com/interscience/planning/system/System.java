@@ -20,8 +20,10 @@ public class System {
 
   private String systemType;
 
+  @Temporal(TemporalType.DATE)
   private Date estimatedDeliveryDate;
 
+  @Temporal(TemporalType.DATE)
   private Date actualDeliveryDate;
 
   private UUID employeeResponsible;

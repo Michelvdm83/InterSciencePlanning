@@ -29,6 +29,7 @@ public class Seeder implements CommandLineRunner {
 
     LocalDate today = LocalDate.now();
     system.setEstimatedDeliveryDate(Date.valueOf(today.plusDays(7)));
+    system.setActualDeliveryDate(Date.valueOf(today));
 
     system.setStatus(SystemStatus.BUILDING);
 
