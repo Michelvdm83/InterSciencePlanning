@@ -1,0 +1,31 @@
+import NavbarButton from "./NavbarButton";
+import { useNavigate } from "react-router-dom";
+
+export default function Navbar() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="navbar h-20 bg-primary">
+      <div className="flex-1">
+        <NavbarButton
+          title="SSP Planning"
+          onClick={() => navigate("/ssp-planning")}
+        ></NavbarButton>
+        <NavbarButton
+          title="Gebruikers"
+          onClick={() => navigate("/gebruikers")}
+        ></NavbarButton>
+      </div>
+      <div className="flex-none gap-2">
+        <div className="form-control">
+          <input
+            type="text"
+            placeholder="Search"
+            className="input input-bordered w-24 md:w-auto"
+          />
+        </div>
+        <p>test inlogknop</p>
+      </div>
+    </div>
+  );
+}
