@@ -8,8 +8,7 @@ import EmployeeService from "./services/EmployeeService";
 export default function App() {
   const isLoggedIn = EmployeeService.isLoggedIn();
 
-  const employee = EmployeeService.getEmployee();
-  const employeeFunction = employee ? employee.function : null;
+  const employeeFunction = EmployeeService.getEmployeeFunction();
 
   return (
     <>

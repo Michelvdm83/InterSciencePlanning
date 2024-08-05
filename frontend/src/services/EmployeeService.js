@@ -1,6 +1,6 @@
 import ApiService, { TOKEN_STORAGE_LOCATION } from "./ApiService.js";
 
-export const EMPLOYEE_STORAGE_LOCATION = "EMPLOYEE";
+export const EMPLOYEE_FUNCTION_STORAGE_LOCATION = "EMPLOYEE_FUNCTION";
 
 export default class EmployeeService {
   static login(email, password) {
@@ -20,7 +20,7 @@ export default class EmployeeService {
         const data = response.data;
 
         this.#setToken(data.token);
-        this.#setEmployee(data.employee);
+        this.#setEmployeeFunction(data.employee.function);
 
         return Promise.resolve({
           success: true,
@@ -36,19 +36,20 @@ export default class EmployeeService {
     localStorage.setItem(TOKEN_STORAGE_LOCATION, token);
   }
 
-  static #setEmployee(employee) {
-    localStorage.setItem(EMPLOYEE_STORAGE_LOCATION, JSON.stringify(employee));
+  static #setEmployeeFunction(employeeFunction) {
+    localStorage.setItem(EMPLOYEE_FUNCTION_STORAGE_LOCATION, employeeFunction);
   }
 
   static logout() {
     localStorage.removeItem(TOKEN_STORAGE_LOCATION);
+    localStorage.removeItem(EMPLOYEE_FUNCTION_STORAGE_LOCATION);
   }
 
   static isLoggedIn() {
     return localStorage.getItem(TOKEN_STORAGE_LOCATION) !== null;
   }
 
-  static getEmployee() {
-    return JSON.parse(localStorage.getItem(EMPLOYEE_STORAGE_LOCATION));
+  static getEmployeeFunction() {
+    return localStorage.getItem(EMPLOYEE_FUNCTION_STORAGE_LOCATION);
   }
 }
