@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "${interscience.cors}")
+@RequestMapping("/api/v1/systems")
 public class SystemController {
 
   private final SystemRepository systemRepository;
 
-  @GetMapping("{id}")
+  @GetMapping("/{id}")
   public ResponseEntity<SystemDto> getSystem(@PathVariable UUID id) {
     var possibleSystem = systemRepository.findById(id);
     if (possibleSystem.isEmpty()) {
