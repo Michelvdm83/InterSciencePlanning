@@ -7,4 +7,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/employees")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "${interscience.cors}")
-public class EmployeeController {}
+public class EmployeeController {
+  private final EmployeeRepository employeeRepository;
+
+  @GetMapping
+  public Iterable<Employee> getAll() {
+    return employeeRepository.findAll();
+  }
+}
