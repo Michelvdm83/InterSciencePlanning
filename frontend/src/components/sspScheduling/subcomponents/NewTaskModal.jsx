@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react";
+import ApiService from "../../../services/ApiService";
 
 export default function NewTaskModal() {
   const [taskName, setTaskName] = useState("");
-  const [amountOfDays, setAmountOfDays] = useState();
+  const [estimatedTime, setEstimatedTime] = useState("");
 
-  const handleAmountOfDaysValueChange = (newValue) => {
+  const handleEstimatedTimeValueChange = (newValue) => {
     if (/^\d*$/.test(newValue)) {
       //check if from beging ^ to end $ of the input string it only consists of numbers \d*
-      setAmountOfDays(newValue);
+      setEstimatedTime(newValue);
     }
+  };
+
+  const handleNewTaskSave = () => {
+    const name = taskName;
+
+    const newTask = { name, estimatedTime };
+
+    ApiService.post("tasks", newTask);
+
+    setTaskName("");
+    setEstimatedTime("");
   };
 
   return (
@@ -27,17 +39,22 @@ export default function NewTaskModal() {
         />
       </div>
 
-      <div className="flex flex-col">
+      <div className="mt-4 flex flex-col">
         <span>verwachte aantal dagen:</span>
         <input
           type="text"
           className="input input-bordered w-full max-w-xs"
-          value={amountOfDays}
-          onChange={(e) => handleAmountOfDaysValueChange(e.target.value)}
+          value={estimatedTime}
+          onChange={(e) => handleEstimatedTimeValueChange(e.target.value)}
         />
       </div>
 
-      <button className="btn btn-accent w-20 self-center">Save</button>
+      <button
+        className="btn btn-accent mt-4 w-20 self-center"
+        onClick={() => handleNewTaskSave()}
+      >
+        Oplsaan
+      </button>
     </div>
   );
 }
