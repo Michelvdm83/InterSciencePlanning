@@ -1,20 +1,40 @@
 package com.interscience.planning.security;
 
+import io.jsonwebtoken.Jwts;
+import javax.crypto.SecretKey;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfiguration {
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+  public SecretKey secretKey() {
+    return Jwts.SIG.HS256.key().build();
+  }
+
+  @Bean
+  public SecurityFilterChain securityFilterChain(
+      HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
     return httpSecurity
-        .httpBasic(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(requests -> requests.anyRequest().permitAll())
+        .httpBasic(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(
+            requests -> requests.requestMatchers("lists").authenticated().anyRequest().permitAll())
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .exceptionHandling(
+            exceptionHandlingConfigurer ->
+                exceptionHandlingConfigurer.authenticationEntryPoint(new UnauthorizedEntryPoint()))
         .build();
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
   }
 }
