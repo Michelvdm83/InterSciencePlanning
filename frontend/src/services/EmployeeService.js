@@ -7,10 +7,6 @@ export default class EmployeeService {
     return this.#requestToken("auth/login", email, password);
   }
 
-  static register(email, password) {
-    return this.#requestToken("auth/register", email, password);
-  }
-
   static #requestToken(url, email, password) {
     return ApiService.post(url, {
       email: email,

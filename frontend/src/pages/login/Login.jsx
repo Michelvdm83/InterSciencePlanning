@@ -2,22 +2,21 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeService from "../../services/EmployeeService";
 
-function translateError(error) {
-  switch (error) {
-    case "Email is required!":
-      return "Email is verplicht!";
-    case "Password is required!":
-      return "Wachtwoord is verplicht!";
-    case "User doesn't exist!":
-      return "Gebruiker bestaat niet!";
-    case "Password is incorrect!":
-      return "Wachtwoord is verkeerd!";
-    default:
-      return error;
+export default function Login() {
+  function translateError(error) {
+    switch (error) {
+      case "Email is required!":
+        return "Email is verplicht!";
+      case "Password is required!":
+        return "Wachtwoord is verplicht!";
+      case "User doesn't exist!":
+        return "Gebruiker bestaat niet!";
+      case "Password is incorrect!":
+        return "Wachtwoord is verkeerd!";
+      default:
+        return error;
+    }
   }
-}
-
-function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -64,5 +63,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login;

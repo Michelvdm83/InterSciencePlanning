@@ -5,7 +5,7 @@ const API_URL = "http://localhost:8080/api/v1";
 
 export const TOKEN_STORAGE_LOCATION = "JWT";
 
-class ApiService {
+export default class ApiService {
   static get(url, params) {
     return this.#doRequest("get", url, null, { params: params });
   }
@@ -55,5 +55,3 @@ class ApiService {
     return { Authorization: "Bearer " + token };
   }
 }
-
-export default ApiService;

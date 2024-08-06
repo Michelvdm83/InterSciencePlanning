@@ -24,6 +24,7 @@ public class Employee implements UserDetails {
 
   private String email;
 
+  @Enumerated(EnumType.STRING)
   private Function function;
 
   private String password;
