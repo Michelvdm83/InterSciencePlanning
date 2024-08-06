@@ -32,7 +32,7 @@ export default function NewTaskModal() {
       setErrorMessage();
     } else {
       event.preventDefault();
-      setErrorMessage("bijde velden zijn verplicht");
+      setErrorMessage("Bijde velden zijn verplicht");
     }
   };
 
@@ -58,7 +58,7 @@ export default function NewTaskModal() {
           </div>
 
           <div className="mt-4 flex flex-col">
-            <span>verwachte aantal dagen:</span>
+            <span>Aantal dagen:</span>
             <input
               type="text"
               className="input input-bordered w-full max-w-xs"
@@ -67,10 +67,14 @@ export default function NewTaskModal() {
             />
           </div>
 
-          {errorMessage && <div className="text-red-600">{errorMessage}</div>}
+          {errorMessage && (
+            <div className="-mb-2 mt-3 self-center text-red-600">
+              {errorMessage}
+            </div>
+          )}
 
           <button
-            className="modal-open={open} btn btn-accent mt-4 w-20 self-center"
+            className="modal-open={open} btn btn-accent mt-5 w-20 self-center"
             onClick={(e) => handleNewTaskSave(e)}
           >
             Oplsaan
