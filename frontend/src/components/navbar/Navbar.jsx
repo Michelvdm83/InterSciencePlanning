@@ -1,3 +1,4 @@
+import { useState } from "react";
 import EmployeeService from "../../services/EmployeeService";
 import NavbarButton from "./NavbarButton";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ export default function Navbar() {
             onClick={() => {
               EmployeeService.logout();
               navigate("/inloggen");
+              window.location.reload();
             }}
           ></NavbarButton>
         )}
