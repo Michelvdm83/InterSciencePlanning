@@ -14,11 +14,11 @@ public class TaskController {
   @PostMapping
   public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO createTaskDTO) {
 
-    if (createTaskDTO.name() == null) {
+    if (createTaskDTO.name() == null || createTaskDTO.name().isEmpty()) {
       return ResponseEntity.badRequest().body("Name is required");
     }
 
-    if (createTaskDTO.estimatedTime() == null) {
+    if (createTaskDTO.estimatedTime() == null || createTaskDTO.estimatedTime().equals("")) {
       return ResponseEntity.badRequest().body("Estimated time is required");
     }
 
