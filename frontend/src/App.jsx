@@ -14,7 +14,6 @@ export default function App() {
   return (
     <>
       <div className="flex h-screen w-screen flex-col font-Effra_Rg">
-      <div className="flex h-screen w-screen flex-col font-Effra_Rg">
         <Navbar />
 
         <div>

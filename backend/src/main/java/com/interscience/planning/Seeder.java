@@ -3,12 +3,12 @@ package com.interscience.planning;
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.employee.Function;
-import java.util.List;
 import com.interscience.planning.system.System;
 import com.interscience.planning.system.SystemRepository;
 import com.interscience.planning.system.SystemStatus;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,7 +44,7 @@ public class Seeder implements CommandLineRunner {
               passwordEncoder.encode("Wachtwoord123!"),
               Function.FT);
       employeeRepository.saveAll(List.of(employee1, employee2, employee3));
-  public void run(String... args) {
+    }
     if (systemRepository.findAll().isEmpty()) {
       createSystem();
     }
