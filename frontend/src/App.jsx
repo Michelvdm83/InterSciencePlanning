@@ -20,7 +20,7 @@ export default function App() {
           <Routes>
             <Route path="/ssp-planning" element={<SSPPlanning />} />
             <Route path="/gebruikers" element={<UserManagement />} />
-            <Route path="/systeem/:systemId" element={<SystemOverview />} />
+            <Route path="/systeem/:systemName" element={<SystemOverview />} />
             <Route path="/inloggen" element={<Login />} />
           </Routes>
         </div>
