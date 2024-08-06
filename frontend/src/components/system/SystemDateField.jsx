@@ -15,7 +15,7 @@ export default function SystemDateField({ date, editable, title }) {
     return (
       <div>
         <div className="max-w-xs">{title}</div>
-        <SystemTextField text={date} editable={false} title={title} />
+        <SystemTextField text={date} editable={false} />
       </div>
     );
   }
