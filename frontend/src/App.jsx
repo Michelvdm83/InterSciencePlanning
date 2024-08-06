@@ -7,13 +7,8 @@ import EmployeeService from "./services/EmployeeService";
 import FtPlanning from "./pages/ftPlanning/FtPlanning";
 
 export default function App() {
-  const navigate = useNavigate();
-  const isLoggedIn = EmployeeService.isLoggedIn();
-
-  const employeeFunction = EmployeeService.getEmployeeFunction();
-
   function getHomeRoute() {
-    switch (employeeFunction) {
+    switch (EmployeeService.getEmployeeFunction()) {
       case "TEAM_LEADER":
       case "SSP":
         return <Route path="/" element={<SSPPlanning />} />;
@@ -24,18 +19,32 @@ export default function App() {
     }
   }
 
+  function getRoutes() {
+    if (!EmployeeService.isLoggedIn()) {
+      return (
+        <Routes>
+          <Route path="/ssp-planning" element={<Login />} />
+          <Route path="/gebruikers" element={<Login />} />
+          <Route path="/inloggen" element={<Login />} />
+          <Route path="/" element={<Login />} />
+        </Routes>
+      );
+    }
+    return (
+      <Routes>
+        <Route path="/ssp-planning" element={<SSPPlanning />} />
+        <Route path="/gebruikers" element={<UserManagement />} />
+        <Route path="/inloggen" element={<Login />} />
+        {getHomeRoute()}
+      </Routes>
+    );
+  }
+
   return (
     <div className="flex h-screen w-screen flex-col font-Effra_Rg">
       <Navbar />
 
-      <div>
-        <Routes>
-          <Route path="/ssp-planning" element={<SSPPlanning />} />
-          <Route path="/gebruikers" element={<UserManagement />} />
-          <Route path="/inloggen" element={<Login />} />
-          {getHomeRoute()}
-        </Routes>
-      </div>
+      <div>{getRoutes()}</div>
     </div>
   );
 }

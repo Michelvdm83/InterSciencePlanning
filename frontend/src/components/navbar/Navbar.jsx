@@ -32,7 +32,6 @@ export default function Navbar() {
             onClick={() => {
               EmployeeService.logout();
               navigate("/inloggen");
-              window.location.reload();
             }}
           ></NavbarButton>
         )}
