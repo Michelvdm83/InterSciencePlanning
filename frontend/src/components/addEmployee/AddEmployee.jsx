@@ -52,7 +52,7 @@ export default function AddEmployee({ employees, setEmployees }) {
   }
 
   return (
-    <div className="flex w-full flex-col rounded-md bg-neutral p-8">
+    <div className="w-2/5 rounded-md bg-neutral p-8">
       <h2 className="px-1 py-2 text-xl font-bold">Medewerker toevoegen</h2>
       <form className="form-control" onSubmit={handleAddEmployee}>
         <label className="label">Naam</label>

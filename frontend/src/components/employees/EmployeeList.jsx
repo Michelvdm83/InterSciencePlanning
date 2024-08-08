@@ -3,7 +3,7 @@ import Employee from "./Employee";
 
 export default function EmployeeList({ employees }) {
   return (
-    <div className="flex h-full w-full flex-col gap-4 rounded-md bg-neutral p-8">
+    <div className="flex h-full w-3/5 flex-col gap-4 overflow-auto rounded-md bg-neutral p-8 font-Effra_Md">
       {employees
         .slice()
         .reverse()

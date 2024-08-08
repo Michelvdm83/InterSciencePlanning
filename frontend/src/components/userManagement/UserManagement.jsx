@@ -13,13 +13,9 @@ export default function UserManagement() {
   }, []);
 
   return (
-    <div className="m-10 flex h-screen gap-8">
-      <div className="h-full flex-1">
-        <EmployeeList employees={employees} />
-      </div>
-      <div className="flex-1">
-        <AddEmployee employees={employees} setEmployees={setEmployees} />
-      </div>
+    <div className="flex h-full w-screen items-start gap-8 p-8">
+      <EmployeeList employees={employees} />{" "}
+      <AddEmployee employees={employees} setEmployees={setEmployees} />
     </div>
   );
 }
