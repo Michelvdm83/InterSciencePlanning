@@ -49,9 +49,11 @@ export default class ApiService {
   }
 
   static #getHeaders() {
-    let token = sessionStorage.getItem(TOKEN_STORAGE_LOCATION);
+    let token = localStorage.getItem(TOKEN_STORAGE_LOCATION);
 
     if (token == null) return {};
-    return { Authorization: "Bearer " + token };
+    return {
+      Authorization: "Bearer " + token,
+    };
   }
 }
