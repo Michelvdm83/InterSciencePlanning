@@ -77,7 +77,7 @@ export default function NewTaskModal() {
             className="modal-open={open} btn btn-accent mt-5 w-20 self-center"
             onClick={(e) => handleNewTaskSave(e)}
           >
-            Oplsaan
+            Opslaan
           </button>
         </div>
       </form>
