@@ -1,5 +1,8 @@
 package com.interscience.planning.system;
 
+import com.interscience.planning.constructiontask.ConstructionTask;
+import com.interscience.planning.employee.Employee;
+import com.interscience.planning.testtask.TestTask;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
@@ -26,11 +29,13 @@ public class System {
   @Temporal(TemporalType.DATE)
   private Date actualDeliveryDate;
 
-  private UUID employeeResponsible;
+  @ManyToOne private Employee employeeResponsible;
 
-  private UUID testTask;
+  @OneToOne(mappedBy = "system")
+  private TestTask testTask;
 
-  private UUID constructionTask;
+  @OneToOne(mappedBy = "system")
+  private ConstructionTask constructionTask;
 
   private String notes;
 

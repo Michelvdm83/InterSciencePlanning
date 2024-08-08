@@ -1,9 +1,8 @@
 package com.interscience.planning.ssptask;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.interscience.planning.constructiontask.ConstructionTask;
+import com.interscience.planning.employee.Employee;
+import jakarta.persistence.*;
 import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,13 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SSPTask {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID taskId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID taskId;
 
-    private UUID constructionTask;
+  @ManyToOne private Employee employee;
 
-    private UUID task;
+  @OneToOne private ConstructionTask constructionTask;
 
-    private int index;
+  //    @OneToOne
+  private String task;
+
+  private int index;
 }

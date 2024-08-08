@@ -1,7 +1,6 @@
 package com.interscience.planning.system;
 
 import java.util.Date;
-import java.util.UUID;
 
 public record SystemDto(
     String name,
@@ -9,9 +8,9 @@ public record SystemDto(
     String systemType,
     Date estimatedDeliveryDate,
     Date actualDeliveryDate,
-    UUID employeeResponsible,
-    UUID employeeFT,
-    UUID employeeSSP,
+    String employeeResponsible,
+    String employeeFT,
+    String employeeSSP,
     String notes,
     String customerContactInformation,
     String projectInformation,
@@ -21,15 +20,35 @@ public record SystemDto(
     Boolean delayCheckedBySupervisor) {
 
   public static SystemDto from(System system) {
+
+    String responsiblePerson =
+        system.getEmployeeResponsible() == null ? null : system.getEmployeeResponsible().getName();
+
+    String ftEmployee;
+    if (system.getTestTask() == null || system.getTestTask().getEmployee() == null) {
+      ftEmployee = null;
+    } else {
+      ftEmployee = system.getTestTask().getEmployee().getName();
+    }
+
+    String sspEmployee;
+    if (system.getConstructionTask() == null
+        || system.getConstructionTask().getSspTask() == null
+        || system.getConstructionTask().getSspTask().getEmployee() == null) {
+      sspEmployee = null;
+    } else {
+      sspEmployee = system.getConstructionTask().getSspTask().getEmployee().getName();
+    }
+
     return new SystemDto(
         system.getName(),
         system.getPoNumber(),
         system.getSystemType(),
         system.getEstimatedDeliveryDate(),
         system.getActualDeliveryDate(),
-        system.getEmployeeResponsible(),
-        system.getTestTask(),
-        system.getConstructionTask(),
+        responsiblePerson,
+        ftEmployee,
+        sspEmployee,
         system.getNotes(),
         system.getCustomerContactInformation(),
         system.getProjectInformation(),
