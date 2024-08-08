@@ -20,6 +20,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   function handleLogin(e) {
     e.preventDefault();
@@ -29,9 +30,14 @@ export default function Login() {
     } else if (password.length == 0) {
       setError("Wachtwoord is verplicht!");
     } else {
-      EmployeeService.login(email, password).catch((error) => {
-        setError(translateError(error));
-      });
+      EmployeeService.login(email, password)
+        .then(() => {
+          navigate("/");
+          window.location.reload();
+        })
+        .catch((error) => {
+          setError(translateError(error));
+        });
     }
   }
 
