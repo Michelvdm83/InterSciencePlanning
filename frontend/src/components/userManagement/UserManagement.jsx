@@ -1,3 +1,5 @@
+import EmployeeList from "../employees/EmployeeList";
+
 export default function UserManagement() {
-  return <div>User Management page</div>;
+  return <EmployeeList />;
 }

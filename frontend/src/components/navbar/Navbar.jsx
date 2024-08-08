@@ -1,3 +1,4 @@
+import { useState } from "react";
 import EmployeeService from "../../services/EmployeeService";
 import NavbarButton from "./NavbarButton";
 import { useNavigate } from "react-router-dom";
@@ -13,8 +14,12 @@ export default function Navbar() {
           onClick={() => navigate("/ssp-planning")}
         ></NavbarButton>
         <NavbarButton
-          title="Gebruikers"
-          onClick={() => navigate("/gebruikers")}
+          title="Medewerkers"
+          onClick={() => navigate("/medewerkers")}
+        ></NavbarButton>
+        <NavbarButton
+          title="SSP Inplannen"
+          onClick={() => navigate("/ssp-inplannen")}
         ></NavbarButton>
       </div>
       <div className="flex-none gap-2">

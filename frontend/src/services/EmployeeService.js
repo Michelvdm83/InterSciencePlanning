@@ -39,6 +39,7 @@ export default class EmployeeService {
   static logout() {
     localStorage.removeItem(TOKEN_STORAGE_LOCATION);
     localStorage.removeItem(EMPLOYEE_FUNCTION_STORAGE_LOCATION);
+    window.location.reload();
   }
 
   static isLoggedIn() {

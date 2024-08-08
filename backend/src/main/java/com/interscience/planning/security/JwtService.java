@@ -72,8 +72,14 @@ public class JwtService {
     List<String> parsedRoles = new LinkedList<>();
 
     for (Object o : rawRoles) {
-      if (o instanceof String parsedRole) {
-        parsedRoles.add(parsedRole);
+      if (o instanceof LinkedHashMap<?, ?> map) {
+        map.values()
+            .forEach(
+                t -> {
+                  if (t instanceof String) {
+                    parsedRoles.add((String) t);
+                  }
+                });
       }
     }
 
