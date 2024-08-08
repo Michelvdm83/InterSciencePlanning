@@ -1,5 +1,6 @@
 package com.interscience.planning.task;
 
+import com.interscience.planning.exceptions.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,11 @@ public class TaskController {
   public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO createTaskDTO) {
 
     if (createTaskDTO.name() == null || createTaskDTO.name().isEmpty()) {
-      return ResponseEntity.badRequest().body("Name is required");
+      throw new BadRequestException("Name is required");
     }
 
     if (createTaskDTO.estimatedTime() == null || createTaskDTO.estimatedTime().equals("")) {
-      return ResponseEntity.badRequest().body("Estimated time is required");
+      throw new BadRequestException("Estimated time is required");
     }
 
     taskRepository.save(new Task(createTaskDTO.name(), createTaskDTO.estimatedTime()));
