@@ -25,7 +25,7 @@ export default function App() {
       return (
         <Routes>
           <Route path="/ssp-planning" element={<Login />} />
-          <Route path="/gebruikers" element={<Login />} />
+          <Route path="/medewerkers" element={<Login />} />
           <Route path="/ssp-inplannen" element={<Login />} />
           <Route path="/inloggen" element={<Login />} />
           <Route path="/" element={<Login />} />
@@ -35,7 +35,7 @@ export default function App() {
     return (
       <Routes>
         <Route path="/ssp-planning" element={<SSPPlanning />} />
-        <Route path="/gebruikers" element={<UserManagement />} />
+        <Route path="/medewerkers" element={<UserManagement />} />
         <Route path="/ssp-inplannen" element={<SSPSCheduling />} />
         <Route path="/inloggen" element={<Login />} />
         {getHomeRoute()}

@@ -14,8 +14,8 @@ export default function Navbar() {
           onClick={() => navigate("/ssp-planning")}
         ></NavbarButton>
         <NavbarButton
-          title="Gebruikers"
-          onClick={() => navigate("/gebruikers")}
+          title="Medewerkers"
+          onClick={() => navigate("/medewerkers")}
         ></NavbarButton>
         <NavbarButton
           title="SSP Inplannen"
