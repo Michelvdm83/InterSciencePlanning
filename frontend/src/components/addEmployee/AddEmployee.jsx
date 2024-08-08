@@ -80,7 +80,7 @@ export default function AddEmployee({ employees, setEmployees }) {
           <option value="" disabled>
             Functie
           </option>
-          <option value="TEAMLEADER">Teamleider</option>
+          <option value="TEAM_LEADER">Teamleider</option>
           <option value="SSP">SSP</option>
           <option value="FT">FT</option>
         </select>
