@@ -3,17 +3,18 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import SystemTextField from "../../components/system/SystemTextField";
 import SystemDateField from "../../components/system/SystemDateField";
+import ApiService from "../../services/ApiService";
 
 export default function SystemOverview() {
   const { systemName } = useParams();
   const [system, setSystem] = useState(null);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/v1/systems/${systemName}`)
-      .then((response) => {
+    ApiService.get(`http://localhost:8080/api/v1/systems/${systemName}`).then(
+      (response) => {
         setSystem(response.data);
-      });
+      },
+    );
   }, []);
 
   function getFields() {

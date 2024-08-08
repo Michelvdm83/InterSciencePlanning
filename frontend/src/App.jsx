@@ -30,11 +30,13 @@ export default function App() {
           <Route path="/ssp-inplannen" element={<Login />} />
           <Route path="/inloggen" element={<Login />} />
           <Route path="/" element={<Login />} />
+          <Route path="/systeem/:systemName" element={<Login />} />
         </Routes>
       );
     }
     return (
       <Routes>
+        <Route path="/systeem/:systemName" element={<SystemOverview />} />
         <Route path="/ssp-planning" element={<SSPPlanning />} />
         <Route path="/medewerkers" element={<UserManagement />} />
         <Route path="/ssp-inplannen" element={<SSPSCheduling />} />
