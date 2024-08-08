@@ -3,10 +3,9 @@ package com.interscience.planning.testtask;
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.system.System;
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Entity
 @Data
@@ -19,5 +18,7 @@ public class TestTask {
 
   @OneToOne private System system;
 
-  @OneToMany private Employee employee;
+  @ManyToOne private Employee employee;
+
+  private Integer estimatedTime;
 }
