@@ -1,3 +1,3 @@
 export default function FtPlanning() {
-  return <></>;
+  return <div>FT Planning placeholder</div>;
 }
