@@ -32,7 +32,7 @@ export default function NewTaskModal() {
       setErrorMessage();
     } else {
       event.preventDefault();
-      setErrorMessage("Bijde velden zijn verplicht");
+      setErrorMessage("Beide velden zijn verplicht");
     }
   };
 

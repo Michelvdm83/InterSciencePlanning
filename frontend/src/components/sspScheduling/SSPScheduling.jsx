@@ -19,10 +19,16 @@ export default function SSPSCheduling() {
         <div className="btn btn-accent btn-lg mb-2 rounded-md">
           Nieuw Systeem
         </div>
-        <div className="flex-grow rounded-md bg-neutral">heleuuuu</div>
+        <div className="flex-grow rounded-md bg-neutral">
+          Nog in te plannen taken en systemen placeholder
+        </div>
       </div>
-      <div className="m-4 w-1/3 rounded-md bg-neutral">heleuuuu</div>
-      <div className="m-4 w-1/3 rounded-md bg-neutral">heleuuuu</div>
+      <div className="m-4 w-1/3 rounded-md bg-neutral">
+        Wachtlijst taken/systemen ssp medewerker placeholder
+      </div>
+      <div className="m-4 w-1/3 rounded-md bg-neutral">
+        Vertraagde systemen placeholder
+      </div>
     </div>
   );
 }

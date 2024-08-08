@@ -47,7 +47,7 @@ export default function App() {
     <div className="flex h-screen w-screen flex-col font-Effra_Rg">
       <Navbar />
 
-      <div>{getRoutes()}</div>
+      <div className="h-full">{getRoutes()}</div>
     </div>
   );
 }
