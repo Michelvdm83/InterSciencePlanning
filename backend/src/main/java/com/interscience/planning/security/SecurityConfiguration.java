@@ -25,7 +25,12 @@ public class SecurityConfiguration {
         .csrf(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
-            requests -> requests.requestMatchers("lists").authenticated().anyRequest().permitAll())
+            requests ->
+                requests
+                    .requestMatchers("api/v1/employees")
+                    .hasRole("TEAM_LEADER")
+                    .anyRequest()
+                    .permitAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .exceptionHandling(
             exceptionHandlingConfigurer ->
