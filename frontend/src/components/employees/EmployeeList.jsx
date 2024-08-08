@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Employee from "./Employee";
-import ApiService from "../../services/ApiService";
 
-export default function EmployeeList() {
-  const [employees, setEmployees] = useState([]);
-
-  useEffect(() => {
-    ApiService.get("employees").then((response) => {
-      setEmployees(response.data);
-    });
-  }, []);
-
+export default function EmployeeList({ employees }) {
   return (
-    <div className="m-8 flex w-1/2 flex-col gap-4 bg-neutral p-8">
-      {employees.map((employee, index) => (
-        <Employee employee={employee} key={index} />
-      ))}
+    <div className="flex h-full w-3/5 flex-col gap-4 overflow-auto rounded-md bg-neutral p-8 font-Effra_Md">
+      {employees
+        .slice()
+        .reverse()
+        .map((employee, index) => (
+          <Employee employee={employee} key={index} />
+        ))}
     </div>
   );
 }
