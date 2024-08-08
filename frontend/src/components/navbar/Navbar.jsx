@@ -17,6 +17,10 @@ export default function Navbar() {
           title="Medewerkers"
           onClick={() => navigate("/medewerkers")}
         ></NavbarButton>
+        <NavbarButton
+          title="SSP Inplannen"
+          onClick={() => navigate("/ssp-inplannen")}
+        ></NavbarButton>
       </div>
       <div className="flex-none gap-2">
         <div className="form-control">

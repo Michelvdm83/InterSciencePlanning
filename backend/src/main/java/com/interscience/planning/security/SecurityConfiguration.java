@@ -29,6 +29,8 @@ public class SecurityConfiguration {
                 requests
                     .requestMatchers("api/v1/employees")
                     .hasRole("TEAM_LEADER")
+                    .requestMatchers("api/v1/tasks")
+                    .hasRole("TEAM_LEADER")
                     .anyRequest()
                     .permitAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
