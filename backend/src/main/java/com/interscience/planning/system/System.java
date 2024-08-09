@@ -24,7 +24,7 @@ public class System {
   private String systemType;
 
   @Temporal(TemporalType.DATE)
-  private Date estimatedDeliveryDate;
+  private Date agreedDate;
 
   @Temporal(TemporalType.DATE)
   private Date actualDeliveryDate;

@@ -14,15 +14,39 @@ export default function SystemTextField({ text, editable, title }) {
     }
   }
 
+  function getField() {
+    if (title === "Notities" || title === "Project informatie") {
+      return (
+        <textarea
+          className={classes + " min-h-40"}
+          value={myText}
+          onChange={(event) => updateText(event)}
+        />
+      );
+    } else if (title === "Contactgegevens klant") {
+      return (
+        <textarea
+          className={classes}
+          value={myText}
+          onChange={(event) => updateText(event)}
+        />
+      );
+    } else {
+      return (
+        <input
+          type="text"
+          className={classes}
+          value={myText}
+          onChange={(event) => updateText(event)}
+        />
+      );
+    }
+  }
+
   return (
     <div>
       <div className="max-w-xs">{title}</div>
-      <input
-        type="text"
-        className={classes}
-        value={myText}
-        onChange={(event) => updateText(event)}
-      />
+      {getField()}
     </div>
   );
 }

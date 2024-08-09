@@ -15,7 +15,12 @@ export default function SystemDateField({ date, editable, title }) {
     return (
       <div>
         <div className="max-w-xs">{title}</div>
-        <SystemTextField text={date} editable={false} />
+        <input
+          type="date"
+          defaultValue={date}
+          className="max-w-md disabled:bg-white"
+          disabled
+        />
       </div>
     );
   }

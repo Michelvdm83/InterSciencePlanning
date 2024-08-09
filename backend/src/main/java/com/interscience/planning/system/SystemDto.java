@@ -6,7 +6,7 @@ public record SystemDto(
     String name,
     String poNumber,
     String systemType,
-    Date estimatedDeliveryDate,
+    Date agreedDate,
     Date actualDeliveryDate,
     String employeeResponsible,
     String employeeFT,
@@ -17,7 +17,9 @@ public record SystemDto(
     Boolean schemeApproved,
     Boolean specsheetApproved,
     String status,
-    Boolean delayCheckedBySupervisor) {
+    Boolean delayCheckedBySupervisor,
+    Date startOfConstruction,
+    Integer estimatedConstructionDays) {
 
   public static SystemDto from(System system) {
 
@@ -40,11 +42,21 @@ public record SystemDto(
       sspEmployee = system.getConstructionTask().getSspTask().getEmployee().getName();
     }
 
+    Date startOfConstruction;
+    Integer estimatedConstructionDays;
+    if (system.getConstructionTask() == null) {
+      startOfConstruction = null;
+      estimatedConstructionDays = null;
+    } else {
+      startOfConstruction = system.getConstructionTask().getDateStarted();
+      estimatedConstructionDays = system.getConstructionTask().getEstimatedTime();
+    }
+
     return new SystemDto(
         system.getName(),
         system.getPoNumber(),
         system.getSystemType(),
-        system.getEstimatedDeliveryDate(),
+        system.getAgreedDate(),
         system.getActualDeliveryDate(),
         responsiblePerson,
         ftEmployee,
@@ -55,6 +67,8 @@ public record SystemDto(
         system.isSchemeApproved(),
         system.isSpecsheetApproved(),
         system.getStatus().toString(),
-        system.isDelayCheckedBySupervisor());
+        system.isDelayCheckedBySupervisor(),
+        startOfConstruction,
+        estimatedConstructionDays);
   }
 }
