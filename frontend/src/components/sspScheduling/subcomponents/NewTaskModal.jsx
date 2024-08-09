@@ -13,6 +13,12 @@ export default function NewTaskModal() {
     }
   };
 
+  const handleOnKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleNewTaskSave(e);
+    }
+  };
+
   const handleClose = () => {
     setTaskName("");
     setEstimatedTime("");
@@ -38,7 +44,7 @@ export default function NewTaskModal() {
 
   return (
     <div className="modal-box w-96">
-      <form method="dialog">
+      <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
         <div className="flex flex-col">
           <button
             className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"

@@ -1,9 +1,6 @@
 import NewTaskModal from "./subcomponents/NewTaskModal";
-import { useState } from "react";
 
 export default function SSPSCheduling() {
-  const [modalOpen, setModalOpen] = useState(false);
-
   return (
     <div className="flex h-full w-screen flex-grow">
       <div className="m-4 flex w-1/3 flex-col">
