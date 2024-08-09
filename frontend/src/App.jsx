@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
-import SSPPlanning from "./components/sspNavbar/SSPPlanning";
-import UserManagement from "./components/userManagement/UserManagement";
-import SSPSCheduling from "./components/sspScheduling/SSPScheduling";
+import SSPPlanning from "./pages/sspPlanning/SSPPlanning.jsx";
+import Employees from "./pages/employees/Employees.jsx";
+import SSPSCheduling from "./pages/sspScheduling/SSPScheduling.jsx";
 import Login from "./pages/login/Login";
 import EmployeeService from "./services/EmployeeService";
 import FtPlanning from "./pages/ftPlanning/FtPlanning";
@@ -39,7 +39,7 @@ export default function App() {
       <Routes>
         <Route path="/ssp-planning" element={<SSPPlanning />} />
         <Route path="/ft-planning" element={<FtPlanning />} />
-        <Route path="/medewerkers" element={<UserManagement />} />
+        <Route path="/medewerkers" element={<Employees />} />
         <Route path="/ssp-inplannen" element={<SSPSCheduling />} />
         <Route path="/vakanties" element={<Holidays />} />
         <Route path="/inloggen" element={<Login />} />

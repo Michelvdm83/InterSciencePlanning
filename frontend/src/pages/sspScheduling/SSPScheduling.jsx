@@ -1,4 +1,4 @@
-import NewTaskModal from "./subcomponents/NewTaskModal";
+import NewTaskModal from "./components/NewTaskModal.jsx";
 import { useState } from "react";
 
 export default function SSPSCheduling() {
