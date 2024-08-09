@@ -27,7 +27,7 @@ export default function AddEmployee({ employees, setEmployees }) {
     return re.test(email);
   }
 
-  function handleAddEmployee(e) {
+  async function handleAddEmployee(e) {
     e.preventDefault();
 
     if (!employee.name.trim()) {
@@ -39,15 +39,15 @@ export default function AddEmployee({ employees, setEmployees }) {
     } else if (!employee.function) {
       setError("Functie is verplicht");
     } else {
-      ApiService.post("employees", employee)
-        .then((response) => {
-          setEmployees([...employees, response.data]);
-          setEmployee({ name: "", email: "", function: "" });
-          setError("");
-        })
-        .catch((error) => {
-          setError(translateError(error.response?.data?.detail));
-        });
+      try {
+        const response = await ApiService.post("employees", employee);
+        setEmployees([...employees, response.data]);
+        setEmployee({ name: "", email: "", function: "" });
+        setError("");
+        await ApiService.post(`password-links/${response.data.id}`);
+      } catch (error) {
+        setError(translateError(error.response?.data?.detail));
+      }
     }
   }
 
