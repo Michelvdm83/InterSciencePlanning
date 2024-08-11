@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ApiService from "../../services/ApiService";
 
@@ -6,9 +6,24 @@ export default function SetPassword() {
   const [password, setPassword] = useState("");
   const [repeatedPassword, setRepeatedPassword] = useState("");
   const [errors, setErrors] = useState("");
+  const [linkIsValid, setLinkIsValid] = useState(false);
+  const [newLinkSent, setNewLinkSent] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const { passwordLinkId, employeeId } = useParams();
+
+  useEffect(() => {
+    ApiService.get(`password-links/${passwordLinkId}`)
+      .then((response) => {
+        setLinkIsValid(response.status === 200);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, [passwordLinkId]);
 
   function translateError(error) {
     switch (error) {
@@ -21,18 +36,13 @@ export default function SetPassword() {
     }
   }
 
-  function linkIsValid() {
-    ApiService.get(`password-links/${passwordLinkId}`).then((response) => {
-      return response.status === 200;
-    });
-  }
-
   function handleSendNewLink(e) {
     e.preventDefault();
 
     ApiService.post(`password-links/${employeeId}`).catch((error) =>
       console.error(error),
     );
+    setNewLinkSent(true);
   }
 
   async function handleSetNewPassword(e) {
@@ -42,13 +52,13 @@ export default function SetPassword() {
       setErrors(["Wachtwoord is verplicht"]);
       return;
     }
-    if (password !== repeatedPassword) {
-      setErrors(["Wachtwoord komt niet overeen"]);
-      return;
-    }
     const errors = validatePassword(password);
     if (errors.length > 0) {
       setErrors(errors);
+      return;
+    }
+    if (password !== repeatedPassword) {
+      setErrors(["Wachtwoord komt niet overeen met het herhaalde wachtwoord"]);
       return;
     }
 
@@ -57,7 +67,13 @@ export default function SetPassword() {
       await ApiService.delete(`password-links/${passwordLinkId}`);
       navigate("/inloggen");
     } catch (error) {
-      setErrors(translateError(error));
+      if (error.response && error.status === 404) {
+        setErrors([
+          "Medewerker niet gevonden. Controleer de link en probeer het opnieuw",
+        ]);
+      } else {
+        setErrors(translateError(error));
+      }
     }
   }
 
@@ -65,7 +81,7 @@ export default function SetPassword() {
     let errors = [];
 
     if (password.length < 8) {
-      errors.push("Wachtwoord moet minimaal 8 karakters zijn");
+      errors.push("- Minimaal 8 karakters zijn");
     }
 
     let hasUppercase = false;
@@ -82,38 +98,44 @@ export default function SetPassword() {
       else hasSpecialCharacter = true;
     }
 
-    if (!hasUppercase) errors.push("Wachtwoord moet een hoofdletter bevatten");
-    if (!hasLowercase)
-      errors.push("Wachtwoord moet een kleine letter bevatten");
-    if (!hasNumber) errors.push("Wachtwoord moet een nummer bevatten");
-    if (!hasSpecialCharacter)
-      errors.push("Wachtwoord moet een speciaal karakter bevatten");
+    if (!hasUppercase) errors.push("- Een hoofdletter bevatten");
+    if (!hasLowercase) errors.push("- Een kleine letter bevatten");
+    if (!hasNumber) errors.push("- Een nummer bevatten");
+    if (!hasSpecialCharacter) errors.push("- Een speciaal karakter bevatten");
+
+    if (errors.length > 0) {
+      errors.unshift("Wachtwoord moet: ");
+    }
 
     return errors;
   }
 
-  return linkIsValid() ? (
+  if (loading) {
+    return <div></div>;
+  }
+
+  return linkIsValid ? (
     <div className="flex justify-center">
       <form
-        className="form-control mt-4 flex flex-col items-start"
+        className="form-control mt-4 flex w-full max-w-[16rem] flex-col items-start"
         onSubmit={handleSetNewPassword}
       >
         <label className="label">Nieuw wachtwoord</label>
         <input
-          className="input input-bordered"
+          className="input input-bordered w-full"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         ></input>
         <label className="label">Herhaal nieuw wachtwoord</label>
         <input
-          className="input input-bordered"
+          className="input input-bordered w-full"
           type="password"
           value={repeatedPassword}
           onChange={(e) => setRepeatedPassword(e.target.value)}
         />
         {errors.length > 0 ? (
-          <div className="text-center font-bold text-[#F00]">
+          <div className="mt-4 break-words text-red-600">
             {errors.map((error, index) => (
               <p key={index}>{error}</p>
             ))}
@@ -131,6 +153,11 @@ export default function SetPassword() {
       <button className="btn btn-accent mt-4" onClick={handleSendNewLink}>
         Ontvang nieuwe link
       </button>
+      {newLinkSent && (
+        <p className="mt-4 font-Effra_Bd text-accent">
+          Er is een nieuwe link verstuurd!
+        </p>
+      )}
     </div>
   );
 }

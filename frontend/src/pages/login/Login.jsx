@@ -44,19 +44,19 @@ export default function Login() {
   return (
     <div className="flex justify-center">
       <form
-        className="form-control mt-4 flex flex-col items-start"
+        className="form-control mt-4 flex w-full max-w-[16rem] flex-col items-start"
         onSubmit={handleLogin}
       >
         <label className="label">E-mailadres</label>
         <input
-          className="input input-bordered"
+          className="input input-bordered w-full"
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         ></input>
         <label className="label">Wachtwoord</label>
         <input
-          className="input input-bordered"
+          className="input input-bordered w-full"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
