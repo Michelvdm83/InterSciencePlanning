@@ -1,6 +1,7 @@
 package com.interscience.planning.passwordlink;
 
 import com.interscience.planning.employee.Employee;
+import com.interscience.planning.mail.EmailServiceImpl;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -10,18 +11,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PasswordLinkService {
   private static final int PASSWORD_LINK_EXPIRATION_DAYS = 2;
+  private final EmailServiceImpl emailServiceImpl;
 
   public void sendEmail(PasswordLink passwordLink, Employee employee) {
     String email = employee.getEmail();
     String setPasswordLink =
-        "http://localhost:5173/wachtwoord-instellen"
+        "http://localhost:5173/wachtwoord-instellen/"
             + employee.getId()
             + "/"
             + passwordLink.getId();
     String message =
-        "Stel via deze link eenmalig je wachtwoord in. Deze link is "
+        "<html><body>Stel via deze link eenmalig je wachtwoord in. Deze link is "
             + PASSWORD_LINK_EXPIRATION_DAYS
-            + " dagen geldig.";
+            + " dagen geldig. <br><br><a href='"
+            + setPasswordLink
+            + "'>"
+            + setPasswordLink
+            + "</a></body></html>";
+    emailServiceImpl.sendEmail(email, "Interscience wachtwoord instellen", message);
   }
 
   public boolean linkHasExpired(PasswordLink passwordLink) {
