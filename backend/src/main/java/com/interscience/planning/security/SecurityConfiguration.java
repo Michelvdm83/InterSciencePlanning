@@ -33,6 +33,8 @@ public class SecurityConfiguration {
                     .hasRole("TEAM_LEADER")
                     .requestMatchers("api/v1/tasks")
                     .hasRole("TEAM_LEADER")
+                    .requestMatchers("/api/v1/systems/**")
+                    .hasAnyRole("TEAM_LEADER", "SSP", "FT")
                     .anyRequest()
                     .permitAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
