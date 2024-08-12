@@ -27,6 +27,8 @@ public class SecurityConfiguration {
         .authorizeHttpRequests(
             requests ->
                 requests
+                    .requestMatchers("/api/v1/password-links/**")
+                    .permitAll()
                     .requestMatchers("api/v1/employees")
                     .hasRole("TEAM_LEADER")
                     .requestMatchers("api/v1/tasks")
