@@ -6,6 +6,9 @@ import SystemDateField from "../../components/system/SystemDateField";
 import ApiService from "../../services/ApiService";
 import EmployeeService from "../../services/EmployeeService";
 import SystemCheckboxField from "../../components/system/SystemCheckBoxField";
+import SystemSelectStatusField from "../../components/system/SystemSelectStatusField";
+import SystemSelectEmployeeField from "../../components/system/SystemSelectEmployeeField";
+import SystemNumberField from "../../components/system/SystemNumberField";
 
 export default function SystemOverview() {
   const { systemName } = useParams();
@@ -17,13 +20,23 @@ export default function SystemOverview() {
     ApiService.get(`http://localhost:8080/api/v1/systems/${systemName}`).then(
       (response) => {
         setSystem(response.data);
+        console.log(response.data);
 
-        const expected = new Date();
+        const startDate = new Date(
+          response.data.startOfTest
+            ? response.data.startOfTest
+            : response.data.startOfConstruction
+              ? response.data.startOfConstruction
+              : new Date(),
+        );
         const buildTime = response.data.estimatedConstructionDays
           ? response.data.estimatedConstructionDays
           : 0;
+        const testTime = response.data.estimatedTestDays
+          ? response.data.estimatedTestDays
+          : 0;
         const addedDate = new Date(
-          expected.setDate(expected.getDate() + buildTime),
+          startDate.setDate(startDate.getDate() + (buildTime + testTime)),
         );
         let expectedDate = addedDate.toISOString().split("T")[0];
 
@@ -37,7 +50,7 @@ export default function SystemOverview() {
       return <></>;
     }
     return (
-      <div className="flex w-full justify-evenly">
+      <div className="flex h-full w-full justify-evenly bg-neutral">
         <div className="flex flex-col content-center">
           <SystemTextField
             title="systeem"
@@ -55,9 +68,9 @@ export default function SystemOverview() {
             editable={employeeFunction == "TEAM_LEADER"}
           />
 
-          <SystemTextField
+          <SystemSelectEmployeeField
             title="Eindverantwoordelijke"
-            text={system.employeeResponsible}
+            employeeName={system.employeeResponsible}
             editable={employeeFunction == "TEAM_LEADER"}
           />
 
@@ -91,16 +104,18 @@ export default function SystemOverview() {
         </div>
 
         <div className="flex flex-col content-center">
-          <SystemTextField
+          <SystemSelectStatusField
             title="status"
-            text={system.status}
+            defaultValue={system.status}
             editable={true}
           />
-          <SystemTextField
+
+          <SystemSelectEmployeeField
             title="SSP medewerker"
-            text={system.employeeSSP}
+            employeeName={system.employeeSSP}
             editable={employeeFunction == "TEAM_LEADER"}
           />
+
           <SystemDateField
             title="Startdatum productie"
             date={system.startOfConstruction}
@@ -108,30 +123,26 @@ export default function SystemOverview() {
               employeeFunction == "TEAM_LEADER" || employeeFunction == "SSP"
             }
           />
-          <SystemTextField
+          <SystemNumberField
             title="Productie dagen"
-            text={system.estimatedConstructionDays}
+            number={system.estimatedConstructionDays}
             editable={employeeFunction == "TEAM_LEADER"}
           />
-          <SystemTextField
+          <SystemSelectEmployeeField
             title="FT medewerker"
-            text={system.employeeFT}
+            employeeName={system.employeeFT}
             editable={employeeFunction == "TEAM_LEADER"}
           />
           <SystemDateField
-            title="Startdatum productie"
-            date={
-              /*system.startOfConstruction*/ new Date()
-                .toISOString()
-                .split("T")[0]
-            }
+            title="Startdatum test"
+            date={system.startOfTest}
             editable={
               employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
             }
           />
-          <SystemTextField
+          <SystemNumberField
             title="Test dagen"
-            text={system.estimatedTestDays}
+            number={system.estimatedTestDays}
             editable={employeeFunction == "TEAM_LEADER"}
           />
           <SystemTextField

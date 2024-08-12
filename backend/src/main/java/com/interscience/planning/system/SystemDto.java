@@ -19,7 +19,9 @@ public record SystemDto(
     String status,
     Boolean delayCheckedBySupervisor,
     Date startOfConstruction,
-    Integer estimatedConstructionDays) {
+    Integer estimatedConstructionDays,
+    Date startOfTest,
+    Integer estimatedTestDays) {
 
   public static SystemDto from(System system) {
 
@@ -31,6 +33,16 @@ public record SystemDto(
       ftEmployee = null;
     } else {
       ftEmployee = system.getTestTask().getEmployee().getName();
+    }
+
+    Date startOfTest;
+    Integer estimatedTestDays;
+    if (system.getTestTask() == null) {
+      startOfTest = null;
+      estimatedTestDays = null;
+    } else {
+      startOfTest = system.getTestTask().getDateStarted();
+      estimatedTestDays = system.getTestTask().getEstimatedTime();
     }
 
     String sspEmployee;
@@ -69,6 +81,8 @@ public record SystemDto(
         system.getStatus().toString(),
         system.isDelayCheckedBySupervisor(),
         startOfConstruction,
-        estimatedConstructionDays);
+        estimatedConstructionDays,
+        startOfTest,
+        estimatedTestDays);
   }
 }

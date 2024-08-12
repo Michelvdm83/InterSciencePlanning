@@ -1,7 +1,8 @@
 import { useState } from "react";
 
 export default function SystemTextField({ text, editable, title }) {
-  let classes = "input input-bordered bg-white max-w-md";
+  let classes =
+    "input input-bordered bg-white max-w-md text-accent disabled:text-accent";
   if (!editable) {
     classes += " input-disabled";
   }
@@ -18,7 +19,7 @@ export default function SystemTextField({ text, editable, title }) {
     if (title === "Notities" || title === "Project informatie") {
       return (
         <textarea
-          className={classes + " min-h-40"}
+          className={classes + " min-h-40 resize-none"}
           value={myText}
           onChange={(event) => updateText(event)}
         />
@@ -26,7 +27,7 @@ export default function SystemTextField({ text, editable, title }) {
     } else if (title === "Contactgegevens klant") {
       return (
         <textarea
-          className={classes}
+          className={classes + " min-h-20 resize-none"}
           value={myText}
           onChange={(event) => updateText(event)}
         />
@@ -45,7 +46,7 @@ export default function SystemTextField({ text, editable, title }) {
 
   return (
     <div>
-      <div className="max-w-xs">{title}</div>
+      <div className="label max-w-xs">{title}</div>
       {getField()}
     </div>
   );

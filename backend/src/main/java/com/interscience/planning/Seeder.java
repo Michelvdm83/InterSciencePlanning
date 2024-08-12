@@ -75,12 +75,14 @@ public class Seeder implements CommandLineRunner {
 
     TestTask testTask = new TestTask();
     testTask.setSystem(system);
+    testTask.setEstimatedTime(3);
 
     Employee ftEmployee = employeeRepository.findByEmail("employee3@gmail.com").orElse(null);
     testTask.setEmployee(ftEmployee);
 
     ConstructionTask constructionTask = new ConstructionTask();
     constructionTask.setSystem(system);
+    constructionTask.setEstimatedTime(2);
 
     SSPTask sspTask = new SSPTask();
     sspTask.setConstructionTask(constructionTask);
