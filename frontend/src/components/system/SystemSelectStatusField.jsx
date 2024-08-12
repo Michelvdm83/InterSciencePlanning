@@ -8,19 +8,21 @@ export default function SystemSelectStatusField({
   const [value, setValue] = useState({ defaultValue });
 
   return (
-    <div className="max-h-fit">
-      <div className="label max-w-xs">{title}</div>
+    <div>
+      <div>{title}</div>
       <select
         defaultValue={defaultValue}
         onChange={(e) => setValue(e.target.value)}
-        className="select select-bordered w-full text-accent"
+        className="select select-bordered select-sm w-full text-accent"
       >
-        <option value="TOBEPLANNED">SSP: nog in te plannen</option>
+        <option value="TOBEPLANNED">aangemaakt</option>
         <option value="PLANNED">SSP: ingepland</option>
         <option value="BUILDING">SSP: in bouw</option>
         <option value="BUILD">overgedragen</option>
         <option value="TESTING">FT: in test</option>
         <option value="FINISHED">FT: testen gereed</option>
+        <option value="PROBLEMS">FT: problemen</option>
+        <option value="INWAIT">in afwachting van klant</option>
         <option value="INSTALLED">geïnstalleerd</option>
       </select>
     </div>

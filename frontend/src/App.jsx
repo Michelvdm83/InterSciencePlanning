@@ -34,6 +34,7 @@ export default function App() {
           <Route path="/inloggen" element={<Login />} />
           <Route path="/" element={<Login />} />
           <Route path="/systeem/:systemName" element={<Login />} />
+          <Route path="/systeem" element={<Login />} />
         </Routes>
       );
     }
@@ -46,6 +47,7 @@ export default function App() {
         <Route path="/ssp-inplannen" element={<SSPSCheduling />} />
         <Route path="/vakanties" element={<Holidays />} />
         <Route path="/inloggen" element={<Login />} />
+        <Route path="/systeem" element={<SystemOverview sName="brt-001" />} />
         {getHomeRoute()}
       </Routes>
     );
@@ -55,7 +57,7 @@ export default function App() {
     <div className="flex h-screen w-screen flex-col font-Effra_Rg">
       <Navbar />
 
-      <div className="h-[calc(100%-5rem)] overflow-auto">{getRoutes()}</div>
+      <div className="h-[calc(100%-5rem)] align-middle">{getRoutes()}</div>
     </div>
   );
 }

@@ -7,39 +7,7 @@ public enum SystemStatus {
   TRANSFERRED,
   TESTING,
   FINISHED,
-  INSTALLED
+  INSTALLED,
+  PROBLEMS,
+  INWAIT
 }
-
-/*
-SSP status:
-
-ingepland (groen)
-
-in bouw (olijfgroen)
-
-overgedragen (donker groen)
-
-bouw overschreden (licht blauw)
-
-vakantie (geel)
-
-Task (oranje)
-
-FT status:
-
-SSP
-
-Overgedragen
-
-in test
-
-problemen
-
-applicatie
-
-testen gereed
-
-in afwachting klant
-
-geinstalleerd
- */

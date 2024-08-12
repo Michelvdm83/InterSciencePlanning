@@ -9,40 +9,40 @@ import SystemCheckboxField from "../../components/system/SystemCheckBoxField";
 import SystemSelectStatusField from "../../components/system/SystemSelectStatusField";
 import SystemSelectEmployeeField from "../../components/system/SystemSelectEmployeeField";
 import SystemNumberField from "../../components/system/SystemNumberField";
+import SystemTextArea from "../../components/system/SystemTextArea";
 
-export default function SystemOverview() {
+export default function SystemOverview({ sName }) {
   const { systemName } = useParams();
   const [expectedFinish, setExpectedFinish] = useState(null);
   const [system, setSystem] = useState(null);
   const employeeFunction = EmployeeService.getEmployeeFunction();
 
   useEffect(() => {
-    ApiService.get(`http://localhost:8080/api/v1/systems/${systemName}`).then(
-      (response) => {
-        setSystem(response.data);
-        console.log(response.data);
+    ApiService.get(
+      `http://localhost:8080/api/v1/systems/${systemName ? systemName : sName}`,
+    ).then((response) => {
+      setSystem(response.data);
 
-        const startDate = new Date(
-          response.data.startOfTest
-            ? response.data.startOfTest
-            : response.data.startOfConstruction
-              ? response.data.startOfConstruction
-              : new Date(),
-        );
-        const buildTime = response.data.estimatedConstructionDays
-          ? response.data.estimatedConstructionDays
-          : 0;
-        const testTime = response.data.estimatedTestDays
-          ? response.data.estimatedTestDays
-          : 0;
-        const addedDate = new Date(
-          startDate.setDate(startDate.getDate() + (buildTime + testTime)),
-        );
-        let expectedDate = addedDate.toISOString().split("T")[0];
+      const startDate = new Date(
+        response.data.startOfTest
+          ? response.data.startOfTest
+          : response.data.startOfConstruction
+            ? response.data.startOfConstruction
+            : new Date(),
+      );
+      const buildTime = response.data.estimatedConstructionDays
+        ? response.data.estimatedConstructionDays
+        : 0;
+      const testTime = response.data.estimatedTestDays
+        ? response.data.estimatedTestDays
+        : 0;
+      const addedDate = new Date(
+        startDate.setDate(startDate.getDate() + (buildTime + testTime)),
+      );
+      let expectedDate = addedDate.toISOString().split("T")[0];
 
-        setExpectedFinish(expectedDate);
-      },
-    );
+      setExpectedFinish(expectedDate);
+    });
   }, []);
 
   function getFields() {
@@ -50,10 +50,10 @@ export default function SystemOverview() {
       return <></>;
     }
     return (
-      <div className="flex h-full w-full justify-evenly bg-neutral">
-        <div className="flex flex-col content-center">
+      <div className="flex h-full w-full justify-evenly overflow-hidden bg-neutral p-9">
+        <div className="flex h-full flex-col">
           <SystemTextField
-            title="systeem"
+            title="Systeem"
             text={system.name}
             editable={employeeFunction == "TEAM_LEADER"}
           />
@@ -103,9 +103,9 @@ export default function SystemOverview() {
           />
         </div>
 
-        <div className="flex flex-col content-center">
+        <div className="flex flex-col">
           <SystemSelectStatusField
-            title="status"
+            title="Status"
             defaultValue={system.status}
             editable={true}
           />
@@ -145,7 +145,8 @@ export default function SystemOverview() {
             number={system.estimatedTestDays}
             editable={employeeFunction == "TEAM_LEADER"}
           />
-          <SystemTextField
+          <SystemTextArea
+            heightCSS="h-20"
             title="Contactgegevens klant"
             text={system.customerContactInformation}
             editable={
@@ -153,13 +154,15 @@ export default function SystemOverview() {
             }
           />
         </div>
-        <div className="flex flex-col content-center">
-          <SystemTextField
+        <div className="flex flex-col">
+          <SystemTextArea
+            heightCSS="h-40"
             title="Project informatie"
             text={system.projectInformation}
             editable={true}
           />
-          <SystemTextField
+          <SystemTextArea
+            heightCSS="h-40"
             title="Notities"
             text={system.notes}
             editable={true}

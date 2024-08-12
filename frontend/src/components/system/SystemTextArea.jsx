@@ -1,8 +1,9 @@
 import { useState } from "react";
 
-export default function SystemTextField({ text, editable, title }) {
+export default function SystemTextArea({ text, editable, title, heightCSS }) {
   let classes =
-    "bg-white text-accent disabled:text-accent input input-sm w-full";
+    "bg-white text-accent disabled:text-accent resize-none input w-full " +
+    heightCSS;
   if (!editable) {
     classes += " input-disabled";
   }
@@ -18,8 +19,7 @@ export default function SystemTextField({ text, editable, title }) {
   return (
     <div>
       <div>{title}</div>
-      <input
-        type="text"
+      <textarea
         className={classes}
         value={myText}
         onChange={(event) => updateText(event)}
