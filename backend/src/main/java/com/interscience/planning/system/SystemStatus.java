@@ -1,7 +1,7 @@
 package com.interscience.planning.system;
 
 public enum SystemStatus {
-  TOBEPLANNED,
+  TO_BE_PLANNED,
   PLANNED,
   BUILDING,
   TRANSFERRED,
@@ -9,5 +9,5 @@ public enum SystemStatus {
   FINISHED,
   INSTALLED,
   PROBLEMS,
-  INWAIT
+  IN_WAIT
 }
