@@ -1,8 +1,11 @@
 package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
+import com.interscience.planning.exceptions.NotFoundException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "${interscience.cors}")
 public class EmployeeController {
   private final EmployeeRepository employeeRepository;
+  private final EmployeeService employeeService;
+  private final PasswordEncoder passwordEncoder;
 
   @GetMapping
   public Iterable<Employee> getAll() {
@@ -18,7 +23,7 @@ public class EmployeeController {
   }
 
   @PostMapping
-  public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+  public ResponseEntity<EmployeeResponseDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
     if (employeeDTO.name() == null || employeeDTO.name().isBlank()) {
       throw new BadRequestException("Name is required");
     }
@@ -36,6 +41,22 @@ public class EmployeeController {
     Employee newEmployee =
         new Employee(employeeDTO.name(), employeeDTO.email(), null, employeeDTO.function());
     employeeRepository.save(newEmployee);
-    return ResponseEntity.ok(EmployeeDTO.from(newEmployee));
+    return ResponseEntity.ok(EmployeeResponseDTO.from(newEmployee));
+  }
+
+  @PatchMapping("{id}")
+  public ResponseEntity<Void> setPassword(
+      @PathVariable UUID id, @RequestBody PasswordDTO passwordDTO) {
+    Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+
+    if (passwordDTO.password() == null || passwordDTO.password().isBlank()) {
+      throw new BadRequestException("Password is required");
+    }
+    if (!employeeService.isValidPassword(passwordDTO.password())) {
+      throw new BadRequestException("Password is invalid");
+    }
+    employee.setPassword(passwordEncoder.encode(passwordDTO.password()));
+    employeeRepository.save(employee);
+    return ResponseEntity.ok().build();
   }
 }

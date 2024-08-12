@@ -23,15 +23,15 @@ public class AuthController {
   public ResponseEntity<TokenDTO> login(@RequestBody AuthDTO authDTO) {
     String email = authDTO.email();
     String password = authDTO.password();
-    if (email == null) throw new BadRequestException("Email is required!");
-    if (password == null) throw new BadRequestException("Password is required!");
+    if (email == null) throw new BadRequestException("Email is required");
+    if (password == null) throw new BadRequestException("Password is required");
 
     Optional<Employee> possibleEmployee = employeeRepository.findByEmail(email);
-    if (possibleEmployee.isEmpty()) throw new BadRequestException("User doesn't exist!");
+    if (possibleEmployee.isEmpty()) throw new BadRequestException("User doesn't exist");
     Employee employee = possibleEmployee.get();
 
     if (!passwordEncoder.matches(password, employee.getPassword())) {
-      throw new BadRequestException("Password is incorrect!");
+      throw new BadRequestException("Password is incorrect");
     }
 
     return ResponseEntity.ok(
