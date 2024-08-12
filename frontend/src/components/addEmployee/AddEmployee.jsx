@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ApiService from "../../services/ApiService";
+import EmployeeInputField from "../EmployeeInputField";
 
 export default function AddEmployee({ employees, setEmployees }) {
   const [employee, setEmployee] = useState({
@@ -53,22 +54,22 @@ export default function AddEmployee({ employees, setEmployees }) {
 
   return (
     <div className="w-2/5 rounded-md bg-neutral p-8">
-      <h2 className="px-1 py-2 text-xl font-bold">Medewerker toevoegen</h2>
+      <h2 className="px-1 py-2 font-Effra_Bd text-xl text-secondary">
+        Medewerker toevoegen
+      </h2>
       <form className="form-control" onSubmit={handleAddEmployee}>
-        <label className="label">Naam</label>
-        <input
-          className="input input-bordered w-full"
+        <EmployeeInputField
+          label={"Naam"}
           type="text"
           value={employee.name}
           onChange={(e) => setEmployee({ ...employee, name: e.target.value })}
-        ></input>
-        <label className="label">E-mailadres</label>
-        <input
-          className="input input-bordered w-full"
+        />
+        <EmployeeInputField
+          label={"E-mailadres"}
           type="text"
           value={employee.email}
           onChange={(e) => setEmployee({ ...employee, email: e.target.value })}
-        ></input>
+        />
         <label className="label">Functie</label>
         <select
           value={employee.function}
@@ -85,7 +86,10 @@ export default function AddEmployee({ employees, setEmployees }) {
           <option value="FT">FT</option>
         </select>
         {error && <p className="mt-4 text-red-600">{error}</p>}
-        <button type="submit" className="btn btn-accent mt-6 w-1/3 self-center">
+        <button
+          type="submit"
+          className="btn btn-accent mt-6 self-center whitespace-nowrap"
+        >
           Verzend uitnodiging
         </button>
       </form>

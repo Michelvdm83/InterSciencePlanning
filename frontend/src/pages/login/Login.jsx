@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeService from "../../services/EmployeeService";
+import EmployeeInputField from "../../components/EmployeeInputField";
 
 export default function Login() {
   function translateError(error) {
     switch (error) {
-      case "Email is required!":
-        return "Email is verplicht!";
-      case "Password is required!":
-        return "Wachtwoord is verplicht!";
+      case "Email is required":
+        return "Email is verplicht";
+      case "Password is required":
+        return "Wachtwoord is verplicht";
       case "User doesn't exist!":
-        return "Gebruiker bestaat niet!";
-      case "Password is incorrect!":
-        return "Wachtwoord is verkeerd!";
+        return "Gebruiker bestaat niet";
+      case "Password is incorrect":
+        return "Wachtwoord is verkeerd";
       default:
         return error;
     }
@@ -47,20 +48,19 @@ export default function Login() {
         className="form-control mt-4 flex w-full max-w-[16rem] flex-col items-start"
         onSubmit={handleLogin}
       >
-        <label className="label">E-mailadres</label>
-        <input
-          className="input input-bordered w-full"
+        <EmployeeInputField
+          label={"E-mailadres"}
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-        ></input>
-        <label className="label">Wachtwoord</label>
-        <input
-          className="input input-bordered w-full"
+        />
+        <EmployeeInputField
+          label={"Wachtwoord"}
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
         {error && <p className="mt-4 text-red-600">{error}</p>}
         <button type="submit" className="btn btn-primary mt-4 w-full">
           Inloggen

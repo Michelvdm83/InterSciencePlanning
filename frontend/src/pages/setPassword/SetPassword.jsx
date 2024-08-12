@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ApiService from "../../services/ApiService";
+import EmployeeInputField from "../../components/EmployeeInputField";
 
 export default function SetPassword() {
   const [password, setPassword] = useState("");
@@ -64,6 +65,7 @@ export default function SetPassword() {
 
     try {
       await ApiService.patch(`employees/${employeeId}`, { password });
+      // delete password setting link from database after the password is set
       await ApiService.delete(`password-links/${passwordLinkId}`);
       navigate("/inloggen");
     } catch (error) {
@@ -106,7 +108,6 @@ export default function SetPassword() {
     if (errors.length > 0) {
       errors.unshift("Wachtwoord moet: ");
     }
-
     return errors;
   }
 
@@ -120,16 +121,14 @@ export default function SetPassword() {
         className="form-control mt-4 flex w-full max-w-[16rem] flex-col items-start"
         onSubmit={handleSetNewPassword}
       >
-        <label className="label">Nieuw wachtwoord</label>
-        <input
-          className="input input-bordered w-full"
+        <EmployeeInputField
+          label={"Nieuw wachtwoord"}
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        ></input>
-        <label className="label">Herhaal nieuw wachtwoord</label>
-        <input
-          className="input input-bordered w-full"
+        />
+        <EmployeeInputField
+          label={"Herhaal nieuw wachtwoord"}
           type="password"
           value={repeatedPassword}
           onChange={(e) => setRepeatedPassword(e.target.value)}

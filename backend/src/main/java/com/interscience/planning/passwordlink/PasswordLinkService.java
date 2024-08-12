@@ -15,13 +15,18 @@ public class PasswordLinkService {
 
   public void sendEmail(PasswordLink passwordLink, Employee employee) {
     String email = employee.getEmail();
+    String employeeName = employee.getName().split(" ")[0];
+
     String setPasswordLink =
         "http://localhost:5173/wachtwoord-instellen/"
             + employee.getId()
             + "/"
             + passwordLink.getId();
     String message =
-        "<html><body>Stel via deze link eenmalig je wachtwoord in. Deze link is "
+        "<html><body>Beste "
+            + employeeName
+            + ","
+            + "<br><br>Stel via deze link eenmalig je wachtwoord in van je Interscience account. Deze link is "
             + PASSWORD_LINK_EXPIRATION_DAYS
             + " dagen geldig. <br><br><a href='"
             + setPasswordLink
