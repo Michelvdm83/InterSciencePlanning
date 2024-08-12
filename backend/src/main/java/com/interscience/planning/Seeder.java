@@ -70,14 +70,15 @@ public class Seeder implements CommandLineRunner {
 
     system.setStatus(SystemStatus.BUILDING);
 
-    Employee responsiblePerson = employeeRepository.findByEmail("employee1@gmail.com").orElse(null);
+    Employee responsiblePerson =
+        employeeRepository.findByEmail("teamleider@interscience.nl").orElse(null);
     system.setEmployeeResponsible(responsiblePerson);
 
     TestTask testTask = new TestTask();
     testTask.setSystem(system);
     testTask.setEstimatedTime(3);
 
-    Employee ftEmployee = employeeRepository.findByEmail("employee3@gmail.com").orElse(null);
+    Employee ftEmployee = employeeRepository.findByEmail("ft@interscience.nl").orElse(null);
     testTask.setEmployee(ftEmployee);
 
     ConstructionTask constructionTask = new ConstructionTask();
@@ -88,7 +89,7 @@ public class Seeder implements CommandLineRunner {
     sspTask.setConstructionTask(constructionTask);
     sspTask.setIndex(1);
 
-    Employee sspEmployee = employeeRepository.findByEmail("employee2@gmail.com").orElse(null);
+    Employee sspEmployee = employeeRepository.findByEmail("ssp@interscience.nl").orElse(null);
     sspTask.setEmployee(sspEmployee);
 
     systemRepository.save(system);

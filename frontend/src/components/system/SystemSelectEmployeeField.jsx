@@ -8,7 +8,7 @@ export default function SystemSelectEmployeeField({
   const [value, setValue] = useState(employeeName);
 
   return (
-    <div>
+    <div className="max-h-fit">
       <div className="label max-w-xs">{title}</div>
       <select
         defaultValue={employeeName}

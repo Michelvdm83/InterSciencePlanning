@@ -22,7 +22,7 @@ export default function SystemNumberField({ number, editable, title }) {
   }
 
   return (
-    <div>
+    <div className="max-h-fit">
       <div className="label max-w-xs">{title}</div>
       <input
         type="number"

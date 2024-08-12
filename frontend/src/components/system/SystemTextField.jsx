@@ -45,7 +45,7 @@ export default function SystemTextField({ text, editable, title }) {
   }
 
   return (
-    <div>
+    <div className="max-h-fit">
       <div className="label max-w-xs">{title}</div>
       {getField()}
     </div>

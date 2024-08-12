@@ -3,11 +3,12 @@ import { useState } from "react";
 export default function SystemDateField({ date, editable, title }) {
   const [value, setValue] = useState(date);
   function getField() {
+    const classes =
+      "input w-full text-accent select-text" +
+      (value ? "" : " text-transparent disabled:text-transparent");
     if (editable) {
-      const classes =
-        "input w-full text-accent my-date" + (value ? "" : " text-transparent");
       return (
-        <div>
+        <div className="max-h-fit">
           <div className="label max-w-xs">{title}</div>
           <input
             type="date"
@@ -21,12 +22,12 @@ export default function SystemDateField({ date, editable, title }) {
     }
 
     return (
-      <div>
+      <div className="max-h-fit">
         <div className="label max-w-xs">{title}</div>
         <input
           type="date"
           defaultValue={date}
-          className="input w-full select-text disabled:bg-white disabled:text-accent"
+          className={classes + " disabled:bg-white disabled:text-accent"}
           disabled
         />
       </div>

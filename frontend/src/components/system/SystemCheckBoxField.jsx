@@ -4,7 +4,7 @@ export default function SystemCheckboxField({ defaultValue, editable, title }) {
   const [checked, setChecked] = useState(defaultValue);
 
   return (
-    <div>
+    <div className="max-h-fit">
       <label className="label cursor-pointer border-b">
         <span className="label-text text-accent">{title}</span>
         <input
