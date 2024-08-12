@@ -7,6 +7,7 @@ import SystemOverview from "./pages/systemOverview/SystemOverview";
 import Login from "./pages/login/Login";
 import EmployeeService from "./services/EmployeeService";
 import FtPlanning from "./pages/ftPlanning/FtPlanning";
+import Holidays from "./pages/holidays/Holidays";
 
 export default function App() {
   function getHomeRoute() {
@@ -26,8 +27,10 @@ export default function App() {
       return (
         <Routes>
           <Route path="/ssp-planning" element={<Login />} />
+          <Route path="/ft-planning" element={<Login />} />
           <Route path="/medewerkers" element={<Login />} />
           <Route path="/ssp-inplannen" element={<Login />} />
+          <Route path="/vakanties" element={<Login />} />
           <Route path="/inloggen" element={<Login />} />
           <Route path="/" element={<Login />} />
           <Route path="/systeem/:systemName" element={<Login />} />
@@ -38,8 +41,10 @@ export default function App() {
       <Routes>
         <Route path="/systeem/:systemName" element={<SystemOverview />} />
         <Route path="/ssp-planning" element={<SSPPlanning />} />
+        <Route path="/ft-planning" element={<FtPlanning />} />
         <Route path="/medewerkers" element={<UserManagement />} />
         <Route path="/ssp-inplannen" element={<SSPSCheduling />} />
+        <Route path="/vakanties" element={<Holidays />} />
         <Route path="/inloggen" element={<Login />} />
         {getHomeRoute()}
       </Routes>

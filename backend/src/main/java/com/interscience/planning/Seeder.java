@@ -36,20 +36,20 @@ public class Seeder implements CommandLineRunner {
     if (employeeRepository.count() == 0) {
       Employee employee1 =
           new Employee(
-              "Employee1",
-              "employee1@gmail.com",
+              "Teamleider",
+              "teamleider@interscience.nl",
               passwordEncoder.encode("Wachtwoord123!"),
               Function.TEAM_LEADER);
       Employee employee2 =
           new Employee(
-              "Employee2",
-              "employee2@gmail.com",
+              "SSP Medewerker",
+              "ssp@interscience.nl",
               passwordEncoder.encode("Wachtwoord123!"),
               Function.SSP);
       Employee employee3 =
           new Employee(
-              "Employee3",
-              "employee3@gmail.com",
+              "Final Test Medewerker",
+              "ft@interscience.nl",
               passwordEncoder.encode("Wachtwoord123!"),
               Function.FT);
       employeeRepository.saveAll(List.of(employee1, employee2, employee3));
