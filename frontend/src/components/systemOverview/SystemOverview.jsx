@@ -1,15 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import SystemTextField from "../../components/system/SystemTextField";
-import SystemDateField from "../../components/system/SystemDateField";
-import ApiService from "../../services/ApiService";
-import EmployeeService from "../../services/EmployeeService";
-import SystemCheckboxField from "../../components/system/SystemCheckBoxField";
-import SystemSelectStatusField from "../../components/system/SystemSelectStatusField";
-import SystemSelectEmployeeField from "../../components/system/SystemSelectEmployeeField";
-import SystemNumberField from "../../components/system/SystemNumberField";
-import SystemTextArea from "../../components/system/SystemTextArea";
+import SystemTextField from "./components/SystemTextField.jsx";
+import SystemDateField from "./components/SystemDateField.jsx";
+import ApiService from "../../services/ApiService.js";
+import EmployeeService from "../../services/EmployeeService.js";
+import SystemCheckboxField from "./components/SystemCheckBoxField.jsx";
+import SystemSelectStatusField from "./components/SystemSelectStatusField.jsx";
+import SystemSelectEmployeeField from "./components/SystemSelectEmployeeField.jsx";
+import SystemNumberField from "./components/SystemNumberField.jsx";
+import SystemTextArea from "./components/SystemTextArea.jsx";
 
 export default function SystemOverview({ sName }) {
   const { systemName } = useParams();

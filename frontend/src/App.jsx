@@ -3,7 +3,7 @@ import Navbar from "./components/navbar/Navbar";
 import SSPPlanning from "./pages/sspPlanning/SSPPlanning.jsx";
 import EmployeeManagement from "./pages/employeeManagement/EmployeeManagement.jsx";
 import SSPSCheduling from "./pages/sspScheduling/SSPScheduling.jsx";
-import SystemOverview from "./pages/systemOverview/SystemOverview";
+import SystemOverview from "./components/systemOverview/SystemOverview.jsx";
 import Login from "./pages/login/Login";
 import EmployeeService from "./services/EmployeeService";
 import FtPlanning from "./pages/ftPlanning/FtPlanning";
