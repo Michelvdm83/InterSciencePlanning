@@ -1,3 +1,14 @@
+import AddHoliday from "./components/AddHoliday";
+import { useGetEmployees } from "../../hooks/useGetEmployees.js";
+import HolidayList from "./components/HolidayList.jsx";
+
 export default function Holidays() {
-  return <div>Vakantie toewijzen aan SSP Medewerkers placeholder</div>;
+  const [employees] = useGetEmployees();
+
+  return (
+    <div className="flex h-full w-screen items-start gap-8 p-8">
+      <HolidayList />
+      <AddHoliday employees={employees} />
+    </div>
+  );
 }
