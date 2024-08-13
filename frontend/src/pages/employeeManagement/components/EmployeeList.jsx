@@ -7,8 +7,8 @@ export default function EmployeeList({ employees }) {
       {employees
         .slice()
         .reverse()
-        .map((employee, index) => (
-          <Employee employee={employee} key={index} />
+        .map((employee) => (
+          <Employee employee={employee} key={employee.id} />
         ))}
     </div>
   );
