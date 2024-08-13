@@ -1,4 +1,4 @@
-import { Routes, Route, useParams } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import SSPPlanning from "./pages/sspPlanning/SSPPlanning.jsx";
 import EmployeeManagement from "./pages/employeeManagement/EmployeeManagement.jsx";
@@ -11,8 +11,6 @@ import Holidays from "./pages/holidays/Holidays";
 import SetPassword from "./pages/setPassword/SetPassword";
 
 export default function App() {
-  const { link } = useParams();
-
   function getHomeRoute() {
     switch (EmployeeService.getEmployeeFunction()) {
       case "TEAM_LEADER":
