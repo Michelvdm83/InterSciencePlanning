@@ -1,6 +1,6 @@
 import { useState } from "react";
-import ApiService from "../../services/ApiService";
-import EmployeeInputField from "../EmployeeInputField";
+import ApiService from "../../../services/ApiService.js";
+import LabeledBasicInput from "../../../components/LabeledBasicInput.jsx";
 
 export default function AddEmployee({ employees, setEmployees }) {
   const [employee, setEmployee] = useState({
@@ -58,13 +58,13 @@ export default function AddEmployee({ employees, setEmployees }) {
         Medewerker toevoegen
       </h2>
       <form className="form-control" onSubmit={handleAddEmployee}>
-        <EmployeeInputField
+        <LabeledBasicInput
           label={"Naam"}
           type="text"
           value={employee.name}
           onChange={(e) => setEmployee({ ...employee, name: e.target.value })}
         />
-        <EmployeeInputField
+        <LabeledBasicInput
           label={"E-mailadres"}
           type="text"
           value={employee.email}

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function EmployeeInputField({ label, type, value, onChange }) {
+export default function LabeledBasicInput({ label, type, value, onChange }) {
   return (
     <div className="w-full">
       <label className="label">{label}</label>

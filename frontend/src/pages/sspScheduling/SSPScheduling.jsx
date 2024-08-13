@@ -1,4 +1,4 @@
-import NewTaskModal from "./subcomponents/NewTaskModal";
+import NewTaskModal from "./components/NewTaskModal.jsx";
 
 export default function SSPSCheduling() {
   return (

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import AddEmployee from "../addEmployee/AddEmployee";
-import EmployeeList from "../employees/EmployeeList";
-import ApiService from "../../services/ApiService";
+import AddEmployee from "./components/AddEmployee.jsx";
+import EmployeeList from "./components/EmployeeList.jsx";
+import ApiService from "../../services/ApiService.js";
 
-export default function UserManagement() {
+export default function EmployeeManagement() {
   const [employees, setEmployees] = useState([]);
 
   useEffect(() => {

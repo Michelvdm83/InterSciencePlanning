@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeService from "../../services/EmployeeService";
-import EmployeeInputField from "../../components/EmployeeInputField";
+import LabeledBasicInput from "../../components/LabeledBasicInput.jsx";
 
 export default function Login() {
   function translateError(error) {
@@ -48,13 +48,13 @@ export default function Login() {
         className="form-control mt-4 flex w-full max-w-[16rem] flex-col items-start"
         onSubmit={handleLogin}
       >
-        <EmployeeInputField
+        <LabeledBasicInput
           label={"E-mailadres"}
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <EmployeeInputField
+        <LabeledBasicInput
           label={"Wachtwoord"}
           type="password"
           value={password}

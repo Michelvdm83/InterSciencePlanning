@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ApiService from "../../../services/ApiService";
+import ApiService from "../../../services/ApiService.js";
 
 export default function NewTaskModal() {
   const [taskName, setTaskName] = useState("");
