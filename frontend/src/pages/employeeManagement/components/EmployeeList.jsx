@@ -1,5 +1,5 @@
 import React from "react";
-import Employee from "./Employee";
+import Employee from "./Employee.jsx";
 
 export default function EmployeeList({ employees }) {
   return (

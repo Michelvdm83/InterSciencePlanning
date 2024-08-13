@@ -1,6 +1,6 @@
 import { useState } from "react";
-import ApiService from "../../services/ApiService";
-import EmployeeInputField from "../EmployeeInputField";
+import ApiService from "../../../services/ApiService.js";
+import EmployeeInputField from "../../../components/EmployeeInputField.jsx";
 
 export default function AddEmployee({ employees, setEmployees }) {
   const [employee, setEmployee] = useState({
