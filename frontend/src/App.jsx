@@ -9,9 +9,14 @@ import EmployeeService from "./services/EmployeeService";
 import FtPlanning from "./pages/ftPlanning/FtPlanning";
 import Holidays from "./pages/holidays/Holidays";
 import SetPassword from "./pages/setPassword/SetPassword";
+import ScheduleService from "./services/ScheduleService.js";
 
 export default function App() {
   const { link } = useParams();
+
+  const dates = ScheduleService.getDates("2024-08-08", 8);
+  ScheduleService.getEmployeeSchedule("2024-08-08", 8);
+  console.log(dates);
 
   function getHomeRoute() {
     switch (EmployeeService.getEmployeeFunction()) {
