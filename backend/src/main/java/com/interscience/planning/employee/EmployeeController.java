@@ -2,7 +2,9 @@ package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,8 +20,10 @@ public class EmployeeController {
   private final PasswordEncoder passwordEncoder;
 
   @GetMapping
-  public Iterable<Employee> getAll() {
-    return employeeRepository.findAll();
+  public List<EmployeeResponseDTO> getAll() {
+    return employeeRepository.findAll().stream()
+        .map(EmployeeResponseDTO::from)
+        .collect(Collectors.toList());
   }
 
   @PostMapping
@@ -30,10 +34,12 @@ public class EmployeeController {
     if (employeeDTO.email() == null || employeeDTO.email().isBlank()) {
       throw new BadRequestException("Email is required");
     }
+    if (!employeeService.isValidEmail(employeeDTO.email())) {
+      throw new BadRequestException("Email is not valid");
+    }
     if (employeeDTO.function() == null) {
       throw new BadRequestException("Function is required");
     }
-
     if (employeeRepository.findByEmail(employeeDTO.email()).isPresent()) {
       throw new BadRequestException("Employee with this email already exists");
     }
