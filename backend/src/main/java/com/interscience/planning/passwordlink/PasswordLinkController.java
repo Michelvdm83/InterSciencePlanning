@@ -18,16 +18,14 @@ public class PasswordLinkController {
   private final EmployeeRepository employeeRepository;
   private final PasswordLinkService passwordLinkService;
 
-  @PostMapping("{id}")
-  public ResponseEntity<PasswordLink> createLink(
-          @PathVariable UUID id) {
-    Employee employee =
-        employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+  @PostMapping("{employeeId}")
+  public ResponseEntity<PasswordLink> createLink(@PathVariable UUID employeeId) {
+    Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
     PasswordLink passwordLink = new PasswordLink(employee, LocalDateTime.now());
     passwordLinkRepository.save(passwordLink);
     passwordLinkService.sendEmail(passwordLink, employee);
 
-    return ResponseEntity.ok(passwordLink);
+    return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("{id}")

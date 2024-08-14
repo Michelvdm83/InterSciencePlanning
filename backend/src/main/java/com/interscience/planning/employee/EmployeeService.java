@@ -1,9 +1,12 @@
 package com.interscience.planning.employee;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmployeeService {
+
   public boolean isValidPassword(String password) {
     if (password == null || password.isBlank()) return false;
     if (password.length() < 8) return false;
@@ -26,5 +29,15 @@ public class EmployeeService {
     }
 
     return hasUppercaseLetter && hasLowercaseLetter && hasNumber && hasSpecialCharacter;
+  }
+
+  public boolean isValidEmail(String email) {
+    try {
+      InternetAddress internetAddress = new InternetAddress(email);
+      internetAddress.validate();
+      return true;
+    } catch (AddressException e) {
+      return false;
+    }
   }
 }

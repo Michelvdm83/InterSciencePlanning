@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,10 @@ public class EmailServiceImpl implements EmailService {
 
       emailSender.send(mimeMessage);
     } catch (MessagingException e) {
+      System.out.println("Error occurred while creating email message: " + e.getMessage());
+      e.printStackTrace();
+    } catch (MailException e) {
+      System.out.println("Error occurred while sending email: " + e.getMessage());
       e.printStackTrace();
     }
   }
