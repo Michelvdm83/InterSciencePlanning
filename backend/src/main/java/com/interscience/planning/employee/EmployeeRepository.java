@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface EmployeeRepository extends CrudRepository<Employee, UUID> {
   Optional<Employee> findByEmail(String email);
 
-  List<Employee> findAll();
+  List<Employee> findAllByEnabledTrue();
 }

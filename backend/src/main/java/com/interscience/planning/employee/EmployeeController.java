@@ -21,7 +21,7 @@ public class EmployeeController {
 
   @GetMapping
   public List<EmployeeResponseDTO> getAll() {
-    return employeeRepository.findAll().stream()
+    return employeeRepository.findAllByEnabledTrue().stream()
         .map(EmployeeResponseDTO::from)
         .collect(Collectors.toList());
   }
@@ -64,5 +64,14 @@ public class EmployeeController {
     employee.setPassword(passwordEncoder.encode(passwordDTO.password()));
     employeeRepository.save(employee);
     return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id) {
+    Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+
+    employee.setEnabled(false);
+    employeeRepository.save(employee);
+    return ResponseEntity.noContent().build();
   }
 }

@@ -29,6 +29,8 @@ public class Employee implements UserDetails {
 
   private String password;
 
+  private boolean enabled = true;
+
   public Employee(String name, String email, String password, Function function) {
     this.name = name;
     this.email = email;
