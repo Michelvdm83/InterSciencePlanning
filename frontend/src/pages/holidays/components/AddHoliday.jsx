@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import LabeledBasicInput from "../../../components/LabeledBasicInput";
+import ApiService from "../../../services/ApiService";
 
-export default function AddHoliday({ employees }) {
+export default function AddHoliday({ employees, holidays, setHolidays }) {
   const today = new Date().toISOString().split("T")[0];
 
   const [holiday, setHoliday] = useState({
@@ -9,11 +10,51 @@ export default function AddHoliday({ employees }) {
     startDate: today,
     endDate: today,
   });
+
   const [error, setError] = useState("");
 
-  function translateError() {}
+  function translateError(error) {
+    switch (error.toString()) {
+      case "EmployeeId can't be null":
+        return "Medewerker moet gekozen worden";
+      case "Start date can't be null":
+        return "Begindatum moet gekozen worden";
+      case "End date can't be null":
+        return "Einddatum moet gekozen worden";
+      case "Start date can't be after end date":
+        return "De begindatum mag niet na de einddatum zijn";
+      case "Start date can't be before today":
+        return "De begindatum mag niet voor vandaag zijn";
+      default:
+        return error;
+    }
+  }
 
-  function handleAddHoliday() {}
+  function handleAddHoliday(e) {
+    e.preventDefault();
+
+    if (!holiday.employeeId) {
+      setError("Medewerker moet gekozen worden");
+    } else if (!holiday.startDate) {
+      setError("Begindatum moet gekozen worden");
+    } else if (!holiday.endDate) {
+      setError("Einddatum moet gekozen worden");
+    } else if (holiday.startDate > holiday.endDate) {
+      setError("De begindatum mag niet na de einddatum zijn");
+    } else if (holiday.startDate < today) {
+      setError("De begindatum mag niet voor vandaag zijn");
+    } else {
+      ApiService.post("holidays", holiday)
+        .then((response) => {
+          setHolidays([...holidays, response.data]);
+          setHoliday({ employeeId: "", startDate: today, endDate: today });
+          setError("");
+        })
+        .catch((error) =>
+          setError(translateError(error.response?.data?.detail)),
+        );
+    }
+  }
 
   return (
     <div className="w-2/5 rounded-md bg-neutral p-8">
