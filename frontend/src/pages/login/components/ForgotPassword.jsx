@@ -61,7 +61,7 @@ export default function ForgotPassword() {
           <div className="items-between flex justify-center">
             <form
               className="flex w-full flex-col items-center justify-center gap-4"
-              onKeyDown={(e) => handleOnKeyDown(e)}
+              onKeyDown={handleOnKeyDown}
             >
               <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
                 ✕
