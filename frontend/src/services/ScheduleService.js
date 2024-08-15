@@ -20,10 +20,14 @@ export default class ScheduleService {
       datesArray.push(addedDate);
     }
 
+    console.log("today: " + new Date(new Date().toISOString().split("T")[0]));
     return datesArray;
   }
 
   static #getNumberOfWorkingDays(startDate, untilDate) {
+    if (untilDate - startDate < 86400000) {
+      return 0;
+    }
     let difference = untilDate - startDate;
     let differenceInDays = difference / 86400000;
 
@@ -44,8 +48,28 @@ export default class ScheduleService {
     return nrOfWorkingDays;
   }
 
+  static #getStatus() {}
+
   static getEmployeeSchedule(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
+
+    const todayTest = new Date(new Date().toISOString().split("T")[0]);
+    const todayIndex = allDays.findIndex(function (day) {
+      return todayTest - day < 86400000 && todayTest - day > -86400000;
+    });
+    allDays.forEach((day, index) =>
+      console.log(index + ", " + (todayIndex - index)),
+    );
+    const todayInArray = allDays[todayIndex];
+    console.log("today: " + todayTest.toISOString().split("T")[0]);
+    console.log(
+      "today in array: " + allDays[todayIndex].toISOString().split("T")[0],
+    );
+
+    console.log(this.#getNumberOfWorkingDays(todayTest, todayInArray));
+    console.log(
+      this.#getNumberOfWorkingDays(allDays[todayIndex - 1], todayInArray),
+    );
 
     let schedule = [];
 
@@ -63,18 +87,40 @@ export default class ScheduleService {
 
         const currentName = task.systemName ? task.systemName : task.taskName;
         let nrOfDays = task.estimatedDays;
-        if (
-          task.dateStarted !== null &&
-          task.dateStarted !== undefined &&
-          currentDay === 0
-        ) {
+        if (task.dateStarted !== null && task.dateStarted !== undefined) {
           const taskStartDate = new Date(task.dateStarted);
 
-          if (allDays[currentDay] > taskStartDate) {
+          if (tasks[index + 1] && tasks[index + 1].dateStarted) {
+            const nextStartDate = new Date(tasks[index + 1].dateStarted);
+            nrOfDays = this.#getNumberOfWorkingDays(
+              taskStartDate,
+              nextStartDate,
+            );
+          } else if (
+            tasks[index + 1] &&
+            (tasks[index + 1].dateStarted === null ||
+              tasks[index + 1].dateStarted === undefined)
+          ) {
+            const today = new Date(new Date().toISOString().split("T")[0]);
+            const todayIndex = allDays.findIndex(function (day) {
+              return today - day < 86400000 && today - day > -86400000;
+            });
+            if (todayIndex !== -1) {
+              if (currentDay + task.estimatedDays < todayIndex) {
+                nrOfDays = todayIndex - currentDay;
+              }
+            }
+          }
+
+          if (currentDay === 0 && allDays[0] > taskStartDate) {
             nrOfDays -= this.#getNumberOfWorkingDays(
               taskStartDate,
               allDays[currentDay],
             );
+          }
+
+          if (nrOfDays <= 0) {
+            continue;
           }
         }
 
@@ -82,6 +128,8 @@ export default class ScheduleService {
           nrOfDays = allDays.length - currentDay;
         }
         currentDay += nrOfDays;
+
+        const status = this.#getStatus(task.dateStarted);
 
         schedule.push({
           taskName: currentName,
