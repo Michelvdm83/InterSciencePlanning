@@ -52,8 +52,6 @@ export default function SSPPlanning() {
     { name: "kolomovens", numberOfDays: "2", status: "task" },
     { name: "vrij", numberOfDays: "5", status: "holiday" },
     { name: "Bakger009", numberOfDays: "3", status: "planned" },
-    { name: "Bakger010", numberOfDays: "6", status: "planned" },
-    { name: "opruimen", numberOfDays: "1", status: "task" },
   ];
   const employee5Tasks = [
     { name: "Bakger011", numberOfDays: "2", status: "done" },
@@ -74,8 +72,8 @@ export default function SSPPlanning() {
   const employee7Tasks = [
     { name: "Bakger004", numberOfDays: "2", status: "done" },
     { name: "bakger005", numberOfDays: "7", status: "started" },
-    { name: "Opruimen", numberOfDays: "2", status: "task" },
-    { name: "Bakger006", numberOfDays: "5", status: "planned" },
+    { name: "Opruimen", numberOfDays: "2", status: "" },
+    { name: "Bakger006", numberOfDays: "5", status: "" },
     { name: "vakantie", numberOfDays: "1", status: "holiday" },
     { name: "Bakger007", numberOfDays: "3", status: "planned" },
   ];
@@ -116,7 +114,6 @@ export default function SSPPlanning() {
           className={`grid p-4 grid-cols-[repeat(${employees.length + 1},150px)] max-w-full grid-flow-col grid-rows-[repeat(21,auto)] overflow-scroll bg-base-100 text-center font-Effra_Md`}
         >
           {employees.map((employee, index) => {
-            const col = index + 2;
             return (
               <div
                 key={index}
@@ -146,7 +143,7 @@ export default function SSPPlanning() {
                       .slice(0, taskIndex)
                       .reduce(
                         (acc, task) => acc + parseInt(task.numberOfDays),
-                        10,
+                        0,
                       ) + i;
 
                   let bgColor;
@@ -167,8 +164,7 @@ export default function SSPPlanning() {
                       bgColor = "task";
                       break;
                     default:
-                      bgColor = "primary";
-                      return;
+                      bgColor = "neutral";
                   }
 
                   const borderClass =
@@ -179,7 +175,7 @@ export default function SSPPlanning() {
                   return (
                     <div
                       key={overallIndex}
-                      className={`${borderClass} bg-${bgColor} col-start-[${employeeIndex + 1}] mr-[2px] h-7 border-b-[1.5px] border-solid`}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
                     >
                       {i === 0 ? task.name : ""}
                     </div>
