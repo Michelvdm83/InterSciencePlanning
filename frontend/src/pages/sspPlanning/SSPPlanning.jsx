@@ -138,6 +138,7 @@ export default function SSPPlanning() {
             {
               return employeeTasks.map((task, taskIndex) => {
                 return Array.from({ length: task.numberOfDays }).map((_, i) => {
+                  //index of amount of gridboxes of tasks in this column, it is the x't gridbox of this task + numberOfDays (aka gridboxes) of the preceding taks
                   const overallIndex =
                     employeeTasks
                       .slice(0, taskIndex)
