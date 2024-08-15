@@ -11,12 +11,10 @@ export default function Login() {
         return "Email is verplicht";
       case "Password is required":
         return "Wachtwoord is verplicht";
-      case "User doesn't exist!":
-        return "Gebruiker bestaat niet";
       case "Password is incorrect":
         return "Wachtwoord is verkeerd";
       default:
-        return error;
+        return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
     }
   }
   const [email, setEmail] = useState("");
@@ -38,7 +36,11 @@ export default function Login() {
           window.location.reload();
         })
         .catch((error) => {
-          setError(translateError(error));
+          if (error.response && error.response.status === 404) {
+            setError("Account niet gevonden");
+          } else {
+            setError(translateError(error.response?.data?.detail));
+          }
         });
     }
   }

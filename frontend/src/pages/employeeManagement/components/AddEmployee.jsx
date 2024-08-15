@@ -21,7 +21,7 @@ export default function AddEmployee({ employees, setEmployees }) {
       case "Employee with this email already exists":
         return "Medewerker met dit e-mailadres bestaat al";
       default:
-        return error;
+        return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
     }
   }
 

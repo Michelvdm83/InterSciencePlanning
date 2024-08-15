@@ -8,7 +8,7 @@ export default function EmployeeManagement() {
 
   return (
     <div className="flex h-full w-screen items-start gap-8 p-8">
-      <EmployeeList employees={employees} />
+      <EmployeeList employees={employees} setEmployees={setEmployees} />{" "}
       <AddEmployee employees={employees} setEmployees={setEmployees} />
     </div>
   );
