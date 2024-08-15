@@ -35,10 +35,11 @@ export default function Employee({ employee, employees, setEmployees }) {
       <div className="col-start-5 row-span-2 row-start-1 flex items-center justify-end">
         <DeleteButton
           className="col-start-5 row-span-2 row-start-1 flex items-center justify-end"
-          question={"Weet je zeker dat je deze medewerker wilt verwijderen?"}
+          question={`Weet je zeker dat je ${employee.name} wilt verwijderen?`}
           onClick={handleDeleteEmployee}
           id={`delete-employee-${employee.id}`}
           error={error}
+          setError={setError}
         />
       </div>
     </div>
