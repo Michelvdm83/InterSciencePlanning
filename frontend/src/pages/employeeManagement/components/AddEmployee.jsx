@@ -16,10 +16,12 @@ export default function AddEmployee({ employees, setEmployees }) {
         return "Naam is verplicht";
       case "Email is required":
         return "E-mailadres is verplicht";
+      case "Email is not valid":
+        return "E-mailadres is niet geldig";
       case "Employee with this email already exists":
         return "Medewerker met dit e-mailadres bestaat al";
       default:
-        return error;
+        return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
     }
   }
 

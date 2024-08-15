@@ -2,9 +2,12 @@ package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +21,10 @@ public class EmployeeController {
   private final PasswordEncoder passwordEncoder;
 
   @GetMapping
-  public Iterable<Employee> getAll() {
-    return employeeRepository.findAll();
+  public List<EmployeeResponseDTO> getAll() {
+    return employeeRepository.findAllByEnabledTrue().stream()
+        .map(EmployeeResponseDTO::from)
+        .collect(Collectors.toList());
   }
 
   @PostMapping
@@ -30,10 +35,12 @@ public class EmployeeController {
     if (employeeDTO.email() == null || employeeDTO.email().isBlank()) {
       throw new BadRequestException("Email is required");
     }
+    if (!employeeService.isValidEmail(employeeDTO.email())) {
+      throw new BadRequestException("Email is not valid");
+    }
     if (employeeDTO.function() == null) {
       throw new BadRequestException("Function is required");
     }
-
     if (employeeRepository.findByEmail(employeeDTO.email()).isPresent()) {
       throw new BadRequestException("Employee with this email already exists");
     }
@@ -58,5 +65,19 @@ public class EmployeeController {
     employee.setPassword(passwordEncoder.encode(passwordDTO.password()));
     employeeRepository.save(employee);
     return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id, Authentication authentication) {
+    Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+    Employee loggedInEmployee = (Employee) authentication.getPrincipal();
+
+    if (employee.equals(loggedInEmployee)) {
+      throw new BadRequestException("You can't delete yourself");
+    }
+
+    employee.setEnabled(false);
+    employeeRepository.save(employee);
+    return ResponseEntity.noContent().build();
   }
 }

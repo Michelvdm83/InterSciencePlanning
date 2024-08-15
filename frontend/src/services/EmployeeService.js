@@ -24,7 +24,7 @@ export default class EmployeeService {
         });
       })
       .catch((error) => {
-        throw error.response.data.detail;
+        throw error;
       });
   }
 
