@@ -1,6 +1,23 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", "./src/assets/fonts"],
+  safelist: [
+    "col-start-1",
+    "col-start-2",
+    "col-start-3",
+    "col-start-4",
+    "col-start-5",
+    "col-start-6",
+    "col-start-7",
+    "col-start-8",
+    "col-start-9",
+    "col-start-10",
+    "col-start-11",
+    "col-start-12",
+    "col-start-13",
+    "row-start-1",
+    "row-start-2",
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -9,6 +26,13 @@ export default {
         Effra_Md: "Effra_Md",
         Effra_Bd: "Effra_Bd",
         Effra_Hvy: "Effra_Hvy",
+      },
+      colors: {
+        holiday: "#FBF800",
+        started: "#768000",
+        planned: "#7BB141",
+        done: "#1B5D20",
+        task: "#F47D01",
       },
     },
   },
