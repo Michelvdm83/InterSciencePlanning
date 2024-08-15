@@ -40,10 +40,20 @@ export default function SetPassword() {
   function handleSendNewLink(e) {
     e.preventDefault();
 
-    ApiService.post(`password-links/${employeeId}`).catch((error) =>
-      console.error(error),
-    );
-    setNewLinkSent(true);
+    ApiService.post(`password-links/${employeeId}`)
+      .then(() => setNewLinkSent(true))
+      .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          setErrors(["Deze medewerker bestaat niet"]);
+        } else if (error.response && error.response.status === 400) {
+          setErrors(["Er bestaat al een link voor deze medewerker"]);
+          setNewLinkSent(false);
+        } else {
+          setErrors([
+            "Er is een onbekende fout opgetreden. Probeer het later opnieuw.",
+          ]);
+        }
+      });
   }
 
   async function handleSetNewPassword(e) {
@@ -69,7 +79,7 @@ export default function SetPassword() {
       await ApiService.delete(`password-links/${passwordLinkId}`);
       navigate("/inloggen");
     } catch (error) {
-      if (error.response && error.status === 404) {
+      if (error.response && error.response.status === 404) {
         setErrors([
           "Medewerker niet gevonden. Controleer de link en probeer het opnieuw",
         ]);
@@ -157,6 +167,13 @@ export default function SetPassword() {
           Er is een nieuwe link verstuurd!
         </p>
       )}
+      {errors.length > 0 ? (
+        <div className="mt-4 break-words text-red-600">
+          {errors.map((error, index) => (
+            <p key={index}>{error}</p>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
