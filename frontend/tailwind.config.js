@@ -10,6 +10,13 @@ export default {
         Effra_Bd: "Effra_Bd",
         Effra_Hvy: "Effra_Hvy",
       },
+      colors: {
+        holiday: "#FBF800",
+        started: "#768000",
+        planned: "#7BB141",
+        done: "#1B5D20",
+        task: "#F47D01",
+      },
     },
   },
   plugins: [require("daisyui")],
