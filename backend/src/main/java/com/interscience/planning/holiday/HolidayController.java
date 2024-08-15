@@ -4,7 +4,6 @@ import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +32,6 @@ public class HolidayController {
     }
     if (holidayDTO.startDate().isAfter(holidayDTO.endDate())) {
       throw new BadRequestException("Start date can't be after end date");
-    }
-    if (holidayDTO.startDate().isBefore(LocalDate.now())) {
-      throw new BadRequestException("Start date can't be before today");
     }
     Holiday holiday = new Holiday(employee, holidayDTO.startDate(), holidayDTO.endDate());
     holidayRepository.save(holiday);

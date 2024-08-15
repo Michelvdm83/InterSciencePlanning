@@ -23,8 +23,6 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
         return "Einddatum moet gekozen worden";
       case "Start date can't be after end date":
         return "De begindatum mag niet na de einddatum zijn";
-      case "Start date can't be before today":
-        return "De begindatum mag niet voor vandaag zijn";
       default:
         return error;
     }
@@ -41,8 +39,6 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
       setError("Einddatum moet gekozen worden");
     } else if (holiday.startDate > holiday.endDate) {
       setError("De begindatum mag niet na de einddatum zijn");
-    } else if (holiday.startDate < today) {
-      setError("De begindatum mag niet voor vandaag zijn");
     } else {
       ApiService.post("holidays", holiday)
         .then((response) => {
