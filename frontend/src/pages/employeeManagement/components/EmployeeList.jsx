@@ -7,12 +7,12 @@ export default function EmployeeList({ employees, setEmployees }) {
       {employees
         .slice()
         .reverse()
-        .map((employee, index) => (
+        .map((employee) => (
           <Employee
             employee={employee}
             employees={employees}
             setEmployees={setEmployees}
-            key={index}
+            key={employee.id}
           />
         ))}
     </div>

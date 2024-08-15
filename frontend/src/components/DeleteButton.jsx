@@ -1,7 +1,7 @@
 import React from "react";
 import { TiDelete } from "react-icons/ti";
 
-export default function DeleteButton({ question, onClick, id }) {
+export default function DeleteButton({ question, onClick, id, error }) {
   return (
     <>
       <TiDelete
@@ -22,6 +22,7 @@ export default function DeleteButton({ question, onClick, id }) {
               >
                 Verwijderen
               </button>
+              {error && <p className="mt-4 text-red-600">{error}</p>}
             </form>
           </div>
         </div>

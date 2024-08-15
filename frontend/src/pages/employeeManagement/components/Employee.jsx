@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 
 import ApiService from "../../../services/ApiService";
 import DeleteButton from "../../../components/DeleteButton";
 
 export default function Employee({ employee, employees, setEmployees }) {
-  function handleDeleteEmployee() {
-    ApiService.delete(`employees/${employee.id}`).then(() => {
-      const updatedEmployees = employees.filter((e) => e.id !== employee.id);
-      setEmployees(updatedEmployees);
-    });
+  const [error, setError] = useState("");
+
+  function handleDeleteEmployee(e) {
+    e.preventDefault();
+
+    ApiService.delete(`employees/${employee.id}`)
+      .then(() => {
+        const updatedEmployees = employees.filter((e) => e.id !== employee.id);
+        setEmployees(updatedEmployees);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 400) {
+          setError("Je kunt jezelf niet verwijderen");
+        } else {
+          setError("Er is een fout opgetreden bij het verwijderen");
+        }
+      });
   }
 
   return (
@@ -25,7 +37,8 @@ export default function Employee({ employee, employees, setEmployees }) {
           className="col-start-5 row-span-2 row-start-1 flex items-center justify-end"
           question={"Weet je zeker dat je deze medewerker wilt verwijderen?"}
           onClick={handleDeleteEmployee}
-          id={"delete-employee"}
+          id={`delete-employee-${employee.id}`}
+          error={error}
         />
       </div>
     </div>
