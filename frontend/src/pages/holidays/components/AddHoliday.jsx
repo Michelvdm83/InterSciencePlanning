@@ -24,7 +24,7 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
       case "Start date can't be after end date":
         return "De begindatum mag niet na de einddatum zijn";
       default:
-        return error;
+        return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
     }
   }
 

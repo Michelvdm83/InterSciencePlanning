@@ -1,6 +1,7 @@
 package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
+import com.interscience.planning.exceptions.NotFoundException;
 import com.interscience.planning.security.AuthDTO;
 import com.interscience.planning.security.JwtService;
 import com.interscience.planning.security.TokenDTO;
@@ -27,8 +28,12 @@ public class AuthController {
     if (password == null) throw new BadRequestException("Password is required");
 
     Optional<Employee> possibleEmployee = employeeRepository.findByEmail(email);
-    if (possibleEmployee.isEmpty()) throw new BadRequestException("User doesn't exist");
+    if (possibleEmployee.isEmpty()) throw new NotFoundException();
     Employee employee = possibleEmployee.get();
+
+    if (!employee.isEnabled()) {
+      throw new NotFoundException();
+    }
 
     if (!passwordEncoder.matches(password, employee.getPassword())) {
       throw new BadRequestException("Password is incorrect");
