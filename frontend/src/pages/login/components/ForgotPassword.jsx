@@ -38,6 +38,12 @@ export default function ForgotPassword() {
     document.getElementById("forgot-password").close();
   }
 
+  const handleOnKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSendResetLink(e);
+    }
+  };
+
   return (
     <>
       <p
@@ -46,13 +52,17 @@ export default function ForgotPassword() {
       >
         Wachtwoord vergeten?
       </p>
+
       <dialog id="forgot-password" className="modal" onClose={handleClose}>
         <div className="modal-box">
           <p className="mb-2 py-4 text-center font-Effra_Bd">
             Vul je e-mailadres in om een link te krijgen
           </p>
           <div className="items-between flex justify-center">
-            <form className="flex w-full flex-col items-center justify-center gap-4">
+            <form
+              className="flex w-full flex-col items-center justify-center gap-4"
+              onKeyDown={(e) => handleOnKeyDown(e)}
+            >
               <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
                 ✕
               </button>
