@@ -71,6 +71,7 @@ export default function ForgotPassword() {
                 type="text"
                 className="input input-bordered w-3/4"
                 onChange={(e) => setEmail(e.target.value)}
+                value={email}
               />
 
               <button
