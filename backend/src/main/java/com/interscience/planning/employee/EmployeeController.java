@@ -2,12 +2,12 @@ package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import com.interscience.planning.ssptask.SSPTaskDto;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,10 +71,10 @@ public class EmployeeController {
 
   @GetMapping("/schedules/{id}")
   public ResponseEntity<EmployeeScheduleDto> getScheduleItems(@PathVariable UUID id) {
-//    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
-//    String dateInString = "06-08-2024";
-//    Date date = formatter.parse(dateInString);
-//    date.setTime(date.getTime() + 20000000L);
+    //    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
+    //    String dateInString = "06-08-2024";
+    //    Date date = formatter.parse(dateInString);
+    //    date.setTime(date.getTime() + 20000000L);
 
     LocalDate testDate = LocalDate.parse("2024-08-06");
 
@@ -83,7 +83,7 @@ public class EmployeeController {
 
     testSchedule.add(new SSPTaskDto(3, "b002", null, 2, null));
 
-    testSchedule.add(new SSPTaskDto(2, "b003", null, 5, null));
+    testSchedule.add(new SSPTaskDto(2, "b003", null, 5, testDate.plusDays(6)));
     testSchedule.sort(Comparator.comparingInt(SSPTaskDto::index));
     return ResponseEntity.ok(new EmployeeScheduleDto(testSchedule));
   }

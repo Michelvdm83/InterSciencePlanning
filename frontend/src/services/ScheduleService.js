@@ -6,21 +6,21 @@ export default class ScheduleService {
       return [];
     }
     const startAsDate = new Date(startDate);
-    let datesArray = [new Date(startAsDate)];
-    for (let i = 1; i < numberOfDays; i++) {
+    let datesArray =
+      startAsDate.getDay() === 0 || startAsDate.getDay() === 6
+        ? []
+        : [new Date(startAsDate)];
+    for (let i = datesArray.length; i < numberOfDays; i++) {
       const addedDate = new Date(
         startAsDate.setDate(startAsDate.getDate() + 1),
       );
-      console.log(addedDate);
       if (addedDate.getDay() === 0 || addedDate.getDay() === 6) {
         i--;
         continue;
       }
-      //   let expectedDate = addedDate.toISOString().split("T")[0];
       datesArray.push(addedDate);
     }
 
-    console.log("today: " + new Date(new Date().toISOString().split("T")[0]));
     return datesArray;
   }
 
@@ -48,35 +48,43 @@ export default class ScheduleService {
     return nrOfWorkingDays;
   }
 
-  static #getStatus() {}
+  static #getStatus(
+    startDateTask,
+    startDateNextTask,
+    estimatedDays,
+    isSystem,
+    nrOfDays,
+  ) {
+    let returnStatus = "";
+    if (!isSystem) {
+      returnStatus = "task";
+    } else if (startDateTask === null) {
+      returnStatus = "planned";
+    } else if (startDateNextTask === null) {
+      returnStatus = nrOfDays > estimatedDays ? "delayed" : "construction";
+    } else {
+      //   const dateTaskStarted = new Date(startDateTask);
+      //   const dateNextTaskStarted = new Date(startDateNextTask);
+      returnStatus = "finished";
+      // this.#getNumberOfWorkingDays(dateTaskStarted, dateNextTaskStarted) >
+      // estimatedDays
+      //   ? "delayed"
+      //   : "finished";
+    }
+
+    return returnStatus;
+  }
 
   static getEmployeeSchedule(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
-
-    const todayTest = new Date(new Date().toISOString().split("T")[0]);
-    const todayIndex = allDays.findIndex(function (day) {
-      return todayTest - day < 86400000 && todayTest - day > -86400000;
-    });
-    allDays.forEach((day, index) =>
-      console.log(index + ", " + (todayIndex - index)),
-    );
-    const todayInArray = allDays[todayIndex];
-    console.log("today: " + todayTest.toISOString().split("T")[0]);
-    console.log(
-      "today in array: " + allDays[todayIndex].toISOString().split("T")[0],
-    );
-
-    console.log(this.#getNumberOfWorkingDays(todayTest, todayInArray));
-    console.log(
-      this.#getNumberOfWorkingDays(allDays[todayIndex - 1], todayInArray),
-    );
 
     let schedule = [];
 
     ApiService.get(
       `employees/schedules/82bc5b5a-8b02-467b-bc93-51bd21fd09b1`,
     ).then((response) => {
-      let tasks = response.data.allTasks;
+      const originalTasks = response.data.allTasks;
+      let tasks = originalTasks.slice();
 
       let currentDay = 0;
       for (let index = 0; index < tasks.length; index++) {
@@ -87,6 +95,7 @@ export default class ScheduleService {
 
         const currentName = task.systemName ? task.systemName : task.taskName;
         let nrOfDays = task.estimatedDays;
+        //als task.dateStarted null EN index = 0
         if (task.dateStarted !== null && task.dateStarted !== undefined) {
           const taskStartDate = new Date(task.dateStarted);
 
@@ -120,6 +129,7 @@ export default class ScheduleService {
           }
 
           if (nrOfDays <= 0) {
+            //als volgende task geen startDate dan startDate berekenen
             continue;
           }
         }
@@ -129,11 +139,18 @@ export default class ScheduleService {
         }
         currentDay += nrOfDays;
 
-        const status = this.#getStatus(task.dateStarted);
+        const status = this.#getStatus(
+          task.dateStarted,
+          tasks[index + 1]?.dateStarted,
+          task.estimatedDays,
+          task.systemName !== null,
+          nrOfDays,
+        );
 
         schedule.push({
           taskName: currentName,
           numberOfDays: nrOfDays,
+          status: status,
         });
       }
       console.log(schedule);

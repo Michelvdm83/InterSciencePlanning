@@ -12,9 +12,8 @@ import SetPassword from "./pages/setPassword/SetPassword";
 import ScheduleService from "./services/ScheduleService.js";
 
 export default function App() {
-  // const dates = ScheduleService.getDates("2024-08-08", 8);
+  // const dates = ScheduleService.getDates("2024-08-04", 8);
   ScheduleService.getEmployeeSchedule("2024-08-07", 8);
-  // console.log(dates);
 
   function getHomeRoute() {
     switch (EmployeeService.getEmployeeFunction()) {
