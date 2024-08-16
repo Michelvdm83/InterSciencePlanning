@@ -13,6 +13,8 @@ export function translateError(error) {
       return "E-mailadres is niet geldig";
     case "Employee with this email already exists":
       return "Medewerker met dit e-mailadres bestaat al";
+    case "You can't edit your own function":
+      return "Je kunt je eigen functie niet aanpassen";
     default:
       return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
   }

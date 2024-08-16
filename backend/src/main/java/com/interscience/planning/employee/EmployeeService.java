@@ -49,8 +49,10 @@ public class EmployeeService {
     return EmployeeResponseDTO.from(newEmployee);
   }
 
-  public EmployeeResponseDTO editEmployee(EmployeeDTO employeeDTO, UUID id) {
+  public EmployeeResponseDTO editEmployee(
+      EmployeeDTO employeeDTO, UUID id, Authentication authentication) {
     Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+    Employee loggedInEmployee = (Employee) authentication.getPrincipal();
 
     if (employeeDTO.name() != null) {
       if (employeeDTO.name().isBlank()) {
@@ -66,6 +68,9 @@ public class EmployeeService {
       employee.setEmail(employeeDTO.email());
     }
     if (employeeDTO.function() != null) {
+      if (employee.equals(loggedInEmployee)) {
+        throw new BadRequestException("You can't edit your own function");
+      }
       employee.setFunction(employeeDTO.function());
     }
     employeeRepository.save(employee);

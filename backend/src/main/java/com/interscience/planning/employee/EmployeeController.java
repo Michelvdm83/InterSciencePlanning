@@ -28,8 +28,9 @@ public class EmployeeController {
 
   @PatchMapping("{id}")
   public ResponseEntity<EmployeeResponseDTO> editEmployee(
-      @PathVariable UUID id, @RequestBody EmployeeDTO employeeDTO) {
-    EmployeeResponseDTO updatedEmployee = employeeService.editEmployee(employeeDTO, id);
+      @PathVariable UUID id, @RequestBody EmployeeDTO employeeDTO, Authentication authentication) {
+    EmployeeResponseDTO updatedEmployee =
+        employeeService.editEmployee(employeeDTO, id, authentication);
     return ResponseEntity.ok(updatedEmployee);
   }
 
