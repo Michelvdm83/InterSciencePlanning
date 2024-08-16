@@ -52,6 +52,31 @@ public class EmployeeController {
   }
 
   @PatchMapping("{id}")
+  public ResponseEntity<Void> editEmployee(
+      @PathVariable UUID id, @RequestBody EmployeeDTO employeeDTO) {
+    Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+
+    if (employeeDTO.name() != null) {
+      if (employeeDTO.name().isBlank()) {
+        throw new BadRequestException("Name is required");
+      }
+      employee.setName(employeeDTO.name());
+    }
+
+    if (employeeDTO.email() != null) {
+      if (!employeeService.isValidEmail(employeeDTO.email())) {
+        throw new BadRequestException("Email is not valid");
+      }
+      employee.setEmail(employeeDTO.email());
+    }
+    if (employeeDTO.function() != null) {
+      employee.setFunction(employeeDTO.function());
+    }
+    employeeRepository.save(employee);
+    return ResponseEntity.ok().build();
+  }
+
+  @PatchMapping("{id}/password")
   public ResponseEntity<Void> setPassword(
       @PathVariable UUID id, @RequestBody PasswordDTO passwordDTO) {
     Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
