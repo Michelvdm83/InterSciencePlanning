@@ -41,11 +41,10 @@ export default function EditEmployee({ employee, setEmployees }) {
 
       if (Object.keys(updatedFields).length > 0) {
         ApiService.patch(`employees/${employee.id}`, editedEmployee)
-          .then(() => {
-            const updatedEmployee = { ...employee, ...updatedFields };
+          .then((response) => {
             setEmployees((prevEmployees) =>
               prevEmployees.map((emp) =>
-                emp.id === employee.id ? updatedEmployee : emp,
+                emp.id === employee.id ? response.data : emp,
               ),
             );
             handleClose();

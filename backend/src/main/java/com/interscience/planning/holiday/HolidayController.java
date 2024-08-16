@@ -36,6 +36,6 @@ public class HolidayController {
     Holiday holiday = new Holiday(employee, holidayDTO.startDate(), holidayDTO.endDate());
     holidayRepository.save(holiday);
 
-    return ResponseEntity.ok(HolidayDTO.from(holiday));
+    return ResponseEntity.status(201).body(HolidayDTO.from(holiday));
   }
 }
