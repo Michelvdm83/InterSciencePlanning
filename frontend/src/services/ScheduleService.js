@@ -77,27 +77,51 @@ export default class ScheduleService {
 
   static getEmployeeSchedule(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
+    const today = new Date(new Date().toISOString().split("T")[0]);
+    const todayIndex = allDays.findIndex(function (day) {
+      return today - day < 86400000 && today - day > -86400000;
+    });
 
     let schedule = [];
 
     ApiService.get(
       `employees/schedules/82bc5b5a-8b02-467b-bc93-51bd21fd09b1`,
     ).then((response) => {
-      const originalTasks = response.data.allTasks;
-      let tasks = originalTasks.slice();
+      const tasks = response.data.allTasks;
+      let tasksEditable = tasks.slice();
 
       let currentDay = 0;
       for (let index = 0; index < tasks.length; index++) {
         if (currentDay >= allDays.length) {
           break;
         }
-        let task = tasks[index];
+        let task = tasksEditable[index];
 
         const currentName = task.systemName ? task.systemName : task.taskName;
         let nrOfDays = task.estimatedDays;
-        //als task.dateStarted null EN index = 0
+
+        if (!task.dateStarted && index === 0) {
+          if (todayIndex === -1) {
+            task.dateStarted = allDays[0];
+          } else {
+            task.dateStarted = allDays[todayIndex];
+          }
+        }
         if (task.dateStarted !== null && task.dateStarted !== undefined) {
           const taskStartDate = new Date(task.dateStarted);
+
+          if (index === 0 && allDays[0] < taskStartDate) {
+            const daysUntillStart = this.#getNumberOfWorkingDays(
+              allDays[0],
+              taskStartDate,
+            );
+            schedule.push({
+              taskName: "",
+              numberOfDays: daysUntillStart,
+              status: "empty",
+            });
+            currentDay += daysUntillStart;
+          }
 
           if (tasks[index + 1] && tasks[index + 1].dateStarted) {
             const nextStartDate = new Date(tasks[index + 1].dateStarted);
@@ -110,10 +134,6 @@ export default class ScheduleService {
             (tasks[index + 1].dateStarted === null ||
               tasks[index + 1].dateStarted === undefined)
           ) {
-            const today = new Date(new Date().toISOString().split("T")[0]);
-            const todayIndex = allDays.findIndex(function (day) {
-              return today - day < 86400000 && today - day > -86400000;
-            });
             if (todayIndex !== -1) {
               if (currentDay + task.estimatedDays < todayIndex) {
                 nrOfDays = todayIndex - currentDay;
@@ -151,6 +171,14 @@ export default class ScheduleService {
           taskName: currentName,
           numberOfDays: nrOfDays,
           status: status,
+        });
+      }
+      if (currentDay < allDays.length) {
+        const extraDays = allDays.length - currentDay;
+        schedule.push({
+          taskName: "",
+          numberOfDays: extraDays,
+          status: "empty",
         });
       }
       console.log(schedule);

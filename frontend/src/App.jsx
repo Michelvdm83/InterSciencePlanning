@@ -13,7 +13,7 @@ import ScheduleService from "./services/ScheduleService.js";
 
 export default function App() {
   // const dates = ScheduleService.getDates("2024-08-04", 8);
-  ScheduleService.getEmployeeSchedule("2024-08-07", 8);
+  ScheduleService.getEmployeeSchedule("2024-08-01", 20);
 
   function getHomeRoute() {
     switch (EmployeeService.getEmployeeFunction()) {
