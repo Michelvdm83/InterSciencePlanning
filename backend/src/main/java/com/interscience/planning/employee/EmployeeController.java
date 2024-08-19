@@ -2,6 +2,7 @@ package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import com.interscience.planning.holiday.HolidayDTO;
 import com.interscience.planning.ssptask.SSPTaskDto;
 import java.time.LocalDate;
 import java.util.*;
@@ -98,8 +99,14 @@ public class EmployeeController {
 
     testSchedule.add(new SSPTaskDto(3, "b002", null, 2, null, null));
 
-    testSchedule.add(new SSPTaskDto(2, "b003", null, 5, testDate.plusDays(4), null));
+    testSchedule.add(new SSPTaskDto(2, "b003", null, 5, testDate.plusDays(1), null));
     testSchedule.sort(Comparator.comparingInt(SSPTaskDto::index));
-    return ResponseEntity.ok(new EmployeeScheduleDto(testSchedule));
+
+    var holidays = new ArrayList<HolidayDTO>();
+    holidays.add(new HolidayDTO(null, testDate, testDate.plusDays(3)));
+    holidays.add(new HolidayDTO(null, testDate.plusDays(7), testDate.plusDays(7)));
+    holidays.add(new HolidayDTO(null, testDate.plusDays(1), testDate.plusDays(2)));
+    holidays.sort(Comparator.comparing(HolidayDTO::startDate));
+    return ResponseEntity.ok(new EmployeeScheduleDto(testSchedule, holidays));
   }
 }

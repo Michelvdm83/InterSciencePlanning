@@ -70,20 +70,47 @@ export default class ScheduleService {
     } else if (startDateNextTask === null && endDateTask === null) {
       returnStatus = nrOfDays > estimatedDays ? "delayed" : "construction";
     } else {
-      //   const dateTaskStarted = new Date(startDateTask);
-      //   const dateNextTaskStarted = new Date(startDateNextTask);
-
       returnStatus = "finished";
-      // this.#getNumberOfWorkingDays(dateTaskStarted, dateNextTaskStarted) >
-      // estimatedDays
-      //   ? "delayed"
-      //   : "finished";
     }
 
     return returnStatus;
   }
 
-  static getEmployeeSchedule(startDate, numberOfDays, employeeId) {
+  static #getDaysOfHolidays(holidays) {
+    let daysOfHolidays = [];
+    holidays.forEach((period) => {
+      const lengthInWorkingDays = this.#getNumberOfWorkingDays(
+        new Date(period.startDate),
+        new Date(period.endDate),
+        true,
+      );
+      let allDaysInPeriod = this.getDates(
+        period.startDate,
+        lengthInWorkingDays,
+      );
+      allDaysInPeriod.forEach((day) => {
+        daysOfHolidays.push(new Date(day));
+      });
+    });
+    daysOfHolidays.sort(function (a, b) {
+      return a - b;
+    });
+    for (let i = 0; i < daysOfHolidays.length; i++) {
+      while (
+        i + 1 < daysOfHolidays.length &&
+        this.#getNumberOfWorkingDays(
+          daysOfHolidays[i],
+          daysOfHolidays[i + 1],
+          true,
+        ) <= 1
+      ) {
+        daysOfHolidays.splice(i + 1, 1);
+      }
+    }
+    return daysOfHolidays;
+  }
+
+  static getEmployeeScheduleOld(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
     const today = new Date(new Date().toISOString().split("T")[0]);
     const todayIndex = allDays.findIndex(function (day) {
@@ -206,7 +233,7 @@ getEmployeeSchedule(startDate, numberOfDays, employeeId): geeft lijst terug van:
 
 taskName is systeemnaam indien het om een systeem gaat, naam van Task indien task en "vrij" indien holiday*/
 
-  static getEmployeeScheduleTest(startDate, numberOfDays, employeeId) {
+  static getEmployeeSchedule(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
     const today = new Date(new Date().toISOString().split("T")[0]);
     const todayIndex = allDays.findIndex(function (day) {
@@ -219,10 +246,32 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
       `employees/schedules/82bc5b5a-8b02-467b-bc93-51bd21fd09b1`,
     ).then((response) => {
       console.log(response.data.allTasks);
-      const tasks = response.data.allTasks;
+      const tasks = response.data.allTasks ? response.data.allTasks : [];
       let tasksEditable = JSON.parse(JSON.stringify(tasks));
 
+      console.log("vakanties:");
+      console.log(response.data.holidays);
+      const holidays = this.#getDaysOfHolidays(response.data.holidays);
+
       let currentDay = 0;
+      //check of holidays currentDay bevat
+      //zo ja, maak vakantieblok aan
+      const firstDayHolidayIndex = holidays.findIndex(function (day) {
+        return allDays[0] - day < 86400000 && allDays[0] - day > -86400000;
+      });
+
+      if (firstDayHolidayIndex !== -1) {
+        nrOfHolidayDays = 0;
+        for (
+          let holidayIndex = firstDayHolidayIndex;
+          currentDay < allDays.length && holidayIndex < holidays.length;
+          holidayIndex++
+        ) {
+          if (holidays[holidayIndex] - allDays[currentDay] < 86400000) {
+          }
+        }
+      }
+
       for (let index = 0; index < tasks.length; index++) {
         if (currentDay >= allDays.length) {
           break;
@@ -235,6 +284,7 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
         let trailingTask;
 
         if (index === 0) {
+          //rekening houden met mogelijke holiday (currentDay is niet altijd 0 meer)
           if (!task.dateStarted) {
             if (todayIndex === -1) {
               task.dateStarted = allDays[currentDay];
