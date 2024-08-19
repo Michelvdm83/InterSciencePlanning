@@ -9,10 +9,11 @@ export default function SystemModalButton({ systemName, children }) {
   }
 
   return (
-    <div className="cursor-pointer">
-      {React.isValidElement(children) &&
-        cloneElement(children, { onClick: handleOpenModal })}
-
+    <div>
+      <div className="cursor-pointer">
+        {React.isValidElement(children) &&
+          cloneElement(children, { onClick: handleOpenModal })}
+      </div>
       {modalIsOpen && (
         <SystemOverview
           sName={systemName}
