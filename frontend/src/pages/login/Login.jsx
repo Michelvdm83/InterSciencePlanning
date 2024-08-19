@@ -69,8 +69,8 @@ export default function Login() {
         <button type="submit" className="btn btn-primary my-4">
           Log in
         </button>
-        <ForgotPassword />
       </form>
+      <ForgotPassword />
     </div>
   );
 }

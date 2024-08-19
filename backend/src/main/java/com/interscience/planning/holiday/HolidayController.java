@@ -48,7 +48,7 @@ public class HolidayController {
     Holiday holiday = new Holiday(employee, holidayDTO.startDate(), holidayDTO.endDate());
     holidayRepository.save(holiday);
 
-    return ResponseEntity.ok(HolidayResponseDTO.from(holiday));
+    return ResponseEntity.status(201).body(HolidayResponseDTO.from(holiday));
   }
 
   @DeleteMapping("{id}")
