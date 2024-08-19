@@ -2,10 +2,13 @@ package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import com.interscience.planning.ssptask.SSPTaskDTO;
+import com.interscience.planning.ssptask.SSPTaskRepository;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class EmployeeService {
   private final EmployeeRepository employeeRepository;
   private final PasswordEncoder passwordEncoder;
+  private final SSPTaskRepository sspTaskRepository;
 
   public List<EmployeeResponseDTO> findAll() {
     return employeeRepository.findAllByEnabledTrue().stream()
@@ -134,5 +138,12 @@ public class EmployeeService {
     } catch (AddressException e) {
       return false;
     }
+  }
+
+  public Set<SSPTaskDTO> getEmployeeSSPTasks(UUID employeeId) {
+    return sspTaskRepository.findByEmployeeId(employeeId).stream().map(task -> SSPTaskDTO.from(task))
+//    return employeeRepository.findAllByEnabledTrue().stream()
+//            .map(EmployeeResponseDTO::from)
+//            .collect(Collectors.toList());
   }
 }
