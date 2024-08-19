@@ -79,11 +79,11 @@ public class EmployeeController {
     LocalDate testDate = LocalDate.parse("2024-08-06");
 
     var testSchedule = new ArrayList<SSPTaskDto>();
-    testSchedule.add(new SSPTaskDto(1, "b001", null, 3, null));
+    testSchedule.add(new SSPTaskDto(1, "b001", null, 3, testDate, testDate.plusDays(2)));
 
-    testSchedule.add(new SSPTaskDto(3, "b002", null, 2, null));
+    testSchedule.add(new SSPTaskDto(3, "b002", null, 2, null, null));
 
-    testSchedule.add(new SSPTaskDto(2, "b003", null, 5, null));
+    testSchedule.add(new SSPTaskDto(2, "b003", null, 5, testDate.plusDays(4), null));
     testSchedule.sort(Comparator.comparingInt(SSPTaskDto::index));
     return ResponseEntity.ok(new EmployeeScheduleDto(testSchedule));
   }

@@ -24,12 +24,18 @@ export default class ScheduleService {
     return datesArray;
   }
 
-  static #getNumberOfWorkingDays(startDate, untilDate) {
-    if (untilDate - startDate < 86400000) {
+  static #getNumberOfWorkingDays(startDate, untilDate, untilIncluded) {
+    if (
+      (untilDate - startDate < 86400000 && !untilIncluded) ||
+      (untilDate - startDate < 0 && untilIncluded)
+    ) {
       return 0;
     }
     let difference = untilDate - startDate;
     let differenceInDays = difference / 86400000;
+    if (untilIncluded) {
+      differenceInDays++;
+    }
 
     const currentDate = new Date(startDate);
     let nrOfWorkingDays = 0;
@@ -54,17 +60,19 @@ export default class ScheduleService {
     estimatedDays,
     isSystem,
     nrOfDays,
+    endDateTask,
   ) {
     let returnStatus = "";
     if (!isSystem) {
       returnStatus = "task";
     } else if (startDateTask === null) {
       returnStatus = "planned";
-    } else if (startDateNextTask === null) {
+    } else if (startDateNextTask === null && endDateTask === null) {
       returnStatus = nrOfDays > estimatedDays ? "delayed" : "construction";
     } else {
       //   const dateTaskStarted = new Date(startDateTask);
       //   const dateNextTaskStarted = new Date(startDateNextTask);
+
       returnStatus = "finished";
       // this.#getNumberOfWorkingDays(dateTaskStarted, dateNextTaskStarted) >
       // estimatedDays
@@ -107,7 +115,7 @@ export default class ScheduleService {
             task.dateStarted = allDays[todayIndex];
           }
         }
-        if (task.dateStarted !== null && task.dateStarted !== undefined) {
+        if (task.dateStarted) {
           const taskStartDate = new Date(task.dateStarted);
 
           if (index === 0 && allDays[0] < taskStartDate) {
@@ -150,6 +158,11 @@ export default class ScheduleService {
 
           if (nrOfDays <= 0) {
             //als volgende task geen startDate dan startDate berekenen
+            if (tasks[index + 1] && !tasks[index + 1].dateStarted) {
+              let nextTask = tasksEditable[index + 1];
+              const currentStart = task.dateStarted;
+              //start + estimatedDays datum berekenen, dan adv deze nextTask dateStarted
+            }
             continue;
           }
         }
@@ -181,13 +194,211 @@ export default class ScheduleService {
           status: "empty",
         });
       }
+      console.log("old");
       console.log(schedule);
     });
   }
-}
-/*
+
+  /*
 Service functions:
 getDates(startDate, numberOfDays): geeft array van Dates terug, weekenden niet meegerekend
 getEmployeeSchedule(startDate, numberOfDays, employeeId): geeft lijst terug van: [taskName, numberOfDays]
 
 taskName is systeemnaam indien het om een systeem gaat, naam van Task indien task en "vrij" indien holiday*/
+
+  static getEmployeeScheduleTest(startDate, numberOfDays, employeeId) {
+    const allDays = this.getDates(startDate, numberOfDays);
+    const today = new Date(new Date().toISOString().split("T")[0]);
+    const todayIndex = allDays.findIndex(function (day) {
+      return today - day < 86400000 && today - day > -86400000;
+    });
+
+    let schedule = [];
+
+    ApiService.get(
+      `employees/schedules/82bc5b5a-8b02-467b-bc93-51bd21fd09b1`,
+    ).then((response) => {
+      console.log(response.data.allTasks);
+      const tasks = response.data.allTasks;
+      let tasksEditable = JSON.parse(JSON.stringify(tasks));
+
+      let currentDay = 0;
+      for (let index = 0; index < tasks.length; index++) {
+        if (currentDay >= allDays.length) {
+          break;
+        }
+        let task = tasksEditable[index];
+
+        const currentName = task.systemName ? task.systemName : task.taskName;
+        let nrOfDays = task.estimatedDays;
+        let taskStartDate;
+        let trailingTask;
+
+        if (index === 0) {
+          if (!task.dateStarted) {
+            if (todayIndex === -1) {
+              task.dateStarted = allDays[currentDay];
+            } else {
+              task.dateStarted = allDays[todayIndex];
+            }
+          }
+          taskStartDate = new Date(task.dateStarted);
+          if (taskStartDate < allDays[0]) {
+            nrOfDays -= this.#getNumberOfWorkingDays(
+              taskStartDate,
+              allDays[currentDay],
+            );
+            task.dateStarted = allDays[0];
+          } else if (taskStartDate > allDays[0]) {
+            const daysUntillStart = this.#getNumberOfWorkingDays(
+              allDays[0],
+              taskStartDate,
+            );
+            schedule.push({
+              taskName: "",
+              numberOfDays: daysUntillStart,
+              status: "empty",
+            });
+            currentDay += daysUntillStart;
+          }
+        }
+
+        if (task.dateCompleted) {
+          taskStartDate = new Date(task.dateStarted);
+          let taskCompletedDate = new Date(task.dateCompleted);
+
+          if (tasks[index + 1]) {
+            let nextTask = tasksEditable[index + 1];
+            if (!nextTask.dateStarted) {
+              nrOfDays = this.#getNumberOfWorkingDays(
+                taskStartDate,
+                taskCompletedDate,
+                true,
+              );
+              if (currentDay + nrOfDays < allDays.length) {
+                nextTask.dateStarted = allDays[currentDay + nrOfDays];
+              }
+            } else {
+              let nextStartDate = new Date(
+                tasksEditable[index + 1].dateStarted,
+              );
+              if (
+                this.#getNumberOfWorkingDays(
+                  taskCompletedDate,
+                  nextStartDate,
+                  true,
+                ) === 0
+              ) {
+                const nrOfConflictingDays = this.#getNumberOfWorkingDays(
+                  nextStartDate,
+                  taskCompletedDate,
+                  true,
+                );
+                nrOfDays -= nrOfConflictingDays;
+
+                taskCompletedDate = new Date(
+                  taskCompletedDate.setDate(
+                    taskCompletedDate.getDate() - nrOfConflictingDays,
+                  ),
+                );
+                task.dateCompleted = taskCompletedDate;
+
+                nextStartDate = new Date(
+                  nextStartDate.setDate(
+                    nextStartDate.getDate() + nrOfConflictingDays,
+                  ),
+                );
+                nextTask.dateStarted = nextStartDate;
+                trailingTask = {
+                  taskName: "",
+                  numberOfDays: nrOfConflictingDays,
+                  status: "conflict",
+                };
+                //trailingTask = conflict blok aanmaken
+                // einddatum, volgende startdatum en nrOfDays aanpassen
+              } else {
+                nrOfDays = this.#getNumberOfWorkingDays(
+                  taskStartDate,
+                  taskCompletedDate,
+                  true,
+                );
+                const daysUntillNext =
+                  this.#getNumberOfWorkingDays(
+                    taskCompletedDate,
+                    nextStartDate,
+                    false,
+                  ) - 1;
+                if (daysUntillNext > 0) {
+                  trailingTask = {
+                    taskName: "",
+                    numberOfDays: daysUntillNext,
+                    status: "empty",
+                  };
+                }
+              }
+            }
+          }
+        } else {
+          if (tasks[index + 1]) {
+            let nextTask = tasksEditable[index + 1];
+            if (nextTask.dateStarted) {
+              const nextStartDate = new Date(tasks[index + 1].dateStarted);
+              nrOfDays = this.#getNumberOfWorkingDays(
+                taskStartDate,
+                nextStartDate,
+                false,
+              );
+            } else {
+              if (todayIndex !== -1) {
+                if (currentDay + task.estimatedDays < todayIndex) {
+                  nrOfDays = todayIndex - currentDay;
+                }
+              }
+            }
+          }
+        }
+
+        if (currentDay + nrOfDays >= allDays.length) {
+          nrOfDays = allDays.length - currentDay;
+        }
+        currentDay += nrOfDays;
+
+        if (tasks[index + 1] && !tasksEditable[index + 1].dateStarted) {
+          tasksEditable[index + 1].dateStarted = allDays[currentDay];
+        }
+
+        const status = this.#getStatus(
+          tasks[index].dateStarted,
+          tasks[index + 1]?.dateStarted,
+          task.estimatedDays,
+          task.systemName !== null,
+          nrOfDays,
+          tasks[index].dateCompleted,
+        );
+
+        schedule.push({
+          taskName: currentName,
+          numberOfDays: nrOfDays,
+          status: status,
+        });
+
+        if (currentDay < allDays.length && trailingTask) {
+          if (currentDay + trailingTask.numberOfDays >= allDays.length) {
+            trailingTask.numberOfDays = allDays.length - currentDay;
+          }
+          schedule.push(trailingTask);
+        }
+      }
+      if (currentDay < allDays.length) {
+        const extraDays = allDays.length - currentDay;
+        schedule.push({
+          taskName: "",
+          numberOfDays: extraDays,
+          status: "empty",
+        });
+      }
+      console.log("new");
+      console.log(schedule);
+    });
+  }
+}
