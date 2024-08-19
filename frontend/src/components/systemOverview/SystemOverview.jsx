@@ -54,7 +54,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
         modal.showModal();
       }
     }
-  }, [modalIsOpen, sName]);
+  }, [modalIsOpen, sName, system]);
 
   function handleClose(e) {
     e.preventDefault();
@@ -74,9 +74,9 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
 
   return (
     <dialog id={sName} className="modal">
-      <div className="modal-box w-2/3 max-w-full p-0">
+      <div className="modal-box w-fit max-w-full p-0">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
-          <div className="flex h-full w-full justify-evenly overflow-hidden bg-neutral p-9">
+          <div className="flex h-full w-full justify-evenly gap-8 overflow-hidden bg-neutral p-9">
             <div className="flex h-full flex-col">
               <SystemTextField
                 title="Systeem"
