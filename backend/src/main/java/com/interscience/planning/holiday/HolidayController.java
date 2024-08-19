@@ -4,7 +4,6 @@ import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +47,6 @@ public class HolidayController {
     Holiday holiday = new Holiday(employee, holidayDTO.startDate(), holidayDTO.endDate());
     holidayRepository.save(holiday);
 
-    return ResponseEntity.status(201).body(HolidayDTO.from(holiday));
+    return ResponseEntity.status(201).body(HolidayResponseDTO.from(holiday));
   }
 }

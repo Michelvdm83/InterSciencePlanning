@@ -36,7 +36,8 @@ export default function EmployeeFormFields({ employee, setEmployee }) {
           <option value="" disabled>
             Functie
           </option>
-          <option value="TEAM_LEADER">Teamleider</option>
+          <option value="SSP_TEAM_LEADER">SSP Teamleider</option>
+          <option value="FT_TEAM_LEADER">FT Teamleider</option>
           <option value="SSP">SSP</option>
           <option value="FT">FT</option>
         </select>
