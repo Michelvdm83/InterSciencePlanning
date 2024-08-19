@@ -3,7 +3,6 @@ import Navbar from "./components/navbar/Navbar";
 import SSPPlanning from "./pages/sspPlanning/SSPPlanning.jsx";
 import EmployeeManagement from "./pages/employeeManagement/EmployeeManagement.jsx";
 import SSPSCheduling from "./pages/sspScheduling/SSPScheduling.jsx";
-import SystemOverview from "./components/systemOverview/SystemOverview.jsx";
 import Login from "./pages/login/Login";
 import EmployeeService from "./services/EmployeeService";
 import FtPlanning from "./pages/ftPlanning/FtPlanning";
@@ -43,21 +42,17 @@ export default function App() {
             element={<SetPassword />}
           />
           <Route path="/" element={<Login />} />
-          <Route path="/systeem/:systemName" element={<Login />} />
-          <Route path="/systeem" element={<Login />} />
         </Routes>
       );
     }
     return (
       <Routes>
-        <Route path="/systeem/:systemName" element={<SystemOverview />} />
         <Route path="/ssp-planning" element={<SSPPlanning />} />
         <Route path="/ft-planning" element={<FtPlanning />} />
         <Route path="/medewerkers" element={<EmployeeManagement />} />
         <Route path="/ssp-inplannen" element={<SSPSCheduling />} />
         <Route path="/vakanties" element={<Holidays />} />
         <Route path="/inloggen" element={<Login />} />
-        <Route path="/systeem" element={<SystemOverview sName="brt-001" />} />
         <Route
           path="/wachtwoord-instellen/:employeeId/:passwordLinkId"
           element={<SetPassword />}
