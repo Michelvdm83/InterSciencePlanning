@@ -9,16 +9,27 @@ public record SSPTaskDTO(
     Integer estimatedDays,
     LocalDate dateStarted,
     LocalDate dateCompleted) {
-    public static SSPTaskDTO from(SSPTask sspTask) {
+  public static SSPTaskDTO from(SSPTask sspTask) {
 
-        Integer estimatedDays;
-        if (sspTask.getConstructionTask() != null) {
-            estimatedDays = sspTask.getConstructionTask().getEstimatedTime();
-        } else {
-            estimatedDays = sspTask.getTask().getEstimatedTime();
-        }
-
-        return new SSPTaskDTO(sspTask.getIndex(), sspTask.getConstructionTask().getSystem().getName(), sspTask.getTask().getName(),
-                estimatedDays, ;)
+    Integer estimatedDays;
+    LocalDate dateStarted;
+    LocalDate dateCompleted;
+    if (sspTask.getConstructionTask() != null) {
+      estimatedDays = sspTask.getConstructionTask().getEstimatedTime();
+      dateStarted = sspTask.getConstructionTask().getDateStarted();
+      dateCompleted = sspTask.getConstructionTask().getDateCompleted();
+    } else {
+      estimatedDays = sspTask.getTask().getEstimatedTime();
+      dateStarted = sspTask.getTask().getDateStarted();
+      dateCompleted = sspTask.getTask().getDateCompleted();
     }
+
+    return new SSPTaskDTO(
+        sspTask.getIndex(),
+        sspTask.getConstructionTask().getSystem().getName(),
+        sspTask.getTask().getName(),
+        estimatedDays,
+        dateStarted,
+        dateCompleted);
+  }
 }

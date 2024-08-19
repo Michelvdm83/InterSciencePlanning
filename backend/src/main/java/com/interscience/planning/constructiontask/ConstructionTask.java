@@ -25,4 +25,6 @@ public class ConstructionTask {
   private Integer estimatedTime;
 
   private LocalDate dateStarted;
+
+  private LocalDate dateCompleted;
 }

@@ -52,7 +52,7 @@ public class EmployeeController {
   }
 
   @GetMapping("/schedules/{id}")
-  public ResponseEntity<EmployeeScheduleDto> getScheduleItems(@PathVariable UUID id) {
+  public ResponseEntity<EmployeeScheduleDto> getScheduleItems(@PathVariable UUID employeeId) {
     //    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
     //    String dateInString = "06-08-2024";
     //    Date date = formatter.parse(dateInString);
@@ -75,8 +75,8 @@ public class EmployeeController {
     holidays.add(new HolidayDTO(null, testDate.plusDays(4), testDate.plusDays(5)));
     holidays.sort(Comparator.comparing(HolidayDTO::startDate));
 
-    Set<SSPTaskDTO> EmployeeSSPTasks =
+    Set<SSPTaskDTO> employeeSSPTasks = employeeService.getEmployeeSSPTasks(employeeId);
 
-    return ResponseEntity.ok(new EmployeeScheduleDto(testSchedule, holidays));
+    return ResponseEntity.ok(new EmployeeScheduleDto(employeeSSPTasks, holidays));
   }
 }

@@ -141,9 +141,8 @@ public class EmployeeService {
   }
 
   public Set<SSPTaskDTO> getEmployeeSSPTasks(UUID employeeId) {
-    return sspTaskRepository.findByEmployeeId(employeeId).stream().map(task -> SSPTaskDTO.from(task))
-//    return employeeRepository.findAllByEnabledTrue().stream()
-//            .map(EmployeeResponseDTO::from)
-//            .collect(Collectors.toList());
+    return sspTaskRepository.findByEmployeeId(employeeId).stream()
+        .map(SSPTaskDTO::from)
+        .collect(Collectors.toSet());
   }
 }
