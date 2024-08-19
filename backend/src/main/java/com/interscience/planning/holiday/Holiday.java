@@ -23,6 +23,8 @@ public class Holiday {
 
   private LocalDate endDate;
 
+  private boolean enabled = true;
+
   public Holiday(Employee employee, LocalDate startDate, LocalDate endDate) {
     this.employee = employee;
     this.startDate = startDate;

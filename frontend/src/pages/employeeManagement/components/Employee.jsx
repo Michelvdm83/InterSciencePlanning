@@ -43,7 +43,6 @@ export default function Employee({ employee, employees, setEmployees }) {
           onClick={handleDeleteEmployee}
           id={`delete-employee-${employee.id}`}
           error={error}
-          setError={setError}
         />
       </div>
     </div>

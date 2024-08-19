@@ -4,9 +4,9 @@ import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
-
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class HolidayController {
 
   @GetMapping
   public List<HolidayResponseDTO> getAll() {
-    return holidayRepository.findAll().stream()
+    return holidayRepository.findAllByEnabledTrue().stream()
         .sorted(Comparator.comparing(Holiday::getStartDate))
         .map(HolidayResponseDTO::from)
         .collect(Collectors.toList());
@@ -49,5 +49,13 @@ public class HolidayController {
     holidayRepository.save(holiday);
 
     return ResponseEntity.ok(HolidayResponseDTO.from(holiday));
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<Void> deleteHoliday(@PathVariable UUID id) {
+    Holiday holiday = holidayRepository.findById(id).orElseThrow(NotFoundException::new);
+    holiday.setEnabled(false);
+    holidayRepository.save(holiday);
+    return ResponseEntity.noContent().build();
   }
 }
