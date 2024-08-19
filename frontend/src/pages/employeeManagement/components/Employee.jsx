@@ -30,7 +30,11 @@ export default function Employee({ employee, employees, setEmployees }) {
         {employee.name}
       </p>
       <p className="col-span-1 row-span-1 text-accent">
-        {employee.function === "TEAM_LEADER" ? "Teamleider" : employee.function}
+        {employee.function === "SSP_TEAM_LEADER"
+          ? "SSP Teamleider"
+          : employee.function === "FT_TEAM_LEADER"
+            ? "FT Teamleider"
+            : employee.function}
       </p>
       <p className="col-span-4 row-span-1">{employee.email}</p>
       <div className="col-start-5 row-span-2 row-start-1 flex items-center justify-end gap-2">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LabeledBasicInput from "../../../components/LabeledBasicInput";
 import ApiService from "../../../services/ApiService";
 
@@ -12,6 +12,14 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
   });
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    // Set endDate to startDate when startDate is selected
+    setHoliday((prevHoliday) => ({
+      ...prevHoliday,
+      endDate: prevHoliday.startDate,
+    }));
+  }, [holiday.startDate]);
 
   function translateError(error) {
     switch (error.toString()) {
