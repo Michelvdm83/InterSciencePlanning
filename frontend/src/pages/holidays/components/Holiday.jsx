@@ -8,8 +8,6 @@ export default function Holiday({ holiday, holidays, setHolidays }) {
           {holiday.startDate} <span className="mx-2">-</span> {holiday.endDate}
         </p>
       </div>
-
-      {/* <div className="">x</div> */}
     </div>
   );
 }
