@@ -21,7 +21,7 @@ export default function AddEmployee({ employees, setEmployees }) {
       case "Employee with this email already exists":
         return "Medewerker met dit e-mailadres bestaat al";
       default:
-        return error;
+        return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
     }
   }
 
@@ -83,7 +83,8 @@ export default function AddEmployee({ employees, setEmployees }) {
           <option value="" disabled>
             Functie
           </option>
-          <option value="TEAM_LEADER">Teamleider</option>
+          <option value="SSP_TEAM_LEADER">SSP Teamleider</option>
+          <option value="FT_TEAM_LEADER">FT Teamleider</option>
           <option value="SSP">SSP</option>
           <option value="FT">FT</option>
         </select>

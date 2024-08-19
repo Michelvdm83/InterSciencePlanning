@@ -29,6 +29,8 @@ public class Employee implements UserDetails {
 
   private String password;
 
+  private boolean enabled = true;
+
   public Employee(String name, String email, String password, Function function) {
     this.name = name;
     this.email = email;
@@ -38,7 +40,13 @@ public class Employee implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority("ROLE_" + function.name()));
+    return List.of(
+        new SimpleGrantedAuthority(
+            "ROLE_"
+                + (function.name().equals("SSP_TEAM_LEADER")
+                        || function.name().equals("FT_TEAM_LEADER")
+                    ? "TEAM_LEADER"
+                    : function.name())));
   }
 
   @Override

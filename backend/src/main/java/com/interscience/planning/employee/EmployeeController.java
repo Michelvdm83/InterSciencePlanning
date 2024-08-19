@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class EmployeeController {
 
   @GetMapping
   public List<EmployeeResponseDTO> getAll() {
-    return employeeRepository.findAll().stream()
+    return employeeRepository.findAllByEnabledTrue().stream()
         .map(EmployeeResponseDTO::from)
         .collect(Collectors.toList());
   }
@@ -67,6 +68,20 @@ public class EmployeeController {
     employee.setPassword(passwordEncoder.encode(passwordDTO.password()));
     employeeRepository.save(employee);
     return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id, Authentication authentication) {
+    Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+    Employee loggedInEmployee = (Employee) authentication.getPrincipal();
+
+    if (employee.equals(loggedInEmployee)) {
+      throw new BadRequestException("You can't delete yourself");
+    }
+
+    employee.setEnabled(false);
+    employeeRepository.save(employee);
+    return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/schedules/{id}")

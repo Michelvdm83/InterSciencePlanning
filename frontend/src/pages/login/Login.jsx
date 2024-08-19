@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeService from "../../services/EmployeeService";
 import LabeledBasicInput from "../../components/LabeledBasicInput.jsx";
+import ForgotPassword from "./components/ForgotPassword.jsx";
 
 export default function Login() {
   function translateError(error) {
@@ -10,12 +11,10 @@ export default function Login() {
         return "Email is verplicht";
       case "Password is required":
         return "Wachtwoord is verplicht";
-      case "User doesn't exist!":
-        return "Gebruiker bestaat niet";
       case "Password is incorrect":
         return "Wachtwoord is verkeerd";
       default:
-        return error;
+        return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
     }
   }
   const [email, setEmail] = useState("");
@@ -37,17 +36,22 @@ export default function Login() {
           window.location.reload();
         })
         .catch((error) => {
-          setError(translateError(error));
+          if (error.response && error.response.status === 404) {
+            setError("Account niet gevonden");
+          } else {
+            setError(translateError(error.response?.data?.detail));
+          }
         });
     }
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex flex-col items-center">
       <form
-        className="form-control mt-4 flex w-full max-w-[16rem] flex-col items-start"
+        className="form-control mt-4 w-full max-w-[16rem]"
         onSubmit={handleLogin}
       >
+        <h1 className="mb-4 font-Effra_Bd text-3xl text-secondary">Inloggen</h1>
         <LabeledBasicInput
           label={"E-mailadres"}
           type="text"
@@ -62,9 +66,10 @@ export default function Login() {
         />
 
         {error && <p className="mt-4 text-red-600">{error}</p>}
-        <button type="submit" className="btn btn-primary mt-4 w-full">
-          Inloggen
+        <button type="submit" className="btn btn-primary my-4">
+          Log in
         </button>
+        <ForgotPassword />
       </form>
     </div>
   );

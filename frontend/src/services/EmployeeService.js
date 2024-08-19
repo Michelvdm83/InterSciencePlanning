@@ -24,7 +24,7 @@ export default class EmployeeService {
         });
       })
       .catch((error) => {
-        throw error.response.data.detail;
+        throw error;
       });
   }
 
@@ -33,7 +33,12 @@ export default class EmployeeService {
   }
 
   static #setEmployeeFunction(employeeFunction) {
-    localStorage.setItem(EMPLOYEE_FUNCTION_STORAGE_LOCATION, employeeFunction);
+    const empFunction =
+      employeeFunction === "SSP_TEAM_LEADER" ||
+      employeeFunction === "FT_TEAM_LEADER"
+        ? "TEAM_LEADER"
+        : employeeFunction;
+    localStorage.setItem(EMPLOYEE_FUNCTION_STORAGE_LOCATION, empFunction);
   }
 
   static logout() {
