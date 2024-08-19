@@ -17,6 +17,7 @@ public class System {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID systemId;
 
+  @Column(unique = true, nullable = false)
   private String name;
 
   private String poNumber;
@@ -51,4 +52,8 @@ public class System {
   private SystemStatus status;
 
   private boolean delayCheckedBySupervisor = true;
+
+  public System(String name) {
+    this.name = name;
+  }
 }

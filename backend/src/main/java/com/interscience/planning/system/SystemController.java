@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/systems")
 public class SystemController {
 
+  private final SystemService systemService;
   private final SystemRepository systemRepository;
 
   //  @GetMapping("/{id}")
@@ -30,5 +31,11 @@ public class SystemController {
     }
 
     return ResponseEntity.ok(SystemDto.from(possibleSystem.get()));
+  }
+
+  @PostMapping
+  public ResponseEntity<?> createNewSystem(@RequestBody SystemDto systemDto) {
+    systemService.createNewSystem(systemDto);
+    return ResponseEntity.status(201).build();
   }
 }

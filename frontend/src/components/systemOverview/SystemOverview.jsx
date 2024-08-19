@@ -11,53 +11,55 @@ import SystemTextArea from "./components/SystemTextArea.jsx";
 
 export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
   const [expectedFinish, setExpectedFinish] = useState(null);
-  const [system, setSystem] = useState(null);
+  const [system, setSystem] = useState("");
+  const [error, setError] = useState("");
 
   const employeeFunction = EmployeeService.getEmployeeFunction();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await ApiService.get(
-        `http://localhost:8080/api/v1/systems/${sName}`,
-      );
+    if (sName) {
+      const fetchData = async () => {
+        const response = await ApiService.get(
+          `http://localhost:8080/api/v1/systems/${sName}`,
+        );
 
-      const data = response.data;
-      setSystem(data);
+        const data = response.data;
+        setSystem(data);
 
-      const startDate = new Date(
-        response.data.startOfTest
-          ? response.data.startOfTest
-          : response.data.startOfConstruction
-            ? response.data.startOfConstruction
-            : new Date(),
-      );
-      const buildTime = response.data.estimatedConstructionDays
-        ? response.data.estimatedConstructionDays
-        : 0;
-      const testTime = response.data.estimatedTestDays
-        ? response.data.estimatedTestDays
-        : 0;
-      const addedDate = new Date(
-        startDate.setDate(startDate.getDate() + (buildTime + testTime)),
-      );
-      let expectedDate = addedDate.toISOString().split("T")[0];
+        const startDate = new Date(
+          response.data.startOfTest
+            ? response.data.startOfTest
+            : response.data.startOfConstruction
+              ? response.data.startOfConstruction
+              : new Date(),
+        );
+        const buildTime = response.data.estimatedConstructionDays
+          ? response.data.estimatedConstructionDays
+          : 0;
+        const testTime = response.data.estimatedTestDays
+          ? response.data.estimatedTestDays
+          : 0;
+        const addedDate = new Date(
+          startDate.setDate(startDate.getDate() + (buildTime + testTime)),
+        );
+        let expectedDate = addedDate.toISOString().split("T")[0];
 
-      setExpectedFinish(expectedDate);
-    };
-    fetchData();
+        setExpectedFinish(expectedDate);
+      };
+      fetchData();
+    }
   }, [sName]);
 
   useEffect(() => {
-    if (modalIsOpen && system) {
-      const modal = document.getElementById(sName);
+    if (modalIsOpen) {
+      const modal = document.getElementById(sName || "new-system");
       if (modal) {
         modal.showModal();
       }
     }
   }, [modalIsOpen, sName, system]);
 
-  function handleClose(e) {
-    e.preventDefault();
+  function handleClose() {
     setModalIsOpen(false);
     setSystem(null);
   }
@@ -68,12 +70,20 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
     }
   }
 
-  if (!system) {
-    return null;
+  function handleSave(e) {
+    // check if in editmode (sName is null)
+
+    e.preventDefault();
+    if (system.name.trim().length() === 0) {
+      setError("Systeemnaam is verplicht");
+      return;
+    }
+
+    ApiService.post("systems", system).catch((error) => {});
   }
 
   return (
-    <dialog id={sName} className="modal">
+    <dialog id={sName || "new-system"} className="modal">
       <div className="modal-box w-fit max-w-full p-0">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
           <div className="flex h-full w-full justify-evenly gap-8 overflow-hidden bg-neutral p-9">
@@ -193,9 +203,15 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 text={system.notes}
                 editable={true}
               />
-              <button className="btn btn-accent" onClick={handleClose}>
-                Annuleren
-              </button>
+              <div className="flex flex-col gap-2">
+                <button className="btn btn-primary" onClick={handleClose}>
+                  Annuleren
+                </button>
+                <button className="btn btn-accent" onClick={handleSave}>
+                  Opslaan
+                </button>
+                {error && <p className="text-red-600">{error}</p>}
+              </div>
             </div>
           </div>
         </form>
