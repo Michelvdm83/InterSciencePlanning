@@ -4,6 +4,9 @@ import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +19,16 @@ public class HolidayController {
   private final HolidayRepository holidayRepository;
   private final EmployeeRepository employeeRepository;
 
+  @GetMapping
+  public List<HolidayResponseDTO> getAll() {
+    return holidayRepository.findAll().stream()
+        .sorted(Comparator.comparing(Holiday::getStartDate))
+        .map(HolidayResponseDTO::from)
+        .collect(Collectors.toList());
+  }
+
   @PostMapping
-  public ResponseEntity<HolidayDTO> addHoliday(@RequestBody HolidayDTO holidayDTO) {
+  public ResponseEntity<HolidayResponseDTO> addHoliday(@RequestBody HolidayDTO holidayDTO) {
     if (holidayDTO.employeeId() == null) {
       throw new BadRequestException("EmployeeId can't be null");
     }
@@ -36,6 +47,6 @@ public class HolidayController {
     Holiday holiday = new Holiday(employee, holidayDTO.startDate(), holidayDTO.endDate());
     holidayRepository.save(holiday);
 
-    return ResponseEntity.ok(HolidayDTO.from(holiday));
+    return ResponseEntity.status(201).body(HolidayResponseDTO.from(holiday));
   }
 }
