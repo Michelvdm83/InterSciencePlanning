@@ -12,7 +12,6 @@ import com.interscience.planning.system.SystemRepository;
 import com.interscience.planning.system.SystemStatus;
 import com.interscience.planning.testtask.TestTask;
 import com.interscience.planning.testtask.TestTaskRepository;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -65,8 +64,8 @@ public class Seeder implements CommandLineRunner {
     system.setSystemType("big");
 
     LocalDate today = LocalDate.now();
-    system.setAgreedDate(Date.valueOf(today.plusDays(7)));
-    system.setActualDeliveryDate(Date.valueOf(today));
+    system.setAgreedDate(today.plusDays(7));
+    system.setActualDeliveryDate(today);
 
     system.setStatus(SystemStatus.BUILDING);
 
