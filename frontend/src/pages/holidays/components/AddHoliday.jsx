@@ -66,25 +66,28 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
         Vakantie toevoegen
       </h2>
       <form className="form-control" onSubmit={handleAddHoliday}>
-        <label className="label">Naam</label>
-        <select
-          value={holiday.employeeId}
-          onChange={(e) =>
-            setHoliday({ ...holiday, employeeId: e.target.value })
-          }
-          className="select select-bordered w-full"
-        >
-          <option value="" disabled>
-            Naam
-          </option>
-          {employees.map((employee) => {
-            return (
-              <option value={employee.id} key={employee.id}>
-                {employee.name}
-              </option>
-            );
-          })}
-        </select>
+        <label className="label flex flex-col items-start px-0">
+          Naam
+          <select
+            value={holiday.employeeId}
+            onChange={(e) =>
+              setHoliday({ ...holiday, employeeId: e.target.value })
+            }
+            className="select select-bordered mt-2 w-full"
+          >
+            <option value="" disabled>
+              Naam
+            </option>
+            {employees.map((employee) => {
+              return (
+                <option value={employee.id} key={employee.id}>
+                  {employee.name}
+                </option>
+              );
+            })}
+          </select>
+        </label>
+
         <LabeledBasicInput
           label="Van"
           type="date"

@@ -76,7 +76,7 @@ export default function ForgotPassword() {
 
               <button
                 className="btn btn-accent"
-                type="button"
+                type="submit"
                 onClick={handleSendResetLink}
               >
                 Link versturen

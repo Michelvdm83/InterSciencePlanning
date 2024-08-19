@@ -74,7 +74,7 @@ export default function SetPassword() {
     }
 
     try {
-      await ApiService.patch(`employees/${employeeId}`, { password });
+      await ApiService.patch(`employees/${employeeId}/password`, { password });
       // delete password setting link from database after the password is set
       await ApiService.delete(`password-links/${passwordLinkId}`);
       navigate("/inloggen");
