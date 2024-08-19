@@ -59,6 +59,7 @@ public class EmployeeController {
     //    date.setTime(date.getTime() + 20000000L);
 
     LocalDate testDate = LocalDate.parse("2024-08-06");
+    LocalDate firstDay = LocalDate.parse("2024-08-01");
 
     var testSchedule = new ArrayList<SSPTaskDTO>();
     testSchedule.add(new SSPTaskDTO(1, "b001", null, 3, testDate, testDate.plusDays(2)));
@@ -69,9 +70,9 @@ public class EmployeeController {
     testSchedule.sort(Comparator.comparingInt(SSPTaskDTO::index));
 
     var holidays = new ArrayList<HolidayDTO>();
-    holidays.add(new HolidayDTO(null, testDate, testDate.plusDays(3)));
+    holidays.add(new HolidayDTO(null, firstDay, firstDay.plusDays(4)));
     holidays.add(new HolidayDTO(null, testDate.plusDays(7), testDate.plusDays(7)));
-    holidays.add(new HolidayDTO(null, testDate.plusDays(1), testDate.plusDays(2)));
+    holidays.add(new HolidayDTO(null, testDate.plusDays(4), testDate.plusDays(5)));
     holidays.sort(Comparator.comparing(HolidayDTO::startDate));
 
     Set<SSPTaskDTO> EmployeeSSPTasks =

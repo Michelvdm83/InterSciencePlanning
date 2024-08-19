@@ -1,6 +1,20 @@
 import ApiService from "./ApiService";
 
 export default class ScheduleService {
+  static getMonday(myDate) {
+    let monday;
+    const current = new Date(myDate);
+    const currentDay = current.getDay();
+    if (currentDay === 1) {
+      monday = current;
+    } else {
+      const addDays =
+        currentDay === 0 ? 1 : currentDay === 6 ? 2 : -(currentDay - 1);
+      monday = new Date(current.setDate(current.getDate() + addDays));
+    }
+    console.log(monday);
+  }
+
   static getDates(startDate, numberOfDays) {
     if (numberOfDays <= 0) {
       return [];
@@ -107,6 +121,7 @@ export default class ScheduleService {
         daysOfHolidays.splice(i + 1, 1);
       }
     }
+    console.log(daysOfHolidays);
     return daysOfHolidays;
   }
 
@@ -261,7 +276,7 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
       });
 
       if (firstDayHolidayIndex !== -1) {
-        nrOfHolidayDays = 0;
+        let nrOfHolidayDays = 0;
         for (
           let holidayIndex = firstDayHolidayIndex;
           currentDay < allDays.length && holidayIndex < holidays.length;

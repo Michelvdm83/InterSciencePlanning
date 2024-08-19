@@ -14,6 +14,7 @@ export default function App() {
   // const dates = ScheduleService.getDates("2024-08-04", 8);
   // ScheduleService.getEmployeeScheduleOld("2024-08-01", 20);
   ScheduleService.getEmployeeSchedule("2024-08-01", 20);
+  ScheduleService.getMonday("2024-08-03");
 
   function getHomeRoute() {
     switch (EmployeeService.getEmployeeFunction()) {
