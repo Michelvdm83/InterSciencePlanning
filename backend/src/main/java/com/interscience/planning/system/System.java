@@ -4,13 +4,17 @@ import com.interscience.planning.constructiontask.ConstructionTask;
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.testtask.TestTask;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class System {
   @Id
@@ -24,11 +28,9 @@ public class System {
 
   private String systemType;
 
-  @Temporal(TemporalType.DATE)
-  private Date agreedDate;
+  private LocalDate agreedDate;
 
-  @Temporal(TemporalType.DATE)
-  private Date actualDeliveryDate;
+  private LocalDate actualDeliveryDate;
 
   @ManyToOne private Employee employeeResponsible;
 

@@ -34,8 +34,8 @@ public class SystemController {
   }
 
   @PostMapping
-  public ResponseEntity<?> createNewSystem(@RequestBody SystemDto systemDto) {
-    systemService.createNewSystem(systemDto);
+  public ResponseEntity<?> createNewSystem(@RequestBody SystemPostPatchDTO systemPostPatchDTO) {
+    systemService.createNewSystem(systemPostPatchDTO);
     return ResponseEntity.status(201).build();
   }
 }

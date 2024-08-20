@@ -1,13 +1,13 @@
 package com.interscience.planning.system;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public record SystemDto(
     String name,
     String poNumber,
     String systemType,
-    Date agreedDate,
-    Date actualDeliveryDate,
+    LocalDate agreedDate,
+    LocalDate actualDeliveryDate,
     String employeeResponsible,
     String employeeFT,
     String employeeSSP,
@@ -18,9 +18,9 @@ public record SystemDto(
     Boolean specsheetApproved,
     String status,
     Boolean delayCheckedBySupervisor,
-    Date startOfConstruction,
+    LocalDate startOfConstruction,
     Integer estimatedConstructionDays,
-    Date startOfTest,
+    LocalDate startOfTest,
     Integer estimatedTestDays) {
 
   public static SystemDto from(System system) {
@@ -35,7 +35,7 @@ public record SystemDto(
       ftEmployee = system.getTestTask().getEmployee().getName();
     }
 
-    Date startOfTest;
+    LocalDate startOfTest;
     Integer estimatedTestDays;
     if (system.getTestTask() == null) {
       startOfTest = null;
@@ -54,7 +54,7 @@ public record SystemDto(
       sspEmployee = system.getConstructionTask().getSspTask().getEmployee().getName();
     }
 
-    Date startOfConstruction;
+    LocalDate startOfConstruction;
     Integer estimatedConstructionDays;
     if (system.getConstructionTask() == null) {
       startOfConstruction = null;
