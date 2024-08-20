@@ -1,6 +1,7 @@
 import ApiService from "./ApiService";
 
 export default class ScheduleService {
+  // get the date of the monday of the week
   static getMonday(myDate) {
     let monday;
     const current = new Date(myDate);
@@ -14,6 +15,7 @@ export default class ScheduleService {
     }
   }
 
+  //get a list of dates of workdays starting at startDate. Length of list is equal to numberOfDays
   static getDates(startDate, numberOfDays) {
     if (numberOfDays <= 0) {
       return [];
@@ -37,6 +39,7 @@ export default class ScheduleService {
     return datesArray;
   }
 
+  //get the number of workingdays between startDate (included) and untilDate (excluded unless untilIncluded = true)
   static #getNumberOfWorkingDays(startDate, untilDate, untilIncluded) {
     if (
       (untilDate - startDate < 86400000 && !untilIncluded) ||
@@ -67,6 +70,7 @@ export default class ScheduleService {
     return nrOfWorkingDays;
   }
 
+  //get the status for a task
   static #getStatus(
     startDateTask,
     startDateNextTask,
@@ -89,6 +93,7 @@ export default class ScheduleService {
     return returnStatus;
   }
 
+  //get a list of dates, ordered old-new, of all holidays. filters duplicate dates
   static #getDaysOfHolidays(holidays) {
     let daysOfHolidays = [];
     holidays.forEach((period) => {
@@ -123,6 +128,7 @@ export default class ScheduleService {
     return daysOfHolidays;
   }
 
+  //get a list of <dayIndex, type>, where dayIndex is the index from the allDays array. type is holiday if it is in the holidays array, task otherwise
   static #getDaysWithTypes(
     currentDay,
     numberOfTaskDays,
@@ -149,6 +155,7 @@ export default class ScheduleService {
     return daysWithTypes;
   }
 
+  //get an array of schedule entries. it checks if there are holidays inbetween and breaks it up if needed
   static #getScheduleEntries(
     daysWithTypes,
     taskName,
@@ -194,6 +201,7 @@ export default class ScheduleService {
     return scheduleEntries;
   }
 
+  //returns the schedule of the employee with employeeId in a period of numberOfDays, starting at startDate
   static getEmployeeSchedule(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
     const today = new Date(new Date().toISOString().split("T")[0]);
@@ -216,6 +224,7 @@ export default class ScheduleService {
         return allDays[0] - day < 86400000 && allDays[0] - day > -86400000;
       });
 
+      //if the first day in the allDays array is a holiday, let schedule start with that holiday and set currentDay to the correct day
       if (firstDayHolidayIndex !== -1) {
         let firstTaskStart;
         if (tasks[0]) {
@@ -262,6 +271,7 @@ export default class ScheduleService {
         let trailingTask;
 
         if (index === 0) {
+          //if the first task doesn't have a start date, set it
           if (!task.dateStarted) {
             if (todayIndex === -1 || todayIndex < currentDay) {
               task.dateStarted = allDays[currentDay];
@@ -270,12 +280,15 @@ export default class ScheduleService {
             }
           }
           taskStartDate = new Date(task.dateStarted);
+
+          //if the start date of the first task is before the current day, adjust the number of days for it
           if (taskStartDate < allDays[currentDay]) {
             nrOfDays -= this.#getNumberOfWorkingDays(
               taskStartDate,
               allDays[currentDay],
             );
             task.dateStarted = allDays[currentDay];
+            //if the start date of the first task is after the current day, fill the period with an "empty" entry (possibly with holidays inbetween)
           } else if (taskStartDate > allDays[currentDay]) {
             const daysUntillStart = this.#getNumberOfWorkingDays(
               allDays[currentDay],
@@ -303,12 +316,14 @@ export default class ScheduleService {
           }
         }
 
+        //if the task has a dateCompleted, use it for calculations
         if (task.dateCompleted) {
           taskStartDate = new Date(task.dateStarted);
           let taskCompletedDate = new Date(task.dateCompleted);
 
           if (tasks[index + 1]) {
             let nextTask = tasksEditable[index + 1];
+
             if (!nextTask.dateStarted) {
               nrOfDays = this.#getNumberOfWorkingDays(
                 taskStartDate,
@@ -319,6 +334,7 @@ export default class ScheduleService {
                 nextTask.dateStarted = allDays[currentDay + nrOfDays];
               }
             } else {
+              //if the next task has a start date, check if it is before dateCompleted, if so, create "conflict" entry
               let nextStartDate = new Date(
                 tasksEditable[index + 1].dateStarted,
               );
@@ -355,6 +371,7 @@ export default class ScheduleService {
                   status: "conflict",
                 };
               } else {
+                //if the next task has a start date, check if it is the day after dateCompleted, created "empty" block if not
                 nrOfDays = this.#getNumberOfWorkingDays(
                   taskStartDate,
                   taskCompletedDate,
@@ -379,6 +396,7 @@ export default class ScheduleService {
         } else {
           if (tasks[index + 1]) {
             let nextTask = tasksEditable[index + 1];
+            //if next task has a start date and the current task doesn't have a dateCompleted, use that period to calculate nrOfDays
             if (nextTask.dateStarted) {
               const nextStartDate = new Date(tasks[index + 1].dateStarted);
               nrOfDays = this.#getNumberOfWorkingDays(
@@ -387,6 +405,7 @@ export default class ScheduleService {
                 false,
               );
             } else {
+              //if next task doesn't have a start date, use estimatedDays for nrOfDays. if today is after period of estimatedDays, increase nrOfDays until today (included)
               if (todayIndex !== -1) {
                 if (currentDay + task.estimatedDays < todayIndex) {
                   nrOfDays = todayIndex - currentDay;
@@ -396,6 +415,7 @@ export default class ScheduleService {
           }
         }
 
+        //if the task would go beyond the period of the schedule, adjust the nrOfDays
         if (currentDay + nrOfDays >= allDays.length) {
           nrOfDays = allDays.length - currentDay;
         }
