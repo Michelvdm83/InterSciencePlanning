@@ -6,9 +6,12 @@ export default function SystemDateField({
   variable,
   date,
 }) {
-  const classes =
-    "input input-sm w-full text-accent select-text disabled:bg-white disabled:text-accent" +
-    (system[variable] ? "" : " text-transparent disabled:text-transparent");
+  const classes = `
+    input input-sm w-full 
+    ${date ? "text-accent" : "text-white"} 
+    select-text 
+    ${editable ? "" : "disabled:bg-white disabled:text-accent"}
+  `;
 
   return (
     <div>

@@ -13,7 +13,7 @@ export default function SystemSelectEmployeeField({
     <div>
       <div>{title}</div>
       <select
-        defaultValue={system[variable]}
+        value={system[variable] || ""}
         onChange={(event) => {
           setSystem({
             ...system,
@@ -23,9 +23,7 @@ export default function SystemSelectEmployeeField({
         className="select select-bordered select-sm w-full text-accent"
         disabled={!editable}
       >
-        <option value="" disabled>
-          Medewerker
-        </option>
+        <option value="" disabled></option>
         {employees.map((employee) => {
           return (
             <option value={employee.id} key={employee.id}>

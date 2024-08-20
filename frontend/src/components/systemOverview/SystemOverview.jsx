@@ -99,7 +99,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 setSystem={setSystem}
               />
               <SystemTextField
-                title="Po-nummer"
+                title="P.O. nummer"
                 variable="poNumber"
                 editable={employeeFunction == "TEAM_LEADER"}
                 system={system}
@@ -141,7 +141,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 title="Afgesproken deadline"
                 date={system.agreedDate}
                 variable="agreedDate"
-                editable={false}
+                editable={employeeFunction == "TEAM_LEADER"}
                 system={system}
                 setSystem={setSystem}
               />
@@ -149,7 +149,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 title="Verwachte einddatum"
                 date={expectedFinish}
                 variable="expectedFinish"
-                editable={employeeFunction == "TEAM_LEADER"}
+                editable={false}
                 system={system}
                 setSystem={setSystem}
               />

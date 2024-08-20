@@ -7,7 +7,7 @@ export default function SystemCheckboxField({
   setSystem,
   variable,
 }) {
-  const [checked, setChecked] = useState(system[variable]);
+  const [checked, setChecked] = useState(system[variable] || false);
 
   function handleChange() {
     const newCheckedValue = !checked;
