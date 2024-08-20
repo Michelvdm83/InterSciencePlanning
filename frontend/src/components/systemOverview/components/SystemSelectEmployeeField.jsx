@@ -8,6 +8,19 @@ export default function SystemSelectEmployeeField({
   variable,
 }) {
   const [employees] = useGetEmployees();
+  let filteredEmployees = [];
+
+  if (variable === "employeeSSP") {
+    filteredEmployees = employees.filter(
+      (employee) => employee.function === "SSP",
+    );
+  } else if (variable === "employeeFT") {
+    filteredEmployees = employees.filter(
+      (employee) => employee.function === "FT",
+    );
+  } else {
+    filteredEmployees = employees;
+  }
 
   return (
     <div>
@@ -24,7 +37,7 @@ export default function SystemSelectEmployeeField({
         disabled={!editable}
       >
         <option value="" disabled></option>
-        {employees.map((employee) => {
+        {filteredEmployees.map((employee) => {
           return (
             <option value={employee.id} key={employee.id}>
               {employee.name}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function SystemCheckboxField({
   editable,
@@ -7,7 +7,11 @@ export default function SystemCheckboxField({
   setSystem,
   variable,
 }) {
-  const [checked, setChecked] = useState(system[variable] || false);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    setChecked(system[variable] || false);
+  }, [system, variable]);
 
   function handleChange() {
     const newCheckedValue = !checked;

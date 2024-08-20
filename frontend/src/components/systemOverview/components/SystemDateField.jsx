@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 export default function SystemDateField({
   editable,
   title,
@@ -6,6 +8,15 @@ export default function SystemDateField({
   variable,
   date,
 }) {
+  useEffect(() => {
+    if (variable === "agreedDate" && !date) {
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + 12 * 7);
+      const formattedDefaultDate = defaultDate.toISOString().split("T")[0];
+      setSystem({ ...system, [variable]: formattedDefaultDate });
+    }
+  }, [date]);
+
   const classes = `
     input input-sm w-full 
     ${date ? "text-accent" : "text-white"} 
