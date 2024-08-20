@@ -6,12 +6,14 @@ import com.interscience.planning.testtask.TestTask;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class System {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

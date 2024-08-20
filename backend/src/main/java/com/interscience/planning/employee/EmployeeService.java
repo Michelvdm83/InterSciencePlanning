@@ -2,13 +2,14 @@ package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import com.interscience.planning.holiday.HolidayDTO;
+import com.interscience.planning.holiday.HolidayRepository;
 import com.interscience.planning.ssptask.SSPTaskDTO;
 import com.interscience.planning.ssptask.SSPTaskRepository;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class EmployeeService {
   private final EmployeeRepository employeeRepository;
   private final PasswordEncoder passwordEncoder;
   private final SSPTaskRepository sspTaskRepository;
+  private final HolidayRepository holidayRepository;
 
   public List<EmployeeResponseDTO> findAll() {
     return employeeRepository.findAllByEnabledTrue().stream()
@@ -140,9 +142,15 @@ public class EmployeeService {
     }
   }
 
-  public Set<SSPTaskDTO> getEmployeeSSPTasks(UUID employeeId) {
+  public List<SSPTaskDTO> getEmployeeSSPTasks(UUID employeeId) {
     return sspTaskRepository.findByEmployeeId(employeeId).stream()
         .map(SSPTaskDTO::from)
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
+  }
+
+  public List<HolidayDTO> getEmployeeHolidays(UUID employeeId) {
+    return holidayRepository.findByEmployeeId(employeeId).stream()
+        .map(HolidayDTO::from)
+        .collect(Collectors.toList());
   }
 }

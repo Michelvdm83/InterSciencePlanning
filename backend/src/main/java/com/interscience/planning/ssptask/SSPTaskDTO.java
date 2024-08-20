@@ -14,22 +14,23 @@ public record SSPTaskDTO(
     Integer estimatedDays;
     LocalDate dateStarted;
     LocalDate dateCompleted;
+    String systemName;
+    String taskName;
     if (sspTask.getConstructionTask() != null) {
       estimatedDays = sspTask.getConstructionTask().getEstimatedTime();
       dateStarted = sspTask.getConstructionTask().getDateStarted();
       dateCompleted = sspTask.getConstructionTask().getDateCompleted();
+      systemName = sspTask.getConstructionTask().getSystem().getName();
+      taskName = null;
     } else {
       estimatedDays = sspTask.getTask().getEstimatedTime();
       dateStarted = sspTask.getTask().getDateStarted();
       dateCompleted = sspTask.getTask().getDateCompleted();
+      systemName = null;
+      taskName = sspTask.getTask().getName();
     }
 
     return new SSPTaskDTO(
-        sspTask.getIndex(),
-        sspTask.getConstructionTask().getSystem().getName(),
-        sspTask.getTask().getName(),
-        estimatedDays,
-        dateStarted,
-        dateCompleted);
+        sspTask.getIndex(), systemName, taskName, estimatedDays, dateStarted, dateCompleted);
   }
 }
