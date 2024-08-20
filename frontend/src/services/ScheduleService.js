@@ -125,120 +125,68 @@ export default class ScheduleService {
     return daysOfHolidays;
   }
 
-  static getEmployeeScheduleOld(startDate, numberOfDays, employeeId) {
-    const allDays = this.getDates(startDate, numberOfDays);
-    const today = new Date(new Date().toISOString().split("T")[0]);
-    const todayIndex = allDays.findIndex(function (day) {
-      return today - day < 86400000 && today - day > -86400000;
-    });
-
-    let schedule = [];
-
-    ApiService.get(
-      `employees/schedules/01b7840b-951e-4625-9328-a5026377dc9d`,
-    ).then((response) => {
-      const tasks = response.data.allTasks;
-      let tasksEditable = tasks.slice();
-
-      let currentDay = 0;
-      for (let index = 0; index < tasks.length; index++) {
-        if (currentDay >= allDays.length) {
-          break;
-        }
-        let task = tasksEditable[index];
-
-        const currentName = task.systemName ? task.systemName : task.taskName;
-        let nrOfDays = task.estimatedDays;
-
-        if (!task.dateStarted && index === 0) {
-          if (todayIndex === -1) {
-            task.dateStarted = allDays[0];
-          } else {
-            task.dateStarted = allDays[todayIndex];
-          }
-        }
-        if (task.dateStarted) {
-          const taskStartDate = new Date(task.dateStarted);
-
-          if (index === 0 && allDays[0] < taskStartDate) {
-            const daysUntillStart = this.#getNumberOfWorkingDays(
-              allDays[0],
-              taskStartDate,
-            );
-            schedule.push({
-              taskName: "",
-              numberOfDays: daysUntillStart,
-              status: "empty",
-            });
-            currentDay += daysUntillStart;
-          }
-
-          if (tasks[index + 1] && tasks[index + 1].dateStarted) {
-            const nextStartDate = new Date(tasks[index + 1].dateStarted);
-            nrOfDays = this.#getNumberOfWorkingDays(
-              taskStartDate,
-              nextStartDate,
-            );
-          } else if (
-            tasks[index + 1] &&
-            (tasks[index + 1].dateStarted === null ||
-              tasks[index + 1].dateStarted === undefined)
-          ) {
-            if (todayIndex !== -1) {
-              if (currentDay + task.estimatedDays < todayIndex) {
-                nrOfDays = todayIndex - currentDay;
-              }
-            }
-          }
-
-          if (currentDay === 0 && allDays[0] > taskStartDate) {
-            nrOfDays -= this.#getNumberOfWorkingDays(
-              taskStartDate,
-              allDays[currentDay],
-            );
-          }
-
-          if (nrOfDays <= 0) {
-            //als volgende task geen startDate dan startDate berekenen
-            if (tasks[index + 1] && !tasks[index + 1].dateStarted) {
-              let nextTask = tasksEditable[index + 1];
-              const currentStart = task.dateStarted;
-              //start + estimatedDays datum berekenen, dan adv deze nextTask dateStarted
-            }
-            continue;
-          }
-        }
-
-        if (currentDay + nrOfDays >= allDays.length) {
-          nrOfDays = allDays.length - currentDay;
-        }
-        currentDay += nrOfDays;
-
-        const status = this.#getStatus(
-          task.dateStarted,
-          tasks[index + 1]?.dateStarted,
-          task.estimatedDays,
-          task.systemName !== null,
-          nrOfDays,
-        );
-
-        schedule.push({
-          taskName: currentName,
-          numberOfDays: nrOfDays,
-          status: status,
-        });
+  static #getDaysWithTypes(
+    currentDay,
+    numberOfTaskDays,
+    holidays,
+    allDays,
+    endDateSet,
+  ) {
+    const daysWithTypes = [];
+    for (let i = currentDay; i < allDays.length && i <= numberOfTaskDays; i++) {
+      const dayAsHolidayIndex = holidays.findIndex(function (day) {
+        return allDays[i] - day < 86400000 && allDays[i] - day > -86400000;
+      });
+      const type = dayAsHolidayIndex === -1 ? "task" : "holiday";
+      if (!endDateSet && type === "holiday") {
+        numberOfTaskDays++;
       }
-      if (currentDay < allDays.length) {
-        const extraDays = allDays.length - currentDay;
-        schedule.push({
-          taskName: "",
-          numberOfDays: extraDays,
-          status: "empty",
-        });
+      daysWithTypes.push({ dayIndex: i, type: type });
+    }
+    return daysWithTypes;
+  }
+
+  static #getScheduleEntries(
+    daysWithTypes,
+    taskName,
+    task,
+    nextTask,
+    calculatedNrOfDays,
+  ) {
+    const scheduleEntries = [];
+
+    let currentIterationNumber = 0;
+    while (currentIterationNumber < daysWithTypes.length) {
+      let currentNumberOfDays = 1;
+      let currentType = daysWithTypes[currentIterationNumber].type;
+      while (
+        daysWithTypes[currentIterationNumber + 1] &&
+        daysWithTypes[currentIterationNumber + 1].type === currentType
+      ) {
+        currentIterationNumber++;
+        currentNumberOfDays++;
       }
-      console.log("old");
-      console.log(schedule);
-    });
+      const thisBlock = {
+        taskName: currentType === "holiday" ? "holiday" : taskName,
+        numberOfDays: currentNumberOfDays,
+        status:
+          currentType === "holiday"
+            ? "holiday"
+            : taskName === ""
+              ? "empty"
+              : this.#getStatus(
+                  task.dateStarted,
+                  nextTask?.dateStarted,
+                  task.estimatedDays,
+                  task.systemName,
+                  calculatedNrOfDays,
+                  task.dateCompleted,
+                ),
+      };
+      scheduleEntries.push(thisBlock);
+      currentIterationNumber++;
+    }
+    return scheduleEntries;
   }
 
   /*
@@ -258,7 +206,7 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
     let schedule = [];
 
     ApiService.get(
-      `employees/schedules/4cc5d2e2-5ae1-48b9-95fd-3224fa5715e9`,
+      `employees/schedules/82bc5b5a-8b02-467b-bc93-51bd21fd09b1`,
     ).then((response) => {
       console.log(response.data.allTasks);
       const tasks = response.data.allTasks ? response.data.allTasks : [];
@@ -269,22 +217,42 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
       const holidays = this.#getDaysOfHolidays(response.data.holidays);
 
       let currentDay = 0;
-      //check of holidays currentDay bevat
-      //zo ja, maak vakantieblok aan
       const firstDayHolidayIndex = holidays.findIndex(function (day) {
         return allDays[0] - day < 86400000 && allDays[0] - day > -86400000;
       });
 
       if (firstDayHolidayIndex !== -1) {
-        let nrOfHolidayDays = 0;
-        for (
-          let holidayIndex = firstDayHolidayIndex;
-          currentDay < allDays.length && holidayIndex < holidays.length;
-          holidayIndex++
-        ) {
-          if (holidays[holidayIndex] - allDays[currentDay] < 86400000) {
+        let firstTaskStart;
+        if (tasks[0]) {
+          if (tasks[0].dateStarted) {
+            firstTaskStart = tasks[0].dateStarted;
+          } else {
+            if (todayIndex === -1 || todayIndex < currentDay) {
+              firstTaskStart = allDays[currentDay];
+            } else {
+              firstTaskStart = allDays[todayIndex];
+            }
           }
+        } else {
+          firstTaskStart = allDays[allDays.length - 1];
         }
+        const numberOfDaysUntillStart = this.#getNumberOfWorkingDays(
+          allDays[currentDay],
+          firstTaskStart,
+          false,
+        );
+        const daysBeforeStart = this.#getDaysWithTypes(
+          currentDay,
+          numberOfDaysUntillStart,
+          holidays,
+          allDays,
+          tasks[0] && tasks[0].dateStarted,
+        );
+        const scheduleEntries = this.#getScheduleEntries(daysBeforeStart);
+        for (let i = 0; i < scheduleEntries.length; i++) {
+          schedule.push(scheduleEntries[i]);
+        }
+        currentDay += daysBeforeStart.length;
       }
 
       for (let index = 0; index < tasks.length; index++) {
@@ -299,31 +267,42 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
         let trailingTask;
 
         if (index === 0) {
-          //rekening houden met mogelijke holiday (currentDay is niet altijd 0 meer)
           if (!task.dateStarted) {
-            if (todayIndex === -1) {
+            if (todayIndex === -1 || todayIndex < currentDay) {
               task.dateStarted = allDays[currentDay];
             } else {
               task.dateStarted = allDays[todayIndex];
             }
           }
           taskStartDate = new Date(task.dateStarted);
-          if (taskStartDate < allDays[0]) {
+          if (taskStartDate < allDays[currentDay]) {
             nrOfDays -= this.#getNumberOfWorkingDays(
               taskStartDate,
               allDays[currentDay],
             );
-            task.dateStarted = allDays[0];
-          } else if (taskStartDate > allDays[0]) {
+            task.dateStarted = allDays[currentDay];
+          } else if (taskStartDate > allDays[currentDay]) {
             const daysUntillStart = this.#getNumberOfWorkingDays(
-              allDays[0],
+              allDays[currentDay],
               taskStartDate,
             );
-            schedule.push({
-              taskName: "",
-              numberOfDays: daysUntillStart,
-              status: "empty",
-            });
+            const daysInThisPeriod = this.#getDaysWithTypes(
+              currentDay,
+              daysUntillStart,
+              holidays,
+              allDays,
+              tasks[1] && tasks[1].dateStarted,
+            );
+            const scheduleEntries = this.#getScheduleEntries(
+              daysInThisPeriod,
+              "",
+              task,
+              tasksEditable[index + 1],
+              daysUntillStart,
+            );
+            for (let i = 0; i < scheduleEntries.length; i++) {
+              schedule.push(scheduleEntries[i]);
+            }
             currentDay += daysUntillStart;
           }
         }
@@ -379,8 +358,6 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
                   numberOfDays: nrOfConflictingDays,
                   status: "conflict",
                 };
-                //trailingTask = conflict blok aanmaken
-                // einddatum, volgende startdatum en nrOfDays aanpassen
               } else {
                 nrOfDays = this.#getNumberOfWorkingDays(
                   taskStartDate,
@@ -451,9 +428,11 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
           if (currentDay + trailingTask.numberOfDays >= allDays.length) {
             trailingTask.numberOfDays = allDays.length - currentDay;
           }
+          currentDay += trailingTask.numberOfDays;
           schedule.push(trailingTask);
         }
       }
+      //check voor vakanties
       if (currentDay < allDays.length) {
         const extraDays = allDays.length - currentDay;
         schedule.push({
