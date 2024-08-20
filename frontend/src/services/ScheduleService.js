@@ -12,7 +12,6 @@ export default class ScheduleService {
         currentDay === 0 ? 1 : currentDay === 6 ? 2 : -(currentDay - 1);
       monday = new Date(current.setDate(current.getDate() + addDays));
     }
-    console.log(monday);
   }
 
   static getDates(startDate, numberOfDays) {
@@ -121,7 +120,6 @@ export default class ScheduleService {
         daysOfHolidays.splice(i + 1, 1);
       }
     }
-    console.log(daysOfHolidays);
     return daysOfHolidays;
   }
 
@@ -133,7 +131,12 @@ export default class ScheduleService {
     endDateSet,
   ) {
     const daysWithTypes = [];
-    for (let i = currentDay; i < allDays.length && i <= numberOfTaskDays; i++) {
+
+    for (
+      let i = currentDay;
+      i < allDays.length && i < currentDay + numberOfTaskDays;
+      i++
+    ) {
       const dayAsHolidayIndex = holidays.findIndex(function (day) {
         return allDays[i] - day < 86400000 && allDays[i] - day > -86400000;
       });
@@ -174,27 +177,22 @@ export default class ScheduleService {
             ? "holiday"
             : taskName === ""
               ? "empty"
-              : this.#getStatus(
-                  task.dateStarted,
-                  nextTask?.dateStarted,
-                  task.estimatedDays,
-                  task.systemName,
-                  calculatedNrOfDays,
-                  task.dateCompleted,
-                ),
+              : taskName === "conflict"
+                ? "conflict"
+                : this.#getStatus(
+                    task.dateStarted,
+                    nextTask?.dateStarted,
+                    task.estimatedDays,
+                    task.systemName,
+                    calculatedNrOfDays,
+                    task.dateCompleted,
+                  ),
       };
       scheduleEntries.push(thisBlock);
       currentIterationNumber++;
     }
     return scheduleEntries;
   }
-
-  /*
-Service functions:
-getDates(startDate, numberOfDays): geeft array van Dates terug, weekenden niet meegerekend
-getEmployeeSchedule(startDate, numberOfDays, employeeId): geeft lijst terug van: [taskName, numberOfDays]
-
-taskName is systeemnaam indien het om een systeem gaat, naam van Task indien task en "vrij" indien holiday*/
 
   static getEmployeeSchedule(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
@@ -208,12 +206,9 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
     ApiService.get(
       `employees/schedules/82bc5b5a-8b02-467b-bc93-51bd21fd09b1`,
     ).then((response) => {
-      console.log(response.data.allTasks);
       const tasks = response.data.allTasks ? response.data.allTasks : [];
       let tasksEditable = JSON.parse(JSON.stringify(tasks));
 
-      console.log("vakanties:");
-      console.log(response.data.holidays);
       const holidays = this.#getDaysOfHolidays(response.data.holidays);
 
       let currentDay = 0;
@@ -285,13 +280,14 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
             const daysUntillStart = this.#getNumberOfWorkingDays(
               allDays[currentDay],
               taskStartDate,
+              false,
             );
             const daysInThisPeriod = this.#getDaysWithTypes(
               currentDay,
               daysUntillStart,
               holidays,
               allDays,
-              tasks[1] && tasks[1].dateStarted,
+              tasks[1] !== null && tasks[1].dateStarted !== null,
             );
             const scheduleEntries = this.#getScheduleEntries(
               daysInThisPeriod,
@@ -303,7 +299,7 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
             for (let i = 0; i < scheduleEntries.length; i++) {
               schedule.push(scheduleEntries[i]);
             }
-            currentDay += daysUntillStart;
+            currentDay += daysInThisPeriod.length;
           }
         }
 
@@ -330,7 +326,7 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
                 this.#getNumberOfWorkingDays(
                   taskCompletedDate,
                   nextStartDate,
-                  true,
+                  false,
                 ) === 0
               ) {
                 const nrOfConflictingDays = this.#getNumberOfWorkingDays(
@@ -354,7 +350,7 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
                 );
                 nextTask.dateStarted = nextStartDate;
                 trailingTask = {
-                  taskName: "",
+                  taskName: "conflict",
                   numberOfDays: nrOfConflictingDays,
                   status: "conflict",
                 };
@@ -403,46 +399,74 @@ taskName is systeemnaam indien het om een systeem gaat, naam van Task indien tas
         if (currentDay + nrOfDays >= allDays.length) {
           nrOfDays = allDays.length - currentDay;
         }
-        currentDay += nrOfDays;
+
+        let endDateIsSet = true;
+        if (nrOfDays + currentDay === allDays.length - 1) {
+          endDateIsSet = true;
+        } else if (!tasks[index + 1]) {
+          endDateIsSet = false;
+        } else if (!tasks[index + 1].dateStarted) {
+          endDateIsSet = false;
+        }
+        const daysInThisPeriod = this.#getDaysWithTypes(
+          currentDay,
+          nrOfDays,
+          holidays,
+          allDays,
+          endDateIsSet,
+        );
+        const scheduleEntries = this.#getScheduleEntries(
+          daysInThisPeriod,
+          currentName,
+          tasks[index],
+          tasks[index + 1],
+          nrOfDays,
+        );
+        for (let i = 0; i < scheduleEntries.length; i++) {
+          schedule.push(scheduleEntries[i]);
+        }
+        currentDay += daysInThisPeriod.length;
 
         if (tasks[index + 1] && !tasksEditable[index + 1].dateStarted) {
           tasksEditable[index + 1].dateStarted = allDays[currentDay];
         }
 
-        const status = this.#getStatus(
-          tasks[index].dateStarted,
-          tasks[index + 1]?.dateStarted,
-          task.estimatedDays,
-          task.systemName !== null,
-          nrOfDays,
-          tasks[index].dateCompleted,
-        );
-
-        schedule.push({
-          taskName: currentName,
-          numberOfDays: nrOfDays,
-          status: status,
-        });
-
         if (currentDay < allDays.length && trailingTask) {
           if (currentDay + trailingTask.numberOfDays >= allDays.length) {
             trailingTask.numberOfDays = allDays.length - currentDay;
           }
-          currentDay += trailingTask.numberOfDays;
-          schedule.push(trailingTask);
+          const daysInThisPeriod = this.#getDaysWithTypes(
+            currentDay,
+            trailingTask.numberOfDays,
+            holidays,
+            allDays,
+            true,
+          );
+          const scheduleEntries = this.#getScheduleEntries(
+            daysInThisPeriod,
+            trailingTask.taskName,
+          );
+          for (let i = 0; i < scheduleEntries.length; i++) {
+            schedule.push(scheduleEntries[i]);
+          }
+          currentDay += daysInThisPeriod.length;
         }
       }
-      //check voor vakanties
+
       if (currentDay < allDays.length) {
         const extraDays = allDays.length - currentDay;
-        schedule.push({
-          taskName: "",
-          numberOfDays: extraDays,
-          status: "empty",
-        });
+        const daysInThisPeriod = this.#getDaysWithTypes(
+          currentDay,
+          extraDays,
+          holidays,
+          allDays,
+          true,
+        );
+        const scheduleEntries = this.#getScheduleEntries(daysInThisPeriod, "");
+        for (let i = 0; i < scheduleEntries.length; i++) {
+          schedule.push(scheduleEntries[i]);
+        }
       }
-      console.log("new");
-      console.log(schedule);
     });
   }
 }
