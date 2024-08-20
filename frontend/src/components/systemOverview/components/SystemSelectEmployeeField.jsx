@@ -1,24 +1,38 @@
-import { useState } from "react";
+import { useGetEmployees } from "../../../hooks/useGetEmployees.js";
 
 export default function SystemSelectEmployeeField({
-  employeeName,
   editable,
   title,
+  system,
+  setSystem,
+  variable,
 }) {
-  const [value, setValue] = useState(employeeName);
+  const [employees] = useGetEmployees();
 
   return (
     <div>
       <div>{title}</div>
       <select
-        defaultValue={employeeName}
-        onChange={(e) => {
-          setValue(e.target.value === "" ? null : e.target.value);
+        defaultValue={system[variable]}
+        onChange={(event) => {
+          setSystem({
+            ...system,
+            [variable]: event.target.value === "" ? null : event.target.value,
+          });
         }}
         className="select select-bordered select-sm w-full text-accent"
+        disabled={!editable}
       >
-        <option value={""}></option>
-        <option value={employeeName}>{employeeName}</option>
+        <option value="" disabled>
+          Medewerker
+        </option>
+        {employees.map((employee) => {
+          return (
+            <option value={employee.id} key={employee.id}>
+              {employee.name}
+            </option>
+          );
+        })}
       </select>
     </div>
   );

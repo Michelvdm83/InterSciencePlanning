@@ -1,17 +1,24 @@
-import { useState } from "react";
-
-export default function SystemDateField({ date, editable, title }) {
-  const [value, setValue] = useState(date);
+export default function SystemDateField({
+  editable,
+  title,
+  system,
+  setSystem,
+  variable,
+  date,
+}) {
   const classes =
     "input input-sm w-full text-accent select-text disabled:bg-white disabled:text-accent" +
-    (value ? "" : " text-transparent disabled:text-transparent");
+    (system[variable] ? "" : " text-transparent disabled:text-transparent");
 
   return (
     <div>
       <div>{title}</div>
       <input
         type="date"
-        defaultValue={date}
+        value={date || ""}
+        onChange={(event) =>
+          setSystem({ ...system, [variable]: event.target.value })
+        }
         className={classes}
         disabled={!editable}
       />

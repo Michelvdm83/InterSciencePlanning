@@ -61,7 +61,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
 
   function handleClose() {
     setModalIsOpen(false);
-    setSystem(null);
+    setSystem("");
   }
 
   function handleOnKeyDown(e) {
@@ -74,12 +74,15 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
     // check if in editmode (sName is null)
 
     e.preventDefault();
-    if (system.name.trim().length() === 0) {
+    if (!system.name || system.name.trim().length === 0) {
       setError("Systeemnaam is verplicht");
       return;
     }
 
-    ApiService.post("systems", system).catch((error) => {});
+    ApiService.post("systems", system)
+      .then(handleClose())
+      .catch((error) => {});
+    // translate errors
   }
 
   return (
@@ -90,104 +93,146 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
             <div className="flex h-full flex-col">
               <SystemTextField
                 title="Systeem"
-                text={system.name}
+                variable="name"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemTextField
                 title="Po-nummer"
-                text={system.poNumber}
+                variable="poNumber"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemTextField
                 title="Systeem type"
-                text={system.systemType}
+                variable="systemType"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemSelectEmployeeField
                 title="Eindverantwoordelijke"
-                employeeName={system.employeeResponsible}
+                variable="employeeResponsible"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemCheckboxField
                 title="Schema goedgekeurd"
-                defaultValue={system.schemeApproved}
+                variable="schemeApproved"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemCheckboxField
                 title="Specsheet goedgekeurd"
-                defaultValue={system.specsheetApproved}
+                variable="specsheetApproved"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemDateField
                 title="Afgesproken deadline"
                 date={system.agreedDate}
+                variable="agreedDate"
                 editable={false}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemDateField
                 title="Verwachte einddatum"
                 date={expectedFinish}
-                editable={false}
+                variable="expectedFinish"
+                editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemDateField
                 title="Dag van levering/installatie"
                 date={system.actualDeliveryDate}
-                editable={employeeFunction == "TEAM_LEADER"}
+                variable="actualDeliveryDate"
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
+                system={system}
+                setSystem={setSystem}
               />
             </div>
 
             <div className="flex flex-col">
               <SystemSelectStatusField
                 title="Status"
-                defaultValue={system.status}
+                variable="status"
                 editable={true}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemSelectEmployeeField
                 title="SSP medewerker"
-                employeeName={system.employeeSSP}
+                variable="employeeSSP"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemDateField
                 title="Startdatum productie"
                 date={system.startOfConstruction}
+                variable="startOfConstruction"
                 editable={
                   employeeFunction == "TEAM_LEADER" || employeeFunction == "SSP"
                 }
+                system={system}
+                setSystem={setSystem}
               />
               <SystemNumberField
                 title="Productie dagen"
-                number={system.estimatedConstructionDays}
+                variable="estimatedConstructionDays"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemSelectEmployeeField
                 title="FT medewerker"
-                employeeName={system.employeeFT}
+                variable="employeeFT"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemDateField
                 title="Startdatum test"
                 date={system.startOfTest}
+                variable="startOfTest"
                 editable={
                   employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
                 }
+                system={system}
+                setSystem={setSystem}
               />
               <SystemNumberField
                 title="Test dagen"
-                number={system.estimatedTestDays}
+                variable="estimatedTestDays"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemTextArea
                 heightCSS="h-20"
                 title="Contactgegevens klant"
                 text={system.customerContactInformation}
+                variable="customerContactInformation"
                 editable={
                   employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
                 }
+                system={system}
+                setSystem={setSystem}
               />
             </div>
             <div className="flex flex-col">
@@ -195,13 +240,19 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 heightCSS="h-40"
                 title="Project informatie"
                 text={system.projectInformation}
+                variable="projectInformation"
                 editable={true}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemTextArea
                 heightCSS="h-40"
                 title="Notities"
                 text={system.notes}
+                variable="notes"
                 editable={true}
+                system={system}
+                setSystem={setSystem}
               />
               <div className="flex flex-col gap-2">
                 <button className="btn btn-primary" onClick={handleClose}>

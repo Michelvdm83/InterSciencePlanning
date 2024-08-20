@@ -1,18 +1,16 @@
 import { useState } from "react";
 
-export default function SystemNumberField({ number, editable, title }) {
+export default function SystemNumberField({
+  editable,
+  title,
+  system,
+  setSystem,
+  variable,
+}) {
   let classes =
     "input input-bordered bg-white text-accent disabled:text-accent input-sm w-full";
   if (!editable) {
     classes += " input-disabled";
-  }
-
-  const [myNumber, setMyNumber] = useState(number ? number : "");
-
-  function updateNumber(event) {
-    if (editable) {
-      setMyNumber(event.target.value);
-    }
   }
 
   function checkKeyPressed(event) {
@@ -27,8 +25,10 @@ export default function SystemNumberField({ number, editable, title }) {
       <input
         type="number"
         className={classes}
-        value={myNumber}
-        onChange={(event) => updateNumber(event)}
+        value={system[variable] || ""}
+        onChange={(event) =>
+          setSystem({ ...system, [variable]: event.target.value })
+        }
         onKeyDown={(event) => checkKeyPressed(event)}
       />
     </div>
