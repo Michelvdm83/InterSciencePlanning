@@ -70,7 +70,7 @@ public class EmployeeController {
     testSchedule.sort(Comparator.comparingInt(SSPTaskDto::index));
 
     var holidays = new ArrayList<HolidayDTO>();
-    holidays.add(new HolidayDTO(null, firstDay, firstDay.plusDays(4)));
+    holidays.add(new HolidayDTO(null, firstDay.plusDays(1), firstDay.plusDays(3)));
     holidays.add(new HolidayDTO(null, testDate.plusDays(7), testDate.plusDays(7)));
     holidays.add(new HolidayDTO(null, testDate.plusDays(4), testDate.plusDays(5)));
     holidays.sort(Comparator.comparing(HolidayDTO::startDate));
