@@ -9,4 +9,6 @@ public interface EmployeeRepository extends CrudRepository<Employee, UUID> {
   Optional<Employee> findByEmail(String email);
 
   List<Employee> findAllByEnabledTrue();
+
+  List<Employee> findAllByFunctionOrFunction(Function function1, Function function2);
 }

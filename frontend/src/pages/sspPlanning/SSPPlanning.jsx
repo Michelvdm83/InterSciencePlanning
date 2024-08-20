@@ -1,6 +1,33 @@
 /* Safelist: border-holiday border-started border-planned border-task border-done bg-done bg-task bg-planned bg-holiday bg-started bg-accent */
 
+import { useEffect, useState } from "react";
+import ApiService from "../../services/ApiService.js";
+
 export default function SSPPlanning() {
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    ApiService.get("/employees/ssp-planning").then((response) =>
+      setEmployees(sortEmployeesOnFunction(response.data)),
+    );
+
+    setLoading(false);
+  }, []);
+
+  const sortEmployeesOnFunction = (unsortedEmployees) => {
+    return unsortedEmployees.sort(function (a, b) {
+      if (a.function === "SSP" && b.function !== "SSP") {
+        return -1;
+      } else if (a.function !== "SSP" && b.function === "SSP") {
+        return 1;
+      } else {
+        return a.name.localeCompare(b.name);
+      }
+    });
+  };
+
   const dateCol = [
     "12-08-2024",
     "13-08-2024",
@@ -77,35 +104,32 @@ export default function SSPPlanning() {
     { name: "vakantie", numberOfDays: "1", status: "holiday" },
     { name: "Bakger007", numberOfDays: "3", status: "planned" },
   ];
-  const employees = [
-    "employee1",
-    "employee2",
-    "employee3",
-    "employee4",
-    "employee5",
-    "employee6",
-    "employee7",
-  ];
 
   const getTasks = (employee) => {
     //this function will get the correct task list from the service when that is done
     switch (employee) {
-      case "employee1":
+      case "SSP Medewerker":
         return employee1Tasks;
-      case "employee2":
+      case "Teamleider":
         return employee2Tasks;
-      case "employee3":
+      case "Henk":
         return employee3Tasks;
-      case "employee4":
+      case "Pieter":
         return employee4Tasks;
-      case "employee5":
+      case "Klaas":
         return employee5Tasks;
-      case "employee6":
+      case "Jan":
         return employee6Tasks;
-      case "employee7":
+      case "Ande":
+        return employee7Tasks;
+      default:
         return employee7Tasks;
     }
   };
+
+  if (loading === true) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div className="flex h-full w-full justify-center overflow-auto p-8">
@@ -119,7 +143,7 @@ export default function SSPPlanning() {
                 key={index}
                 className={`row-start-1 col-start-${index + 2} h-10 w-48 font-Effra_Bd text-2xl text-secondary`}
               >
-                {employee}
+                {employee.name}
               </div>
             );
           })}
@@ -134,7 +158,7 @@ export default function SSPPlanning() {
           ))}
 
           {employees.map((employee, employeeIndex) => {
-            const employeeTasks = getTasks(employee);
+            const employeeTasks = getTasks(employee.name);
             {
               return employeeTasks.map((task, taskIndex) => {
                 return Array.from({ length: task.numberOfDays }).map((_, i) => {

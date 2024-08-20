@@ -20,6 +20,11 @@ public class EmployeeController {
     return employeeService.findAll();
   }
 
+  @GetMapping("/ssp-planning")
+  public List<EmployeeResponseDTO> getEmployeesForSSPPlanning() {
+    return employeeService.findAllByFunctionOrFunction(Function.SSP, Function.SSP_TEAM_LEADER);
+  }
+
   @PostMapping
   public ResponseEntity<EmployeeResponseDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
     EmployeeResponseDTO employee = employeeService.createEmployee(employeeDTO);
