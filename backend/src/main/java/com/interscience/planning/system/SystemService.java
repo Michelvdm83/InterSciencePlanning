@@ -25,6 +25,10 @@ public class SystemService {
   private final ConstructionTaskRepository constructionTaskRepository;
   private final TestTaskRepository testTaskRepository;
 
+  public System getSystem(String name) {
+    return systemRepository.findByName(name).orElseThrow(NotFoundException::new);
+  }
+
   public void createNewSystem(SystemPostPatchDTO systemPostPatchDTO) {
     validateName(systemPostPatchDTO);
 
