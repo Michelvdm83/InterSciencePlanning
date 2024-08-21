@@ -34,11 +34,6 @@ public class SystemService {
     }
     System system = new System(systemPostPatchDTO.name());
 
-    system.setPoNumber(systemPostPatchDTO.poNumber());
-    system.setSystemType(systemPostPatchDTO.systemType());
-    system.setAgreedDate(systemPostPatchDTO.agreedDate());
-    system.setActualDeliveryDate(systemPostPatchDTO.actualDeliveryDate());
-
     if (systemPostPatchDTO.employeeResponsible() != null) {
       Employee employeeResponsible =
           employeeRepository
@@ -47,48 +42,13 @@ public class SystemService {
       system.setEmployeeResponsible(employeeResponsible);
     }
 
-    ConstructionTask newConstructionTask;
-    SSPTask newSSPTask;
-    if (systemPostPatchDTO.estimatedConstructionDays() != null
-        && systemPostPatchDTO.employeeSSP() != null) {
-      Employee sspEmployee =
-          employeeRepository
-              .findById(systemPostPatchDTO.employeeSSP())
-              .orElseThrow(NotFoundException::new);
-      newSSPTask = new SSPTask(sspEmployee);
-      newConstructionTask =
-          new ConstructionTask(newSSPTask, systemPostPatchDTO.estimatedConstructionDays());
-    } else {
-      newSSPTask = new SSPTask();
-      newConstructionTask = new ConstructionTask(newSSPTask);
-    }
-    newConstructionTask.setDateStarted(systemPostPatchDTO.startOfConstruction());
-    constructionTaskRepository.save(newConstructionTask);
-    newSSPTask.setConstructionTask(newConstructionTask);
-    sspTaskRepository.save(newSSPTask);
-
-    TestTask newTestTask;
-    if (systemPostPatchDTO.estimatedTestDays() != null && systemPostPatchDTO.employeeFT() != null) {
-      Employee ftEmployee =
-          employeeRepository
-              .findById(systemPostPatchDTO.employeeFT())
-              .orElseThrow(NotFoundException::new);
-      newTestTask = new TestTask(ftEmployee, systemPostPatchDTO.estimatedTestDays());
-    } else {
-      newTestTask = new TestTask();
-    }
-    newTestTask.setDateStarted(systemPostPatchDTO.startOfTest());
-
-    newConstructionTask.setSystem(system);
-    constructionTaskRepository.save(newConstructionTask);
-    newTestTask.setSystem(system);
-    testTaskRepository.save(newTestTask);
-
+    system.setPoNumber(systemPostPatchDTO.poNumber());
+    system.setSystemType(systemPostPatchDTO.systemType());
+    system.setAgreedDate(systemPostPatchDTO.agreedDate());
+    system.setActualDeliveryDate(systemPostPatchDTO.actualDeliveryDate());
     system.setNotes(systemPostPatchDTO.notes());
-
     system.setCustomerContactInformation(systemPostPatchDTO.customerContactInformation());
     system.setProjectInformation(systemPostPatchDTO.projectInformation());
-
     system.setSchemeApproved(
         systemPostPatchDTO.schemeApproved() != null ? systemPostPatchDTO.schemeApproved() : false);
     system.setSpecsheetApproved(
@@ -100,6 +60,52 @@ public class SystemService {
             ? systemPostPatchDTO.status()
             : SystemStatus.TO_BE_PLANNED);
 
+    createConstructionTask(systemPostPatchDTO, system);
+    createTestTask(systemPostPatchDTO, system);
+
     systemRepository.save(system);
+  }
+
+  private void createConstructionTask(SystemPostPatchDTO systemPostPatchDTO, System system) {
+    ConstructionTask newConstructionTask = new ConstructionTask();
+    SSPTask newSSPTask = new SSPTask();
+
+    if (systemPostPatchDTO.estimatedConstructionDays() != null) {
+      if (systemPostPatchDTO.employeeSSP() != null) {
+        Employee sspEmployee =
+            employeeRepository
+                .findById(systemPostPatchDTO.employeeSSP())
+                .orElseThrow(NotFoundException::new);
+        newSSPTask.setEmployee(sspEmployee);
+      }
+      newConstructionTask.setEstimatedTime(systemPostPatchDTO.estimatedConstructionDays());
+    }
+    newConstructionTask.setDateStarted(systemPostPatchDTO.startOfConstruction());
+
+    newSSPTask.setConstructionTask(newConstructionTask);
+    newConstructionTask.setSspTask(newSSPTask);
+    newConstructionTask.setSystem(system);
+    sspTaskRepository.save(newSSPTask);
+    constructionTaskRepository.save(newConstructionTask);
+    system.setConstructionTask(newConstructionTask);
+  }
+
+  private void createTestTask(SystemPostPatchDTO systemPostPatchDTO, System system) {
+    TestTask newTestTask = new TestTask();
+
+    if (systemPostPatchDTO.estimatedTestDays() != null) {
+      if (systemPostPatchDTO.employeeFT() != null) {
+        Employee ftEmployee =
+            employeeRepository
+                .findById(systemPostPatchDTO.employeeFT())
+                .orElseThrow(NotFoundException::new);
+        newTestTask.setEmployee(ftEmployee);
+      }
+      newTestTask.setEstimatedTime(systemPostPatchDTO.estimatedTestDays());
+    }
+    newTestTask.setDateStarted(systemPostPatchDTO.startOfTest());
+    newTestTask.setSystem(system);
+    testTaskRepository.save(newTestTask);
+    system.setTestTask(newTestTask);
   }
 }

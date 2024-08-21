@@ -24,8 +24,4 @@ public class SSPTask {
   @OneToOne private Task task;
 
   private Integer index;
-
-  public SSPTask(Employee employee) {
-    this.employee = employee;
-  }
 }

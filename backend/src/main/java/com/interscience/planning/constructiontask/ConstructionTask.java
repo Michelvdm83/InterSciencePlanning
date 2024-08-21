@@ -27,13 +27,4 @@ public class ConstructionTask {
   private LocalDate dateStarted;
 
   private LocalDate dateCompleted;
-
-  public ConstructionTask(SSPTask sspTask, Integer estimatedTime) {
-    this.sspTask = sspTask;
-    this.estimatedTime = estimatedTime;
-  }
-
-  public ConstructionTask(SSPTask sspTask) {
-    this.sspTask = sspTask;
-  }
 }

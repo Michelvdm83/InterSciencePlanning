@@ -26,9 +26,4 @@ public class TestTask {
   private LocalDate dateStarted;
 
   private LocalDate dateCompleted;
-
-  public TestTask(Employee employee, Integer estimatedTime) {
-    this.employee = employee;
-    this.estimatedTime = estimatedTime;
-  }
 }
