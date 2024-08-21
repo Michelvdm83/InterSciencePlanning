@@ -22,7 +22,7 @@ public class HolidayController {
 
   @GetMapping
   public List<HolidayResponseDTO> getAll() {
-    return holidayRepository.findAllByEnabledTrue().stream()
+    return holidayRepository.findAll().stream()
         .sorted(Comparator.comparing(Holiday::getStartDate))
         .map(HolidayResponseDTO::from)
         .collect(Collectors.toList());
@@ -54,8 +54,7 @@ public class HolidayController {
   @DeleteMapping("{id}")
   public ResponseEntity<Void> deleteHoliday(@PathVariable UUID id) {
     Holiday holiday = holidayRepository.findById(id).orElseThrow(NotFoundException::new);
-    holiday.setEnabled(false);
-    holidayRepository.save(holiday);
+    holidayRepository.delete(holiday);
     return ResponseEntity.noContent().build();
   }
 }
