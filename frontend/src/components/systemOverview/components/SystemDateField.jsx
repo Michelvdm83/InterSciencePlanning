@@ -17,12 +17,9 @@ export default function SystemDateField({
     }
   }, [date]);
 
-  const classes = `
-    input input-sm w-full 
-    ${date ? "text-accent" : "text-white"} 
-    select-text 
-    ${editable ? "" : "disabled:bg-white disabled:text-accent"}
-  `;
+  const classes =
+    "input input-sm w-full text-accent select-text disabled:bg-white disabled:text-accent" +
+    (date ? "" : " text-transparent disabled:text-transparent");
 
   return (
     <div>
@@ -30,9 +27,17 @@ export default function SystemDateField({
       <input
         type="date"
         value={date || ""}
-        onChange={(event) =>
-          setSystem({ ...system, [variable]: event.target.value })
-        }
+        onChange={(event) => {
+          setSystem({ ...system, [variable]: event.target.value });
+        }}
+        onBlur={() => {
+          if (date === "") {
+            setSystem({
+              ...system,
+              [variable]: null,
+            });
+          }
+        }}
         className={classes}
         disabled={!editable}
       />

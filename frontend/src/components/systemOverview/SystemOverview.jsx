@@ -8,10 +8,14 @@ import SystemSelectStatusField from "./components/SystemSelectStatusField.jsx";
 import SystemSelectEmployeeField from "./components/SystemSelectEmployeeField.jsx";
 import SystemNumberField from "./components/SystemNumberField.jsx";
 import SystemTextArea from "./components/SystemTextArea.jsx";
+import {
+  translateError,
+  validateSystemData,
+} from "./components/validateSystem.js";
 
 export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
   const [expectedFinish, setExpectedFinish] = useState(null);
-  const [system, setSystem] = useState("");
+  const [system, setSystem] = useState({});
   const [error, setError] = useState("");
 
   const employeeFunction = EmployeeService.getEmployeeFunction();
@@ -71,18 +75,19 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
   }
 
   function handleSave(e) {
-    // check if in editmode (sName is null)
-
     e.preventDefault();
-    if (!system.name || system.name.trim().length === 0) {
-      setError("Systeemnaam is verplicht");
-      return;
-    }
 
-    ApiService.post("systems", system)
-      .then(handleClose())
-      .catch((error) => {});
-    // translate errors
+    if (validateSystemData(system, setError)) {
+      ApiService.post("systems", system)
+        .then(() => handleClose())
+        .catch((error) => {
+          if (error.response && error.response.status === 404) {
+            setError("Medewerker niet gevonden");
+          } else {
+            setError(translateError(error.response?.data?.detail));
+          }
+        });
+    }
   }
 
   return (
@@ -254,17 +259,17 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 system={system}
                 setSystem={setSystem}
               />
-              <div className="flex flex-col gap-2">
+              <div className="mt-2 flex flex-col gap-4">
                 <button className="btn btn-primary" onClick={handleClose}>
                   Annuleren
                 </button>
                 <button className="btn btn-accent" onClick={handleSave}>
                   Opslaan
                 </button>
-                {error && <p className="text-red-600">{error}</p>}
               </div>
             </div>
           </div>
+          {error && <p className="py-3 text-center text-red-600">{error}</p>}
         </form>
       </div>
     </dialog>

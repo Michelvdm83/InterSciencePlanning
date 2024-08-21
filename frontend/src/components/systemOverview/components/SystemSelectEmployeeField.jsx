@@ -18,6 +18,10 @@ export default function SystemSelectEmployeeField({
     filteredEmployees = employees.filter(
       (employee) => employee.function === "FT",
     );
+  } else if (variable === "employeeResponsible") {
+    filteredEmployees = employees.filter(
+      (employee) => employee.function !== "SSP",
+    );
   } else {
     filteredEmployees = employees;
   }
@@ -36,7 +40,7 @@ export default function SystemSelectEmployeeField({
         className="select select-bordered select-sm w-full text-accent"
         disabled={!editable}
       >
-        <option value="" disabled></option>
+        <option value=""></option>
         {filteredEmployees.map((employee) => {
           return (
             <option value={employee.id} key={employee.id}>
