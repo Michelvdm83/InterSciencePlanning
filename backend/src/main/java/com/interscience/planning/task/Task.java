@@ -22,7 +22,6 @@ public class Task {
   private Integer estimatedTime;
 
   private LocalDate dateStarted;
-  private LocalDate dateCompleted;
 
   private LocalDate dateCompleted;
 
