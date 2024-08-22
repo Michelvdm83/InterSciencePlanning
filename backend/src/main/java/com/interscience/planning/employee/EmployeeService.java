@@ -28,7 +28,9 @@ public class EmployeeService {
 
   public List<EmployeeResponseDTO> findAllByFunctionOrFunction(
       Function function1, Function function2) {
-    return employeeRepository.findAllByFunctionOrFunction(function1, function2).stream()
+    return employeeRepository
+        .findAllByFunctionAndEnabledTrueOrFunctionAndEnabledTrue(function1, function2)
+        .stream()
         .map(EmployeeResponseDTO::from)
         .toList();
   }

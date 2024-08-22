@@ -10,5 +10,6 @@ public interface EmployeeRepository extends CrudRepository<Employee, UUID> {
 
   List<Employee> findAllByEnabledTrue();
 
-  List<Employee> findAllByFunctionOrFunction(Function function1, Function function2);
+  List<Employee> findAllByFunctionAndEnabledTrueOrFunctionAndEnabledTrue(
+      Function function1, Function function2);
 }
