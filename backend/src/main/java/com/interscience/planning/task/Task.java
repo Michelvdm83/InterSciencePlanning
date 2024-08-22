@@ -24,8 +24,6 @@ public class Task {
   private LocalDate dateStarted;
   private LocalDate dateCompleted;
 
-  private LocalDate dateCompleted;
-
   @OneToOne(mappedBy = "task")
   private SSPTask sspTask;
 
