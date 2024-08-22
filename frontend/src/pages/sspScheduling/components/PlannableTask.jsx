@@ -4,28 +4,39 @@ export default function PlannableTask({ task, employees, onChange }) {
   const taskName = task.taskName;
   const systemName = task.systemName;
   const estimatedTime = task.estimatedTime;
+  let labelClasses = "label rounded-md bg-white p-3";
+  if (systemName) {
+    labelClasses += " cursor-pointer text-primary";
+  }
 
   function getStandardField(label) {
     return (
-      <label className="label">
+      <label className={labelClasses}>
         {label}
-        <select
-          defaultValue={""}
-          onChange={onChange}
-          className="select select-bordered mt-2 w-1/2"
-          onClick={(event) => event.stopPropagation()}
-        >
-          <option value="" disabled>
-            Naam
-          </option>
-          {employees.map((employee) => {
-            return (
-              <option value={employee.id} key={employee.id}>
-                {employee.name}
-              </option>
-            );
-          })}
-        </select>
+        {estimatedTime && (
+          <select
+            defaultValue={""}
+            onChange={onChange}
+            className="select select-bordered select-accent select-sm w-1/2 cursor-pointer"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <option value="" disabled>
+              Naam
+            </option>
+            {employees.map((employee) => {
+              return (
+                <option value={employee.id} key={employee.id}>
+                  {employee.name}
+                </option>
+              );
+            })}
+          </select>
+        )}
+        {!estimatedTime && systemName && (
+          <p className="text-red-600">
+            Productiedagen moet nog ingevuld worden
+          </p>
+        )}
       </label>
     );
   }

@@ -109,7 +109,7 @@ public class Seeder implements CommandLineRunner {
 
     ConstructionTask constructionTask = new ConstructionTask();
     constructionTask.setSystem(system);
-    constructionTask.setEstimatedTime(2);
+    //    constructionTask.setEstimatedTime(2);
 
     SSPTask sspTask = new SSPTask();
     sspTask.setConstructionTask(constructionTask);

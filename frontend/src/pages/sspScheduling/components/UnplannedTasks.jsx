@@ -34,7 +34,7 @@ export default function UnplannedTasks() {
   }
 
   return (
-    <div className="flex flex-grow flex-col rounded-md bg-neutral">
+    <div className="flex flex-grow flex-col gap-2 rounded-md bg-neutral p-5">
       {openTasks.map((task) => {
         return (
           <PlannableTask
