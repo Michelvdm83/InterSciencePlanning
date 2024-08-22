@@ -65,12 +65,15 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
 
   function handleClose() {
     setModalIsOpen(false);
-    setSystem("");
+    setSystem({});
   }
 
   function handleOnKeyDown(e) {
     if (e.key === "Enter") {
       handleSave(e);
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
     }
   }
 
@@ -291,10 +294,18 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 setSystem={setSystem}
               />
               <div className="mt-2 flex flex-col gap-3">
-                <button className="btn btn-primary" onClick={handleClose}>
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  onClick={handleClose}
+                >
                   Annuleren
                 </button>
-                <button className="btn btn-accent" onClick={handleSave}>
+                <button
+                  className="btn btn-accent"
+                  type="submit"
+                  onClick={handleSave}
+                >
                   Opslaan
                 </button>
               </div>
