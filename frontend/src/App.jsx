@@ -8,14 +8,8 @@ import EmployeeService from "./services/EmployeeService";
 import FtPlanning from "./pages/ftPlanning/FtPlanning";
 import Holidays from "./pages/holidays/Holidays";
 import SetPassword from "./pages/setPassword/SetPassword";
-import ScheduleService from "./services/ScheduleService.js";
 
 export default function App() {
-  // const dates = ScheduleService.getDates("2024-08-04", 8);
-  // ScheduleService.getEmployeeScheduleOld("2024-08-01", 20);
-  ScheduleService.getEmployeeSchedule("2024-08-01", 20);
-  ScheduleService.getMonday("2024-08-03");
-
   function getHomeRoute() {
     switch (EmployeeService.getEmployeeFunction()) {
       case "TEAM_LEADER":
