@@ -39,7 +39,7 @@ public class Seeder implements CommandLineRunner {
               "Teamleider",
               "teamleider@interscience.nl",
               passwordEncoder.encode("Wachtwoord123!"),
-              Function.TEAM_LEADER);
+              Function.SSP_TEAM_LEADER);
       Employee employee2 =
           new Employee(
               "SSP Medewerker",
