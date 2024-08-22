@@ -20,6 +20,7 @@ export default function SystemOverview({
 }) {
   const [expectedFinish, setExpectedFinish] = useState(null);
   const [system, setSystem] = useState({});
+  const [editedSystem, setEditedSystem] = useState({});
   const [error, setError] = useState("");
 
   const employeeFunction = EmployeeService.getEmployeeFunction();
@@ -32,6 +33,7 @@ export default function SystemOverview({
         );
 
         const data = response.data;
+
         setSystem(data);
 
         const startDate = new Date(
@@ -64,12 +66,16 @@ export default function SystemOverview({
       if (modal) {
         modal.showModal();
       }
+      if (systemName) {
+        setEditedSystem({ ...system });
+      }
     }
   }, [modalIsOpen, systemName, system]);
 
   function handleClose() {
     setModalIsOpen(false);
     setSystem({});
+    setEditedSystem({});
   }
 
   function handleOnKeyDown(e) {
@@ -84,16 +90,39 @@ export default function SystemOverview({
   function handleSave(e) {
     e.preventDefault();
 
-    if (validateSystemData(system, setError)) {
-      ApiService.post("systems", system)
-        .then(() => handleClose())
-        .catch((error) => {
-          if (error.response && error.response.status === 404) {
-            setError("Medewerker niet gevonden");
-          } else {
-            setError(translateError(error.response?.data?.detail));
-          }
-        });
+    if (!systemName) {
+      if (validateSystemData(system, setError)) {
+        ApiService.post("systems", system)
+          .then(() => handleClose())
+          .catch((error) => {
+            if (error.response && error.response.status === 404) {
+              setError("Medewerker niet gevonden");
+            } else {
+              setError(translateError(error.response?.data?.detail));
+            }
+          });
+      }
+    } else {
+      // Determine which fields have been edited
+      const editedFields = {};
+      for (const key in editedSystem) {
+        if (editedSystem[key] !== system[key]) {
+          editedFields[key] = editedSystem[key];
+        }
+      }
+      if (Object.keys(editedFields).length > 0) {
+        if (validateSystemData(editedSystem, setError)) {
+          ApiService.patch(`systems/${systemName}`, editedFields)
+            .then(() => handleClose())
+            .catch((error) => {
+              if (error.response && error.response.status === 404) {
+                setError("Medewerker niet gevonden");
+              } else {
+                setError(translateError(error.response?.data?.detail));
+              }
+            });
+        }
+      }
     }
   }
 
@@ -107,46 +136,46 @@ export default function SystemOverview({
                 title="Systeem"
                 variable="name"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemTextField
                 title="P.O. nummer"
                 variable="poNumber"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemTextField
                 title="Systeemtype"
                 variable="systemType"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
 
               <SystemSelectEmployeeField
                 title="Eindverantwoordelijke"
                 variable="employeeResponsible"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
 
               {/* <SystemCheckboxField
                 title="Schema goedgekeurd"
                 variable="schemeApproved"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
 
               <SystemCheckboxField
                 title="Specsheet goedgekeurd"
                 variable="specsheetApproved"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               /> */}
 
               <SystemDateField
@@ -154,16 +183,16 @@ export default function SystemOverview({
                 date={system.agreedDate}
                 variable="agreedDate"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemDateField
                 title="Verwachte einddatum"
                 date={expectedFinish}
                 variable="expectedFinish"
                 editable={false}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemDateField
                 title="Dag van levering/installatie"
@@ -172,8 +201,8 @@ export default function SystemOverview({
                 editable={
                   employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
                 }
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemTextArea
                 heightCSS="h-36"
@@ -183,8 +212,8 @@ export default function SystemOverview({
                 editable={
                   employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
                 }
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
             </div>
 
@@ -193,22 +222,22 @@ export default function SystemOverview({
                 title="Status"
                 variable="status"
                 editable={systemName && true}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemNumberField
                 title="Productiedagen"
                 variable="estimatedConstructionDays"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemSelectEmployeeField
                 title="SSP-medewerker"
                 variable="employeeSSP"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
 
               <SystemDateField
@@ -216,47 +245,50 @@ export default function SystemOverview({
                 date={system.startOfConstruction}
                 variable="startOfConstruction"
                 editable={
-                  (systemName && employeeFunction == "TEAM_LEADER") ||
-                  employeeFunction == "SSP"
+                  systemName &&
+                  (employeeFunction == "TEAM_LEADER" ||
+                    employeeFunction == "SSP")
                 }
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemDateField
                 title="Einddatum productie"
                 date={system.endOfConstruction}
                 variable="endOfConstruction"
                 editable={
-                  (systemName && employeeFunction == "TEAM_LEADER") ||
-                  employeeFunction == "SSP"
+                  systemName &&
+                  (employeeFunction == "TEAM_LEADER" ||
+                    employeeFunction == "SSP")
                 }
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemNumberField
                 title="Testdagen"
                 variable="estimatedTestDays"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemSelectEmployeeField
                 title="FT-medewerker"
                 variable="employeeFT"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemDateField
                 title="Startdatum test"
                 date={system.startOfTest}
                 variable="startOfTest"
                 editable={
-                  (systemName && employeeFunction == "TEAM_LEADER") ||
-                  employeeFunction == "FT"
+                  systemName &&
+                  (employeeFunction == "TEAM_LEADER" ||
+                    employeeFunction == "FT")
                 }
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemDateField
                 title="Einddatum test"
@@ -266,16 +298,16 @@ export default function SystemOverview({
                   (systemName && employeeFunction == "TEAM_LEADER") ||
                   employeeFunction == "FT"
                 }
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
 
               <SystemTextField
                 title="Verkoper"
                 variable="seller"
                 editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
             </div>
             <div className="flex flex-col">
@@ -285,8 +317,8 @@ export default function SystemOverview({
                 text={system.projectInformation}
                 variable="projectInformation"
                 editable={true}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemTextArea
                 heightCSS="h-48"
@@ -294,8 +326,8 @@ export default function SystemOverview({
                 text={system.notes}
                 variable="notes"
                 editable={true}
-                system={system}
-                setSystem={setSystem}
+                system={systemName ? editedSystem : system}
+                setSystem={systemName ? setEditedSystem : setSystem}
               />
               <div className="mt-2 flex flex-col gap-3">
                 <button

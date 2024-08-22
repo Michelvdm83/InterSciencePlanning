@@ -19,7 +19,9 @@ export default function SystemDateField({
 
   const classes =
     "input input-sm w-full text-accent select-text disabled:bg-white disabled:text-accent" +
-    (date ? "" : " text-transparent disabled:text-transparent");
+    (date || system[variable]
+      ? ""
+      : " text-transparent disabled:text-transparent");
 
   return (
     <div>
