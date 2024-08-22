@@ -23,12 +23,12 @@ public class SystemController {
   //  }
 
   @GetMapping("/{systemName}")
-  public ResponseEntity<SystemDto> getSystem(@PathVariable String systemName) {
+  public ResponseEntity<SystemDTO> getSystem(@PathVariable String systemName) {
     var possibleSystem = systemRepository.findByName(systemName);
     if (possibleSystem.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
 
-    return ResponseEntity.ok(SystemDto.from(possibleSystem.get()));
+    return ResponseEntity.ok(SystemDTO.from(possibleSystem.get()));
   }
 }

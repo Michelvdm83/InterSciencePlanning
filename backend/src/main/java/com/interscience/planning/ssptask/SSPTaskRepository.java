@@ -1,5 +1,6 @@
 package com.interscience.planning.ssptask;
 
+import java.util.List;
 import com.interscience.planning.employee.Employee;
 import java.util.List;
 import java.util.UUID;
@@ -9,4 +10,6 @@ public interface SSPTaskRepository extends JpaRepository<SSPTask, UUID> {
   List<SSPTask> findByEmployeeIsNull();
 
   List<SSPTask> findByEmployee(Employee employee);
+
+  List<SSPTask> findByEmployeeId(UUID employeeId);
 }
