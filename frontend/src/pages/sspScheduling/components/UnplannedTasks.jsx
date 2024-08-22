@@ -9,14 +9,12 @@ export default function UnplannedTasks() {
   const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
-    ApiService.get("employees/ssp").then((response) => {
+    ApiService.get("employees/ssp-planning").then((response) => {
       setEmployees(response.data);
-      console.log(response.data);
     });
 
     ApiService.get("ssptasks/unplanned").then((response) => {
       setOpenTasks(response.data);
-      console.log(response.data);
     });
   }, []);
 
