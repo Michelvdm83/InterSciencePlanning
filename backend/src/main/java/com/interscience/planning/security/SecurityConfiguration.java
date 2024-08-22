@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                     .requestMatchers("api/v1/tasks")
                     .hasRole("TEAM_LEADER")
                     .requestMatchers(HttpMethod.POST, "/api/v1/systems/**")
-                    .hasAnyRole("TEAM_LEADER", "FT")
+                    .hasRole("TEAM_LEADER")
                     .requestMatchers(HttpMethod.GET, "/api/v1/systems/**")
                     .permitAll()
                     .requestMatchers(HttpMethod.PATCH, "/api/v1/systems/**")
