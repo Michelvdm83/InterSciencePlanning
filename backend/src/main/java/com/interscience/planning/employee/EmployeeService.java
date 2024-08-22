@@ -150,12 +150,14 @@ public class EmployeeService {
   }
 
   public List<SSPTaskDTO> getEmployeeSSPTasks(UUID employeeId) {
+    Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
     return sspTaskRepository.findByEmployeeId(employeeId).stream()
         .map(SSPTaskDTO::from)
         .collect(Collectors.toList());
   }
 
   public List<HolidayDTO> getEmployeeHolidays(UUID employeeId) {
+    Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
     return holidayRepository.findByEmployeeId(employeeId).stream()
         .map(HolidayDTO::from)
         .collect(Collectors.toList());

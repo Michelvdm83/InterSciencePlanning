@@ -11,22 +11,20 @@ public record SSPTaskDTO(
     LocalDate dateCompleted) {
   public static SSPTaskDTO from(SSPTask sspTask) {
 
-    Integer estimatedDays;
-    LocalDate dateStarted;
-    LocalDate dateCompleted;
-    String systemName;
-    String taskName;
+    Integer estimatedDays = null;
+    LocalDate dateStarted = null;
+    LocalDate dateCompleted = null;
+    String systemName = null;
+    String taskName = null;
     if (sspTask.getConstructionTask() != null) {
       estimatedDays = sspTask.getConstructionTask().getEstimatedTime();
       dateStarted = sspTask.getConstructionTask().getDateStarted();
       dateCompleted = sspTask.getConstructionTask().getDateCompleted();
       systemName = sspTask.getConstructionTask().getSystem().getName();
-      taskName = null;
-    } else {
+    } else if (sspTask.getTask() != null) {
       estimatedDays = sspTask.getTask().getEstimatedTime();
       dateStarted = sspTask.getTask().getDateStarted();
       dateCompleted = sspTask.getTask().getDateCompleted();
-      systemName = null;
       taskName = sspTask.getTask().getName();
     }
 
