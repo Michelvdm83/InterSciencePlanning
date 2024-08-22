@@ -1,8 +1,18 @@
+import { useEffect, useState } from "react";
 import SystemModalButton from "../../components/SystemModalButton.jsx";
 import NewTaskModal from "./components/NewTaskModal.jsx";
 import UnplannedTasks from "./components/UnplannedTasks.jsx";
+import TasksOfEmployee from "./components/TasksOfEmployee.jsx";
 
 export default function SSPSCheduling() {
+  const [employees, setEmployees] = useState([]);
+  const [currentEmployeeId, setCurrentEmployeeId] = useState("");
+
+  useEffect(() => {
+    ApiService.get("employees/ssp-planning").then((response) => {
+      setEmployees(response.data);
+    });
+  });
   return (
     <div className="flex h-full w-screen flex-grow">
       <div className="m-4 flex w-1/3 flex-col">
@@ -24,6 +34,27 @@ export default function SSPSCheduling() {
       </div>
       <div className="m-4 w-1/3 rounded-md bg-neutral">
         Wachtlijst taken/systemen ssp medewerker placeholder
+        {employees && (
+          <select
+            defaultValue={""}
+            onChange={(event) => setCurrentEmployeeId(event.target.value)}
+            className="select select-bordered select-accent select-sm w-1/2 cursor-pointer"
+          >
+            <option value="" disabled>
+              Naam
+            </option>
+            {employees.map((employee) => {
+              return (
+                <option value={employee.id} key={employee.id}>
+                  {employee.name}
+                </option>
+              );
+            })}
+          </select>
+        )}
+        {currentEmployeeId && (
+          <TasksOfEmployee employeeId={currentEmployeeId} />
+        )}
       </div>
       <div className="m-4 w-1/3 rounded-md bg-neutral">
         Vertraagde systemen placeholder

@@ -18,6 +18,9 @@ public class SSPTaskController {
     return sspTaskRepository.findByEmployeeIsNull().stream().map(SSPTaskOverviewDTO::from).toList();
   }
 
+  @GetMapping("/{employeeId}")
+  public List<SSPTaskAssignedDTO> getAllByEmployeeId() {}
+
   @PatchMapping
   public ResponseEntity<?> assignEmployee(@RequestBody SSPTaskAssignDTO sspTaskAssignDTO) {
     sspTaskService.assignEmployee(sspTaskAssignDTO);
