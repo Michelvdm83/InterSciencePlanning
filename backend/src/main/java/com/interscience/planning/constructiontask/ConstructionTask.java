@@ -3,7 +3,7 @@ package com.interscience.planning.constructiontask;
 import com.interscience.planning.ssptask.SSPTask;
 import com.interscience.planning.system.System;
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +24,5 @@ public class ConstructionTask {
 
   private Integer estimatedTime;
 
-  @Temporal(TemporalType.DATE)
-  private Date dateStarted;
+  private LocalDate dateStarted;
 }

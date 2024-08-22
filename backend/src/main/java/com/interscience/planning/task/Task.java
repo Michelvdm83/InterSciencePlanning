@@ -2,7 +2,7 @@ package com.interscience.planning.task;
 
 import com.interscience.planning.ssptask.SSPTask;
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ public class Task {
 
   private String name;
   private Integer estimatedTime;
-  private Date dateStarted;
+  private LocalDate dateStarted;
 
   @OneToOne(mappedBy = "task")
   private SSPTask sspTask;

@@ -27,13 +27,13 @@ public class SecurityConfiguration {
         .authorizeHttpRequests(
             requests ->
                 requests
-                    .requestMatchers("/api/v1/password-links/**")
-                    .permitAll()
                     .requestMatchers("api/v1/employees")
                     .hasRole("TEAM_LEADER")
                     .requestMatchers("api/v1/tasks")
                     .hasRole("TEAM_LEADER")
                     .requestMatchers("/api/v1/systems/**")
+                    .hasAnyRole("TEAM_LEADER", "SSP", "FT")
+                    .requestMatchers("api/v1/employees/ssp-planning")
                     .hasAnyRole("TEAM_LEADER", "SSP", "FT")
                     .requestMatchers("api/v1/ssptasks/unplanned")
                     .hasRole("TEAM_LEADER")
