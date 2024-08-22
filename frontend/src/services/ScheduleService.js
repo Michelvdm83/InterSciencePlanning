@@ -302,7 +302,7 @@ export default class ScheduleService {
               daysUntilStart,
               holidays,
               allDays,
-              tasks[1] !== null && tasks[1].dateStarted !== null,
+              tasks.length > 1 && tasks[1].dateStarted !== null,
             );
             const scheduleEntries = this.#getScheduleEntries(
               daysInThisPeriod,
