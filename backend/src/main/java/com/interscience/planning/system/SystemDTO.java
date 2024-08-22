@@ -2,7 +2,7 @@ package com.interscience.planning.system;
 
 import java.time.LocalDate;
 
-public record SystemDto(
+public record SystemDTO(
     String name,
     String poNumber,
     String systemType,
@@ -26,7 +26,7 @@ public record SystemDto(
     Integer estimatedTestDays,
     String seller) {
 
-  public static SystemDto from(System system) {
+  public static SystemDTO from(System system) {
 
     String responsiblePerson =
         system.getEmployeeResponsible() == null ? null : system.getEmployeeResponsible().getName();
@@ -73,7 +73,7 @@ public record SystemDto(
       estimatedConstructionDays = system.getConstructionTask().getEstimatedTime();
     }
 
-    return new SystemDto(
+    return new SystemDTO(
         system.getName(),
         system.getPoNumber(),
         system.getSystemType(),
