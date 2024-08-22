@@ -160,7 +160,7 @@ public class SystemService {
     if (systemPostPatchDTO.estimatedConstructionDays() == null
         && sspTask.getConstructionTask().getEstimatedTime() == null) {
       throw new BadRequestException(
-          "Estimated construction days are required for assigning an SSP employee");
+          "Estimated construction days required for assigning an SSP employee");
     }
     Employee sspEmployee =
         employeeRepository
@@ -179,7 +179,8 @@ public class SystemService {
       throw new BadRequestException(
           "Estimated construction days required for setting construction start date");
     }
-    if (systemPostPatchDTO.employeeSSP() == null) {
+    if (systemPostPatchDTO.employeeSSP() == null
+        && constructionTask.getSspTask().getEmployee() == null) {
       throw new BadRequestException("SSP employee required for setting construction start date");
     }
 
@@ -210,8 +211,8 @@ public class SystemService {
     }
 
     LocalDate testStartDate =
-        systemPostPatchDTO.startOfConstruction() != null
-            ? systemPostPatchDTO.startOfConstruction()
+        systemPostPatchDTO.startOfTest() != null
+            ? systemPostPatchDTO.startOfTest()
             : system.getTestTask().getDateStarted();
     if (testStartDate != null && systemPostPatchDTO.endOfConstruction().isAfter(testStartDate)) {
       throw new BadRequestException("Construction end date must be before test start date");
@@ -241,8 +242,7 @@ public class SystemService {
 
   private void setFTEmployee(SystemPostPatchDTO systemPostPatchDTO, TestTask testTask) {
     if (systemPostPatchDTO.estimatedTestDays() == null && testTask.getEstimatedTime() == null) {
-      throw new BadRequestException(
-          "Estimated test days are required for assigning an FT employee");
+      throw new BadRequestException("Estimated test days required for assigning an FT employee");
     }
     Employee ftEmployee =
         employeeRepository
@@ -268,10 +268,11 @@ public class SystemService {
       throw new BadRequestException("Test start date must be after construction end date");
     }
 
-    if (systemPostPatchDTO.estimatedTestDays() == null) {
+    if (systemPostPatchDTO.estimatedTestDays() == null
+        && system.getTestTask().getEstimatedTime() == null) {
       throw new BadRequestException("Estimated test days required for setting test start date");
     }
-    if (systemPostPatchDTO.employeeFT() == null) {
+    if (systemPostPatchDTO.employeeFT() == null && system.getTestTask().getEmployee() == null) {
       throw new BadRequestException("FT employee required for setting test start date");
     }
     LocalDate endDate =
