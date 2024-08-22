@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                     .permitAll()
                     .requestMatchers(HttpMethod.PATCH, "/api/v1/systems/**")
                     .permitAll()
+                    .requestMatchers("api/v1/employees/ssp-planning")
+                    .hasAnyRole("TEAM_LEADER", "SSP", "FT")
                     .anyRequest()
                     .permitAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

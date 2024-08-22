@@ -26,6 +26,12 @@ public class EmployeeService {
         .collect(Collectors.toList());
   }
 
+  public List<EmployeeResponseDTO> findAllByFunctionIn(List<Function> functions) {
+    return employeeRepository.findByEnabledTrueAndFunctionIn(functions).stream()
+        .map(EmployeeResponseDTO::from)
+        .toList();
+  }
+
   public EmployeeResponseDTO createEmployee(EmployeeDTO employeeDTO) {
     if (employeeDTO.name() == null || employeeDTO.name().isBlank()) {
       throw new BadRequestException("Name is required");
