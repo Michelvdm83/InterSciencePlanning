@@ -77,6 +77,7 @@ public class EmployeeController {
     }
 
     employee.setEnabled(false);
+    employee.setEmail(null);
     employeeRepository.save(employee);
     return ResponseEntity.noContent().build();
   }
