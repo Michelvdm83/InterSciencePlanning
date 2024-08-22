@@ -1,7 +1,7 @@
 package com.interscience.planning.employee;
 
 import com.interscience.planning.holiday.HolidayDTO;
-import com.interscience.planning.ssptask.SSPTaskDto;
+import com.interscience.planning.ssptask.SSPTaskDTO;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
@@ -61,13 +61,13 @@ public class EmployeeController {
     LocalDate testDate = LocalDate.parse("2024-08-06");
     LocalDate firstDay = LocalDate.parse("2024-08-01");
 
-    var testSchedule = new ArrayList<SSPTaskDto>();
-    testSchedule.add(new SSPTaskDto(1, "b001", null, 3, testDate, testDate.plusDays(2)));
+    var testSchedule = new ArrayList<SSPTaskDTO>();
+    testSchedule.add(new SSPTaskDTO(1, "b001", null, 3, testDate, testDate.plusDays(2)));
 
-    testSchedule.add(new SSPTaskDto(3, "b002", null, 2, null, null));
+    testSchedule.add(new SSPTaskDTO(3, "b002", null, 2, null, null));
 
-    testSchedule.add(new SSPTaskDto(2, "b003", null, 5, testDate.plusDays(1), null));
-    testSchedule.sort(Comparator.comparingInt(SSPTaskDto::index));
+    testSchedule.add(new SSPTaskDTO(2, "b003", null, 5, testDate.plusDays(1), null));
+    testSchedule.sort(Comparator.comparingInt(SSPTaskDTO::index));
 
     var holidays = new ArrayList<HolidayDTO>();
     holidays.add(new HolidayDTO(null, firstDay.plusDays(1), firstDay.plusDays(3)));

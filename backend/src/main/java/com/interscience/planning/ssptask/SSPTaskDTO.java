@@ -2,7 +2,7 @@ package com.interscience.planning.ssptask;
 
 import java.time.LocalDate;
 
-public record SSPTaskDto(
+public record SSPTaskDTO(
     Integer index,
     String systemName,
     String taskName,
