@@ -51,10 +51,8 @@ public class SystemService {
         systemPostPatchDTO.specsheetApproved() != null
             ? systemPostPatchDTO.specsheetApproved()
             : false);
-    system.setStatus(
-        systemPostPatchDTO.status() != null
-            ? systemPostPatchDTO.status()
-            : SystemStatus.TO_BE_PLANNED);
+    system.setStatus(SystemStatus.TO_BE_PLANNED);
+    system.setSeller(systemPostPatchDTO.seller());
 
     createConstructionTask(systemPostPatchDTO, system);
     createTestTask(systemPostPatchDTO, system);
@@ -119,10 +117,6 @@ public class SystemService {
 
     newConstructionTask.setEstimatedTime(systemPostPatchDTO.estimatedConstructionDays());
 
-    if (systemPostPatchDTO.startOfConstruction() != null) {
-      setConstructionStartDate(systemPostPatchDTO, newConstructionTask);
-    }
-
     newSSPTask.setConstructionTask(newConstructionTask);
     newConstructionTask.setSspTask(newSSPTask);
     newConstructionTask.setSystem(system);
@@ -164,10 +158,6 @@ public class SystemService {
     }
 
     newTestTask.setEstimatedTime(systemPostPatchDTO.estimatedTestDays());
-
-    if (systemPostPatchDTO.startOfTest() != null) {
-      setTestStartDate(systemPostPatchDTO, newTestTask);
-    }
 
     newTestTask.setSystem(system);
     testTaskRepository.save(newTestTask);

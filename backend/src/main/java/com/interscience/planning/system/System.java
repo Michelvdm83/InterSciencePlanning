@@ -4,9 +4,7 @@ import com.interscience.planning.constructiontask.ConstructionTask;
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.testtask.TestTask;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,6 +47,8 @@ public class System {
   private boolean schemeApproved;
 
   private boolean specsheetApproved;
+
+  private String seller;
 
   @Enumerated(EnumType.STRING)
   private SystemStatus status;

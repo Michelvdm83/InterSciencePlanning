@@ -18,8 +18,12 @@ public class Task {
   private UUID id;
 
   private String name;
+
   private Integer estimatedTime;
+
   private LocalDate dateStarted;
+
+  private LocalDate dateCompleted;
 
   @OneToOne(mappedBy = "task")
   private SSPTask sspTask;

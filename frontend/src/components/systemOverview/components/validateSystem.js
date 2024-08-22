@@ -7,21 +7,21 @@ export function translateError(error) {
     case "Employee responsible can't be an SSP employee":
       return "Eindverantwoordelijke mag geen SSP medewerker zijn";
     case "Estimated construction days are required for assigning an SSP employee":
-      return "Productie dagen vereist om een SSP medewerker toe te wijzen";
+      return "Productiedagen vereist om een SSP-medewerker toe te wijzen";
     case "SSP employee needs to have function SSP":
-      return "SSP medewerker moet de functie SSP hebben";
+      return "SSP-medewerker moet de functie SSP hebben";
     case "Estimated construction days required for setting construction start date":
-      return "Productie dagen vereist om startdatum productie in te stellen";
+      return "Productiedagen vereist om startdatum productie in te stellen";
     case "SSP employee required for setting construction start date":
-      return "SSP medewerker vereist om startdatum productie in te stellen";
+      return "SSP-medewerker vereist om startdatum productie in te stellen";
     case "Estimated test days are required for assigning an FT employee":
-      return "Test dagen vereist om een FT medewerker toe te wijzen";
+      return "Testdagen vereist om een FT-medewerker toe te wijzen";
     case "FT employee needs to have function FT":
-      return "FT medewerker moet de functie FT hebben";
+      return "FT-medewerker moet de functie FT hebben";
     case "Estimated test days required for setting test start date":
-      return "Test dagen vereist om startdatum test in te stellen";
+      return "Testdagen vereist om startdatum test in te stellen";
     case "FT employee required for setting test start date":
-      return "FT medewerker vereist om startdatum test in te stellen";
+      return "FT-medewerker vereist om startdatum test in te stellen";
     default:
       return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
   }
@@ -35,38 +35,34 @@ export function validateSystemData(system, setError) {
 
   if (system.startOfConstruction != null) {
     if (system.estimatedConstructionDays == null) {
-      setError("Productie dagen vereist om startdatum productie in te stellen");
+      setError("Productiedagen vereist om startdatum productie in te stellen");
       return false;
     }
     if (system.employeeSSP == null) {
-      setError("SSP medewerker vereist om startdatum productie in te stellen");
+      setError("SSP-medewerker vereist om startdatum productie in te stellen");
       return false;
     }
   }
 
   if (system.startOfTest != null) {
     if (system.estimatedTestDays == null) {
-      setError("Test dagen vereist om startdatum test in te stellen");
+      setError("Testdagen vereist om startdatum test in te stellen");
       return false;
     }
     if (system.employeeFT == null) {
-      setError("FT medewerker vereist om startdatum test in te stellen");
+      setError("FT-medewerker vereist om startdatum test in te stellen");
       return false;
     }
   }
   if (system.employeeSSP != null) {
     if (system.estimatedConstructionDays == null) {
-      setError(
-        "Productie dagen moet worden ingevuld om een SSP medewerker toe te wijzen",
-      );
+      setError("Productiedagen vereist om een SSP-medewerker toe te wijzen");
       return false;
     }
   }
   if (system.employeeFT != null) {
     if (system.estimatedTestDays == null) {
-      setError(
-        "Test dagen moet worden ingevuld om een FT medewerker toe te wijzen",
-      );
+      setError("Testdagen vereist om een FT-medewerker toe te wijzen");
       return false;
     }
   }

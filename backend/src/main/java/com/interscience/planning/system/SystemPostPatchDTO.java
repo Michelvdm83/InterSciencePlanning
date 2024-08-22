@@ -15,10 +15,13 @@ public record SystemPostPatchDTO(
     SystemStatus status,
     UUID employeeSSP,
     LocalDate startOfConstruction,
+    LocalDate endOfConstruction,
     Integer estimatedConstructionDays,
     UUID employeeFT,
     LocalDate startOfTest,
+    LocalDate endOfTest,
     Integer estimatedTestDays,
     String customerContactInformation,
     String projectInformation,
-    String notes) {}
+    String notes,
+    String seller) {}

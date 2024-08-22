@@ -70,7 +70,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
 
   function handleOnKeyDown(e) {
     if (e.key === "Enter") {
-      handleNewTaskSave(e);
+      handleSave(e);
     }
   }
 
@@ -111,7 +111,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 setSystem={setSystem}
               />
               <SystemTextField
-                title="Systeem type"
+                title="Systeemtype"
                 variable="systemType"
                 editable={employeeFunction == "TEAM_LEADER"}
                 system={system}
@@ -126,7 +126,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 setSystem={setSystem}
               />
 
-              <SystemCheckboxField
+              {/* <SystemCheckboxField
                 title="Schema goedgekeurd"
                 variable="schemeApproved"
                 editable={employeeFunction == "TEAM_LEADER"}
@@ -140,7 +140,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 editable={employeeFunction == "TEAM_LEADER"}
                 system={system}
                 setSystem={setSystem}
-              />
+              /> */}
 
               <SystemDateField
                 title="Afgesproken deadline"
@@ -168,19 +168,36 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 system={system}
                 setSystem={setSystem}
               />
+              <SystemTextArea
+                heightCSS="h-36"
+                title="Contactgegevens klant"
+                text={system.customerContactInformation}
+                variable="customerContactInformation"
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
+                system={system}
+                setSystem={setSystem}
+              />
             </div>
 
             <div className="flex flex-col">
               <SystemSelectStatusField
                 title="Status"
                 variable="status"
-                editable={true}
+                editable={sName && true}
                 system={system}
                 setSystem={setSystem}
               />
-
+              <SystemNumberField
+                title="Productiedagen"
+                variable="estimatedConstructionDays"
+                editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
+              />
               <SystemSelectEmployeeField
-                title="SSP medewerker"
+                title="SSP-medewerker"
                 variable="employeeSSP"
                 editable={employeeFunction == "TEAM_LEADER"}
                 system={system}
@@ -192,20 +209,32 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 date={system.startOfConstruction}
                 variable="startOfConstruction"
                 editable={
-                  employeeFunction == "TEAM_LEADER" || employeeFunction == "SSP"
+                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  employeeFunction == "SSP"
+                }
+                system={system}
+                setSystem={setSystem}
+              />
+              <SystemDateField
+                title="Einddatum productie"
+                date={system.endOfConstruction}
+                variable="endOfConstruction"
+                editable={
+                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  employeeFunction == "SSP"
                 }
                 system={system}
                 setSystem={setSystem}
               />
               <SystemNumberField
-                title="Productie dagen"
-                variable="estimatedConstructionDays"
+                title="Testdagen"
+                variable="estimatedTestDays"
                 editable={employeeFunction == "TEAM_LEADER"}
                 system={system}
                 setSystem={setSystem}
               />
               <SystemSelectEmployeeField
-                title="FT medewerker"
+                title="FT-medewerker"
                 variable="employeeFT"
                 editable={employeeFunction == "TEAM_LEADER"}
                 system={system}
@@ -216,33 +245,35 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 date={system.startOfTest}
                 variable="startOfTest"
                 editable={
-                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  employeeFunction == "FT"
                 }
                 system={system}
                 setSystem={setSystem}
               />
-              <SystemNumberField
-                title="Test dagen"
-                variable="estimatedTestDays"
-                editable={employeeFunction == "TEAM_LEADER"}
-                system={system}
-                setSystem={setSystem}
-              />
-              <SystemTextArea
-                heightCSS="h-20"
-                title="Contactgegevens klant"
-                text={system.customerContactInformation}
-                variable="customerContactInformation"
+              <SystemDateField
+                title="Einddatum test"
+                date={system.endOfTest}
+                variable="endOfTest"
                 editable={
-                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  employeeFunction == "FT"
                 }
+                system={system}
+                setSystem={setSystem}
+              />
+
+              <SystemTextField
+                title="Verkoper"
+                variable="seller"
+                editable={employeeFunction == "TEAM_LEADER"}
                 system={system}
                 setSystem={setSystem}
               />
             </div>
             <div className="flex flex-col">
               <SystemTextArea
-                heightCSS="h-40"
+                heightCSS="h-48"
                 title="Project informatie"
                 text={system.projectInformation}
                 variable="projectInformation"
@@ -251,7 +282,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 setSystem={setSystem}
               />
               <SystemTextArea
-                heightCSS="h-40"
+                heightCSS="h-48"
                 title="Notities"
                 text={system.notes}
                 variable="notes"
@@ -259,7 +290,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 system={system}
                 setSystem={setSystem}
               />
-              <div className="mt-2 flex flex-col gap-4">
+              <div className="mt-2 flex flex-col gap-3">
                 <button className="btn btn-primary" onClick={handleClose}>
                   Annuleren
                 </button>

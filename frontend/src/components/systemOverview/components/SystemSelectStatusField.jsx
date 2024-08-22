@@ -5,6 +5,11 @@ export default function SystemSelectStatusField({
   setSystem,
   variable,
 }) {
+  const classes = `
+    select select-bordered select-sm w-full text-accent
+    ${!editable ? "disabled:bg-white disabled:text-accent" : ""}
+`;
+
   return (
     <div>
       <div>{title}</div>
@@ -16,7 +21,7 @@ export default function SystemSelectStatusField({
             [variable]: event.target.value === "" ? null : event.target.value,
           });
         }}
-        className="select select-bordered select-sm w-full text-accent"
+        className={classes}
         disabled={!editable}
       >
         <option value="TO_BE_PLANNED">aangemaakt</option>
