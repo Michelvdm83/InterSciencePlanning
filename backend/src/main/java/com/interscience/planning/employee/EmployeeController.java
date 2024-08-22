@@ -56,29 +56,11 @@ public class EmployeeController {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/schedules/{id}")
-  public ResponseEntity<EmployeeScheduleDto> getScheduleItems(@PathVariable UUID id) {
-    //    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.FRENCH);
-    //    String dateInString = "06-08-2024";
-    //    Date date = formatter.parse(dateInString);
-    //    date.setTime(date.getTime() + 20000000L);
+  @GetMapping("/schedules/{employeeId}")
+  public ResponseEntity<EmployeeScheduleDTO> getScheduleItems(@PathVariable UUID employeeId) {
+    List<SSPTaskDTO> employeeSSPTasks = employeeService.getEmployeeSSPTasks(employeeId);
+    List<HolidayDTO> employeeHolidays = employeeService.getEmployeeHolidays(employeeId);
 
-    LocalDate testDate = LocalDate.parse("2024-08-06");
-    LocalDate firstDay = LocalDate.parse("2024-08-01");
-
-    var testSchedule = new ArrayList<SSPTaskDTO>();
-    testSchedule.add(new SSPTaskDTO(1, "b001", null, 3, testDate, testDate.plusDays(2)));
-
-    testSchedule.add(new SSPTaskDTO(3, "b002", null, 2, null, null));
-
-    testSchedule.add(new SSPTaskDTO(2, "b003", null, 5, testDate.plusDays(1), null));
-    testSchedule.sort(Comparator.comparingInt(SSPTaskDTO::index));
-
-    var holidays = new ArrayList<HolidayDTO>();
-    holidays.add(new HolidayDTO(null, firstDay.plusDays(1), firstDay.plusDays(3)));
-    holidays.add(new HolidayDTO(null, testDate.plusDays(7), testDate.plusDays(7)));
-    holidays.add(new HolidayDTO(null, testDate.plusDays(4), testDate.plusDays(5)));
-    holidays.sort(Comparator.comparing(HolidayDTO::startDate));
-    return ResponseEntity.ok(new EmployeeScheduleDto(testSchedule, holidays));
+    return ResponseEntity.ok(new EmployeeScheduleDTO(employeeSSPTasks, employeeHolidays));
   }
 }

@@ -2,6 +2,10 @@ package com.interscience.planning.employee;
 
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import com.interscience.planning.holiday.HolidayDTO;
+import com.interscience.planning.holiday.HolidayRepository;
+import com.interscience.planning.ssptask.SSPTaskDTO;
+import com.interscience.planning.ssptask.SSPTaskRepository;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.transaction.Transactional;
@@ -19,6 +23,8 @@ import org.springframework.stereotype.Service;
 public class EmployeeService {
   private final EmployeeRepository employeeRepository;
   private final PasswordEncoder passwordEncoder;
+  private final SSPTaskRepository sspTaskRepository;
+  private final HolidayRepository holidayRepository;
 
   public List<EmployeeResponseDTO> findAll() {
     return employeeRepository.findAllByEnabledTrue().stream()
@@ -141,5 +147,19 @@ public class EmployeeService {
     } catch (AddressException e) {
       return false;
     }
+  }
+
+  public List<SSPTaskDTO> getEmployeeSSPTasks(UUID employeeId) {
+    Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
+    return sspTaskRepository.findByEmployeeId(employeeId).stream()
+        .map(SSPTaskDTO::from)
+        .collect(Collectors.toList());
+  }
+
+  public List<HolidayDTO> getEmployeeHolidays(UUID employeeId) {
+    Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
+    return holidayRepository.findByEmployeeId(employeeId).stream()
+        .map(HolidayDTO::from)
+        .collect(Collectors.toList());
   }
 }
