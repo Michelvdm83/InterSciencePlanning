@@ -28,8 +28,12 @@ public class SecurityConfiguration {
         .authorizeHttpRequests(
             requests ->
                 requests
-                    .requestMatchers("api/v1/employees")
+                    .requestMatchers(HttpMethod.POST, "api/v1/employees/**")
                     .hasRole("TEAM_LEADER")
+                    .requestMatchers(HttpMethod.PATCH, "api/v1/employees/**")
+                    .hasRole("TEAM_LEADER")
+                    .requestMatchers(HttpMethod.GET, "api/v1/employees")
+                    .permitAll()
                     .requestMatchers("api/v1/tasks")
                     .hasRole("TEAM_LEADER")
                     .requestMatchers(HttpMethod.POST, "/api/v1/systems/**")

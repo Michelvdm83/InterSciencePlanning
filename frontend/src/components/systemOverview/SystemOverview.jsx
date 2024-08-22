@@ -274,7 +274,9 @@ export default function SystemOverview({
               <SystemSelectEmployeeField
                 title="FT-medewerker"
                 variable="employeeFT"
-                editable={employeeFunction == "TEAM_LEADER"}
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
               />
