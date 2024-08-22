@@ -105,6 +105,7 @@ public class EmployeeService {
     }
 
     employee.setEnabled(false);
+    employee.setEmail(null);
     employeeRepository.save(employee);
   }
 
