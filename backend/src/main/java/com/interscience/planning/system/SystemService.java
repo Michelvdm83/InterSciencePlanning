@@ -8,7 +8,9 @@ import com.interscience.planning.employee.Function;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
 import com.interscience.planning.ssptask.SSPTask;
+import com.interscience.planning.ssptask.SSPTaskAssignDTO;
 import com.interscience.planning.ssptask.SSPTaskRepository;
+import com.interscience.planning.ssptask.SSPTaskService;
 import com.interscience.planning.testtask.TestTask;
 import com.interscience.planning.testtask.TestTaskRepository;
 import jakarta.transaction.Transactional;
@@ -24,6 +26,7 @@ public class SystemService {
   private final SSPTaskRepository sspTaskRepository;
   private final ConstructionTaskRepository constructionTaskRepository;
   private final TestTaskRepository testTaskRepository;
+  private final SSPTaskService sspTaskService;
 
   public System getSystem(String name) {
     return systemRepository.findByName(name).orElseThrow(NotFoundException::new);
@@ -60,6 +63,21 @@ public class SystemService {
     systemRepository.save(system);
   }
 
+  public void editSystem(SystemPostPatchDTO systemPostPatchDTO, String name) {
+    System system = systemRepository.findByName(name).orElseThrow(NotFoundException::new);
+
+    if (systemPostPatchDTO.name() != null) {
+      validateName(systemPostPatchDTO);
+      system.setName(systemPostPatchDTO.name());
+    }
+
+    if (systemPostPatchDTO.employeeResponsible() != null) {
+      setEmployeeResponsible(systemPostPatchDTO, system);
+    }
+
+    systemRepository.save(system);
+  }
+
   private void validateName(SystemPostPatchDTO systemPostPatchDTO) {
     if (systemRepository.findByName(systemPostPatchDTO.name()).isPresent()) {
       throw new BadRequestException("System name already exists");
@@ -92,7 +110,7 @@ public class SystemService {
     if (sspEmployee.getFunction() != Function.SSP) {
       throw new BadRequestException("SSP employee needs to have function SSP");
     }
-    sspTask.setEmployee(sspEmployee);
+    sspTaskService.assignEmployee(new SSPTaskAssignDTO(sspTask.getId(), sspEmployee.getId()));
   }
 
   private void setConstructionStartDate(
@@ -110,6 +128,7 @@ public class SystemService {
   private void createConstructionTask(SystemPostPatchDTO systemPostPatchDTO, System system) {
     ConstructionTask newConstructionTask = new ConstructionTask();
     SSPTask newSSPTask = new SSPTask();
+    sspTaskRepository.save(newSSPTask);
 
     if (systemPostPatchDTO.employeeSSP() != null) {
       setSSPEmployee(systemPostPatchDTO, newSSPTask);

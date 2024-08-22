@@ -23,4 +23,11 @@ public class SystemController {
     systemService.createNewSystem(systemPostPatchDTO);
     return ResponseEntity.status(201).build();
   }
+
+  @PatchMapping("{name}")
+  public ResponseEntity<?> editSystem(
+      @RequestBody SystemPostPatchDTO systemPostPatchDTO, @PathVariable String name) {
+    systemService.editSystem(systemPostPatchDTO, name);
+    return ResponseEntity.ok().build();
+  }
 }

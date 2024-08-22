@@ -13,7 +13,11 @@ import {
   validateSystemData,
 } from "./components/validateSystem.js";
 
-export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
+export default function SystemOverview({
+  systemName,
+  modalIsOpen,
+  setModalIsOpen,
+}) {
   const [expectedFinish, setExpectedFinish] = useState(null);
   const [system, setSystem] = useState({});
   const [error, setError] = useState("");
@@ -21,10 +25,10 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
   const employeeFunction = EmployeeService.getEmployeeFunction();
 
   useEffect(() => {
-    if (sName) {
+    if (systemName) {
       const fetchData = async () => {
         const response = await ApiService.get(
-          `http://localhost:8080/api/v1/systems/${sName}`,
+          `http://localhost:8080/api/v1/systems/${systemName}`,
         );
 
         const data = response.data;
@@ -52,16 +56,16 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
       };
       fetchData();
     }
-  }, [sName]);
+  }, [systemName]);
 
   useEffect(() => {
     if (modalIsOpen) {
-      const modal = document.getElementById(sName || "new-system");
+      const modal = document.getElementById(systemName || "new-system");
       if (modal) {
         modal.showModal();
       }
     }
-  }, [modalIsOpen, sName, system]);
+  }, [modalIsOpen, systemName, system]);
 
   function handleClose() {
     setModalIsOpen(false);
@@ -94,7 +98,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
   }
 
   return (
-    <dialog id={sName || "new-system"} className="modal">
+    <dialog id={systemName || "new-system"} className="modal">
       <div className="modal-box w-fit max-w-full p-0">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
           <div className="flex h-full w-full justify-evenly gap-8 overflow-hidden bg-neutral p-9">
@@ -188,7 +192,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
               <SystemSelectStatusField
                 title="Status"
                 variable="status"
-                editable={sName && true}
+                editable={systemName && true}
                 system={system}
                 setSystem={setSystem}
               />
@@ -212,7 +216,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 date={system.startOfConstruction}
                 variable="startOfConstruction"
                 editable={
-                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  (systemName && employeeFunction == "TEAM_LEADER") ||
                   employeeFunction == "SSP"
                 }
                 system={system}
@@ -223,7 +227,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 date={system.endOfConstruction}
                 variable="endOfConstruction"
                 editable={
-                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  (systemName && employeeFunction == "TEAM_LEADER") ||
                   employeeFunction == "SSP"
                 }
                 system={system}
@@ -248,7 +252,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 date={system.startOfTest}
                 variable="startOfTest"
                 editable={
-                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  (systemName && employeeFunction == "TEAM_LEADER") ||
                   employeeFunction == "FT"
                 }
                 system={system}
@@ -259,7 +263,7 @@ export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
                 date={system.endOfTest}
                 variable="endOfTest"
                 editable={
-                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  (systemName && employeeFunction == "TEAM_LEADER") ||
                   employeeFunction == "FT"
                 }
                 system={system}

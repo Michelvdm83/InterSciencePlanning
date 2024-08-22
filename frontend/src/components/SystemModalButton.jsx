@@ -16,7 +16,7 @@ export default function SystemModalButton({ systemName, children }) {
       </div>
       {modalIsOpen && (
         <SystemOverview
-          sName={systemName}
+          systemName={systemName}
           modalIsOpen={modalIsOpen}
           setModalIsOpen={setModalIsOpen}
         />
