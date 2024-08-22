@@ -22,7 +22,7 @@ public class EmployeeController {
 
   @GetMapping("/ssp-planning")
   public List<EmployeeResponseDTO> getEmployeesForSSPPlanning() {
-    return employeeService.findAllByFunctionOrFunction(Function.SSP, Function.SSP_TEAM_LEADER);
+    return employeeService.findAllByFunctionIn(List.of(Function.SSP, Function.SSP_TEAM_LEADER));
   }
 
   @PostMapping

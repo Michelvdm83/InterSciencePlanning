@@ -133,7 +133,7 @@ export default function SSPPlanning() {
 
   return (
     <div className="flex h-full w-full justify-center overflow-auto p-8">
-      <div className="flex h-max max-w-full flex-col overflow-hidden rounded-lg border border-secondary p-4">
+      <div className="flex h-max max-h-full max-w-full flex-col overflow-hidden rounded-lg border border-secondary p-4">
         <div
           className={`grid p-4 grid-cols-[repeat(${employees.length + 1},150px)] max-w-full grid-flow-col grid-rows-[repeat(21,auto)] overflow-scroll bg-base-100 text-center font-Effra_Md`}
         >
