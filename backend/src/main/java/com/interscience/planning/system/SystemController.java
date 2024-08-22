@@ -25,9 +25,9 @@ public class SystemController {
   }
 
   @PatchMapping("{name}")
-  public ResponseEntity<?> editSystem(
+  public ResponseEntity<?> updateSystem(
       @RequestBody SystemPostPatchDTO systemPostPatchDTO, @PathVariable String name) {
-    systemService.editSystem(systemPostPatchDTO, name);
+    systemService.updateSystem(systemPostPatchDTO, name);
     return ResponseEntity.ok().build();
   }
 }
