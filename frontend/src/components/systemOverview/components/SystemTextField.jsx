@@ -1,18 +1,16 @@
 import { useState } from "react";
 
-export default function SystemTextField({ text, editable, title }) {
+export default function SystemTextField({
+  system,
+  setSystem,
+  editable,
+  title,
+  variable,
+}) {
   let classes =
     "bg-white text-accent disabled:text-accent input input-sm w-full";
   if (!editable) {
     classes += " input-disabled";
-  }
-
-  const [myText, setMyText] = useState(text ? text : "");
-
-  function updateText(event) {
-    if (editable) {
-      setMyText(event.target.value);
-    }
   }
 
   return (
@@ -21,8 +19,11 @@ export default function SystemTextField({ text, editable, title }) {
       <input
         type="text"
         className={classes}
-        value={myText}
-        onChange={(event) => updateText(event)}
+        value={system[variable] || ""}
+        onChange={(event) =>
+          setSystem({ ...system, [variable]: event.target.value })
+        }
+        disabled={!editable}
       />
     </div>
   );

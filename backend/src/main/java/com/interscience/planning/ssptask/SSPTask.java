@@ -23,5 +23,5 @@ public class SSPTask {
 
   @OneToOne private Task task;
 
-  private int index;
+  private Integer index;
 }

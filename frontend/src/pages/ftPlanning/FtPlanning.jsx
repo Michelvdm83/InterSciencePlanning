@@ -5,7 +5,7 @@ export default function FtPlanning() {
     <div>
       FT Planning placeholder
       {/*testbutton for the system modal*/}
-      <SystemModalButton systemName={"brt-001"}>
+      <SystemModalButton systemName={"test"}>
         <div className="btn">system temporary test button</div>
       </SystemModalButton>
     </div>

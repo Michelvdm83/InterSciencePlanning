@@ -1,6 +1,11 @@
-import { useState } from "react";
-
-export default function SystemTextArea({ text, editable, title, heightCSS }) {
+export default function SystemTextArea({
+  editable,
+  title,
+  heightCSS,
+  system,
+  setSystem,
+  variable,
+}) {
   let classes =
     "bg-white text-accent disabled:text-accent resize-none input w-full " +
     heightCSS;
@@ -8,21 +13,16 @@ export default function SystemTextArea({ text, editable, title, heightCSS }) {
     classes += " input-disabled";
   }
 
-  const [myText, setMyText] = useState(text ? text : "");
-
-  function updateText(event) {
-    if (editable) {
-      setMyText(event.target.value);
-    }
-  }
-
   return (
     <div>
       <div>{title}</div>
       <textarea
         className={classes}
-        value={myText}
-        onChange={(event) => updateText(event)}
+        value={system[variable] || ""}
+        onChange={(event) =>
+          setSystem({ ...system, [variable]: event.target.value })
+        }
+        disabled={!editable}
       />
     </div>
   );

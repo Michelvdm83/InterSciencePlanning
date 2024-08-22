@@ -1,7 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function SystemCheckboxField({ defaultValue, editable, title }) {
-  const [checked, setChecked] = useState(defaultValue);
+export default function SystemCheckboxField({
+  editable,
+  title,
+  system,
+  setSystem,
+  variable,
+}) {
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    setChecked(system[variable] || false);
+  }, [system, variable]);
+
+  function handleChange() {
+    const newCheckedValue = !checked;
+    setChecked(newCheckedValue);
+    setSystem({ ...system, [variable]: newCheckedValue });
+  }
 
   return (
     <label className="label h-14 w-full border-b-2 border-white">
@@ -9,8 +25,9 @@ export default function SystemCheckboxField({ defaultValue, editable, title }) {
       <input
         type="checkbox"
         checked={checked}
-        onChange={() => setChecked(!checked)}
+        onChange={handleChange}
         className="checkbox-secondary justify-self-end"
+        disabled={!editable}
       />
     </label>
   );
