@@ -6,6 +6,7 @@ import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +49,12 @@ public class HolidayController {
     holidayRepository.save(holiday);
 
     return ResponseEntity.status(201).body(HolidayResponseDTO.from(holiday));
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<Void> deleteHoliday(@PathVariable UUID id) {
+    Holiday holiday = holidayRepository.findById(id).orElseThrow(NotFoundException::new);
+    holidayRepository.delete(holiday);
+    return ResponseEntity.noContent().build();
   }
 }
