@@ -24,6 +24,7 @@ export default function SystemNumberField({
       <div>{title}</div>
       <input
         type="number"
+        min={1}
         className={classes}
         value={system[variable] || ""}
         onChange={(event) =>
