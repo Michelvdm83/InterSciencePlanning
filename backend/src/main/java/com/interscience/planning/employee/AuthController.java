@@ -31,10 +31,6 @@ public class AuthController {
     if (possibleEmployee.isEmpty()) throw new NotFoundException();
     Employee employee = possibleEmployee.get();
 
-    if (!employee.isEnabled()) {
-      throw new NotFoundException();
-    }
-
     if (!passwordEncoder.matches(password, employee.getPassword())) {
       throw new BadRequestException("Password is incorrect");
     }
