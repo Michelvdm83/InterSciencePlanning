@@ -1,3 +1,4 @@
+import SystemModalButton from "../../components/SystemModalButton.jsx";
 import NewTaskModal from "./components/NewTaskModal.jsx";
 import UnplannedTasks from "./components/UnplannedTasks.jsx";
 
@@ -14,9 +15,11 @@ export default function SSPSCheduling() {
         <dialog id="new_task_modal" className="modal">
           <NewTaskModal />
         </dialog>
-        <div className="btn btn-accent btn-lg mb-2 rounded-md">
-          Nieuw Systeem
-        </div>
+        <SystemModalButton>
+          <div className="btn btn-accent btn-lg mb-2 w-full rounded-md">
+            Nieuw Systeem
+          </div>
+        </SystemModalButton>
         <UnplannedTasks />
       </div>
       <div className="m-4 w-1/3 rounded-md bg-neutral">

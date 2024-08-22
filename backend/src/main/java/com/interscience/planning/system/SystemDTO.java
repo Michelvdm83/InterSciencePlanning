@@ -19,9 +19,12 @@ public record SystemDTO(
     String status,
     Boolean delayCheckedBySupervisor,
     LocalDate startOfConstruction,
+    LocalDate endOfConstruction,
     Integer estimatedConstructionDays,
     LocalDate startOfTest,
-    Integer estimatedTestDays) {
+    LocalDate endOfTest,
+    Integer estimatedTestDays,
+    String seller) {
 
   public static SystemDTO from(System system) {
 
@@ -36,12 +39,15 @@ public record SystemDTO(
     }
 
     LocalDate startOfTest;
+    LocalDate endOfTest;
     Integer estimatedTestDays;
     if (system.getTestTask() == null) {
       startOfTest = null;
       estimatedTestDays = null;
+      endOfTest = null;
     } else {
       startOfTest = system.getTestTask().getDateStarted();
+      endOfTest = system.getTestTask().getDateCompleted();
       estimatedTestDays = system.getTestTask().getEstimatedTime();
     }
 
@@ -55,12 +61,15 @@ public record SystemDTO(
     }
 
     LocalDate startOfConstruction;
+    LocalDate endOfConstruction;
     Integer estimatedConstructionDays;
     if (system.getConstructionTask() == null) {
       startOfConstruction = null;
+      endOfConstruction = null;
       estimatedConstructionDays = null;
     } else {
       startOfConstruction = system.getConstructionTask().getDateStarted();
+      endOfConstruction = system.getConstructionTask().getDateCompleted();
       estimatedConstructionDays = system.getConstructionTask().getEstimatedTime();
     }
 
@@ -81,8 +90,11 @@ public record SystemDTO(
         system.getStatus().toString(),
         system.isDelayCheckedBySupervisor(),
         startOfConstruction,
+        endOfConstruction,
         estimatedConstructionDays,
         startOfTest,
-        estimatedTestDays);
+        endOfTest,
+        estimatedTestDays,
+        system.getSeller());
   }
 }

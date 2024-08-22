@@ -1,19 +1,28 @@
-import { useState } from "react";
-
 export default function SystemSelectStatusField({
-  defaultValue,
   editable,
   title,
+  system,
+  setSystem,
+  variable,
 }) {
-  const [value, setValue] = useState({ defaultValue });
+  const classes = `
+    select select-bordered select-sm w-full text-accent
+    ${!editable ? "disabled:bg-white disabled:text-accent" : ""}
+`;
 
   return (
     <div>
       <div>{title}</div>
       <select
-        defaultValue={defaultValue}
-        onChange={(e) => setValue(e.target.value)}
-        className="select select-bordered select-sm w-full text-accent"
+        value={system[variable]}
+        onChange={(event) => {
+          setSystem({
+            ...system,
+            [variable]: event.target.value === "" ? null : event.target.value,
+          });
+        }}
+        className={classes}
+        disabled={!editable}
       >
         <option value="TO_BE_PLANNED">aangemaakt</option>
         <option value="PLANNED">SSP: ingepland</option>

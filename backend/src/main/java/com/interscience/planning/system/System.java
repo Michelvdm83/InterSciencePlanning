@@ -6,12 +6,16 @@ import com.interscience.planning.testtask.TestTask;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Getter
 @Setter
 public class System {
@@ -19,6 +23,7 @@ public class System {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID systemId;
 
+  @Column(unique = true, nullable = false)
   private String name;
 
   private String poNumber;
@@ -47,8 +52,14 @@ public class System {
 
   private boolean specsheetApproved;
 
+  private String seller;
+
   @Enumerated(EnumType.STRING)
   private SystemStatus status;
 
   private boolean delayCheckedBySupervisor = true;
+
+  public System(String name) {
+    this.name = name;
+  }
 }

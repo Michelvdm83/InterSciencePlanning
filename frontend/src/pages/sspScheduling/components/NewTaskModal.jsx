@@ -8,7 +8,7 @@ export default function NewTaskModal() {
 
   const handleEstimatedTimeValueChange = (newValue) => {
     if (/^\d*$/.test(newValue)) {
-      //check if from beging ^ to end $ of the input string it only consists of numbers \d*
+      //check if from beginning ^ to end $ of the input string it only consists of numbers \d*
       setEstimatedTime(newValue);
     }
   };
@@ -22,7 +22,7 @@ export default function NewTaskModal() {
   const handleClose = () => {
     setTaskName("");
     setEstimatedTime("");
-    setErrorMessage();
+    setErrorMessage(null);
   };
 
   const handleNewTaskSave = (event) => {

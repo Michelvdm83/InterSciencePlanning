@@ -8,196 +8,310 @@ import SystemSelectStatusField from "./components/SystemSelectStatusField.jsx";
 import SystemSelectEmployeeField from "./components/SystemSelectEmployeeField.jsx";
 import SystemNumberField from "./components/SystemNumberField.jsx";
 import SystemTextArea from "./components/SystemTextArea.jsx";
+import {
+  translateError,
+  validateSystemData,
+} from "./components/validateSystem.js";
 
 export default function SystemOverview({ sName, modalIsOpen, setModalIsOpen }) {
   const [expectedFinish, setExpectedFinish] = useState(null);
-  const [system, setSystem] = useState(null);
+  const [system, setSystem] = useState({});
+  const [error, setError] = useState("");
 
   const employeeFunction = EmployeeService.getEmployeeFunction();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await ApiService.get(
-        `http://localhost:8080/api/v1/systems/${sName}`,
-      );
+    if (sName) {
+      const fetchData = async () => {
+        const response = await ApiService.get(
+          `http://localhost:8080/api/v1/systems/${sName}`,
+        );
 
-      const data = response.data;
-      setSystem(data);
+        const data = response.data;
+        setSystem(data);
 
-      const startDate = new Date(
-        response.data.startOfTest
-          ? response.data.startOfTest
-          : response.data.startOfConstruction
-            ? response.data.startOfConstruction
-            : new Date(),
-      );
-      const buildTime = response.data.estimatedConstructionDays
-        ? response.data.estimatedConstructionDays
-        : 0;
-      const testTime = response.data.estimatedTestDays
-        ? response.data.estimatedTestDays
-        : 0;
-      const addedDate = new Date(
-        startDate.setDate(startDate.getDate() + (buildTime + testTime)),
-      );
-      let expectedDate = addedDate.toISOString().split("T")[0];
+        const startDate = new Date(
+          response.data.startOfTest
+            ? response.data.startOfTest
+            : response.data.startOfConstruction
+              ? response.data.startOfConstruction
+              : new Date(),
+        );
+        const buildTime = response.data.estimatedConstructionDays
+          ? response.data.estimatedConstructionDays
+          : 0;
+        const testTime = response.data.estimatedTestDays
+          ? response.data.estimatedTestDays
+          : 0;
+        const addedDate = new Date(
+          startDate.setDate(startDate.getDate() + (buildTime + testTime)),
+        );
+        let expectedDate = addedDate.toISOString().split("T")[0];
 
-      setExpectedFinish(expectedDate);
-    };
-    fetchData();
+        setExpectedFinish(expectedDate);
+      };
+      fetchData();
+    }
   }, [sName]);
 
   useEffect(() => {
-    if (modalIsOpen && system) {
-      const modal = document.getElementById(sName);
+    if (modalIsOpen) {
+      const modal = document.getElementById(sName || "new-system");
       if (modal) {
         modal.showModal();
       }
     }
   }, [modalIsOpen, sName, system]);
 
-  function handleClose(e) {
-    e.preventDefault();
+  function handleClose() {
     setModalIsOpen(false);
-    setSystem(null);
+    setSystem({});
   }
 
   function handleOnKeyDown(e) {
     if (e.key === "Enter") {
-      handleNewTaskSave(e);
+      handleSave(e);
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
     }
   }
 
-  if (!system) {
-    return null;
+  function handleSave(e) {
+    e.preventDefault();
+
+    if (validateSystemData(system, setError)) {
+      ApiService.post("systems", system)
+        .then(() => handleClose())
+        .catch((error) => {
+          if (error.response && error.response.status === 404) {
+            setError("Medewerker niet gevonden");
+          } else {
+            setError(translateError(error.response?.data?.detail));
+          }
+        });
+    }
   }
 
   return (
-    <dialog id={sName} className="modal">
+    <dialog id={sName || "new-system"} className="modal">
       <div className="modal-box w-fit max-w-full p-0">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
           <div className="flex h-full w-full justify-evenly gap-8 overflow-hidden bg-neutral p-9">
             <div className="flex h-full flex-col">
               <SystemTextField
                 title="Systeem"
-                text={system.name}
+                variable="name"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemTextField
-                title="Po-nummer"
-                text={system.poNumber}
+                title="P.O. nummer"
+                variable="poNumber"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemTextField
-                title="Systeem type"
-                text={system.systemType}
+                title="Systeemtype"
+                variable="systemType"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemSelectEmployeeField
                 title="Eindverantwoordelijke"
-                employeeName={system.employeeResponsible}
+                variable="employeeResponsible"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
-              <SystemCheckboxField
+              {/* <SystemCheckboxField
                 title="Schema goedgekeurd"
-                defaultValue={system.schemeApproved}
+                variable="schemeApproved"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemCheckboxField
                 title="Specsheet goedgekeurd"
-                defaultValue={system.specsheetApproved}
+                variable="specsheetApproved"
                 editable={employeeFunction == "TEAM_LEADER"}
-              />
+                system={system}
+                setSystem={setSystem}
+              /> */}
 
               <SystemDateField
                 title="Afgesproken deadline"
                 date={system.agreedDate}
-                editable={false}
+                variable="agreedDate"
+                editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemDateField
                 title="Verwachte einddatum"
                 date={expectedFinish}
+                variable="expectedFinish"
                 editable={false}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemDateField
                 title="Dag van levering/installatie"
                 date={system.actualDeliveryDate}
-                editable={employeeFunction == "TEAM_LEADER"}
+                variable="actualDeliveryDate"
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
+                system={system}
+                setSystem={setSystem}
+              />
+              <SystemTextArea
+                heightCSS="h-36"
+                title="Contactgegevens klant"
+                text={system.customerContactInformation}
+                variable="customerContactInformation"
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
+                system={system}
+                setSystem={setSystem}
               />
             </div>
 
             <div className="flex flex-col">
               <SystemSelectStatusField
                 title="Status"
-                defaultValue={system.status}
-                editable={true}
+                variable="status"
+                editable={sName && true}
+                system={system}
+                setSystem={setSystem}
               />
-
-              <SystemSelectEmployeeField
-                title="SSP medewerker"
-                employeeName={system.employeeSSP}
+              <SystemNumberField
+                title="Productiedagen"
+                variable="estimatedConstructionDays"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
+              />
+              <SystemSelectEmployeeField
+                title="SSP-medewerker"
+                variable="employeeSSP"
+                editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
 
               <SystemDateField
                 title="Startdatum productie"
                 date={system.startOfConstruction}
+                variable="startOfConstruction"
                 editable={
-                  employeeFunction == "TEAM_LEADER" || employeeFunction == "SSP"
+                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  employeeFunction == "SSP"
                 }
+                system={system}
+                setSystem={setSystem}
+              />
+              <SystemDateField
+                title="Einddatum productie"
+                date={system.endOfConstruction}
+                variable="endOfConstruction"
+                editable={
+                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  employeeFunction == "SSP"
+                }
+                system={system}
+                setSystem={setSystem}
               />
               <SystemNumberField
-                title="Productie dagen"
-                number={system.estimatedConstructionDays}
+                title="Testdagen"
+                variable="estimatedTestDays"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemSelectEmployeeField
-                title="FT medewerker"
-                employeeName={system.employeeFT}
+                title="FT-medewerker"
+                variable="employeeFT"
                 editable={employeeFunction == "TEAM_LEADER"}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemDateField
                 title="Startdatum test"
                 date={system.startOfTest}
+                variable="startOfTest"
                 editable={
-                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  employeeFunction == "FT"
                 }
+                system={system}
+                setSystem={setSystem}
               />
-              <SystemNumberField
-                title="Test dagen"
-                number={system.estimatedTestDays}
+              <SystemDateField
+                title="Einddatum test"
+                date={system.endOfTest}
+                variable="endOfTest"
+                editable={
+                  (sName && employeeFunction == "TEAM_LEADER") ||
+                  employeeFunction == "FT"
+                }
+                system={system}
+                setSystem={setSystem}
+              />
+
+              <SystemTextField
+                title="Verkoper"
+                variable="seller"
                 editable={employeeFunction == "TEAM_LEADER"}
-              />
-              <SystemTextArea
-                heightCSS="h-20"
-                title="Contactgegevens klant"
-                text={system.customerContactInformation}
-                editable={
-                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
-                }
+                system={system}
+                setSystem={setSystem}
               />
             </div>
             <div className="flex flex-col">
               <SystemTextArea
-                heightCSS="h-40"
+                heightCSS="h-48"
                 title="Project informatie"
                 text={system.projectInformation}
+                variable="projectInformation"
                 editable={true}
+                system={system}
+                setSystem={setSystem}
               />
               <SystemTextArea
-                heightCSS="h-40"
+                heightCSS="h-48"
                 title="Notities"
                 text={system.notes}
+                variable="notes"
                 editable={true}
+                system={system}
+                setSystem={setSystem}
               />
-              <button className="btn btn-accent" onClick={handleClose}>
-                Annuleren
-              </button>
+              <div className="mt-2 flex flex-col gap-3">
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  onClick={handleClose}
+                >
+                  Annuleren
+                </button>
+                <button
+                  className="btn btn-accent"
+                  type="submit"
+                  onClick={handleSave}
+                >
+                  Opslaan
+                </button>
+              </div>
             </div>
           </div>
+          {error && <p className="py-3 text-center text-red-600">{error}</p>}
         </form>
       </div>
     </dialog>

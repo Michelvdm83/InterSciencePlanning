@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import javax.crypto.SecretKey;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -31,8 +32,12 @@ public class SecurityConfiguration {
                     .hasRole("TEAM_LEADER")
                     .requestMatchers("api/v1/tasks")
                     .hasRole("TEAM_LEADER")
-                    .requestMatchers("/api/v1/systems/**")
-                    .hasAnyRole("TEAM_LEADER", "SSP", "FT")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/systems/**")
+                    .hasRole("TEAM_LEADER")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/systems/**")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.PATCH, "/api/v1/systems/**")
+                    .permitAll()
                     .requestMatchers("api/v1/employees/ssp-planning")
                     .hasAnyRole("TEAM_LEADER", "SSP")
                     .requestMatchers("api/v1/ssptasks/unplanned")

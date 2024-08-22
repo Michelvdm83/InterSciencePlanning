@@ -10,25 +10,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/systems")
 public class SystemController {
 
-  private final SystemRepository systemRepository;
-
-  //  @GetMapping("/{id}")
-  //  public ResponseEntity<SystemDto> getSystem(@PathVariable UUID id) {
-  //    var possibleSystem = systemRepository.findById(id);
-  //    if (possibleSystem.isEmpty()) {
-  //      return ResponseEntity.notFound().build();
-  //    }
-  //
-  //    return ResponseEntity.ok(SystemDto.from(possibleSystem.get()));
-  //  }
+  private final SystemService systemService;
 
   @GetMapping("/{systemName}")
-  public ResponseEntity<SystemDTO> getSystem(@PathVariable String systemName) {
-    var possibleSystem = systemRepository.findByName(systemName);
-    if (possibleSystem.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
+  public ResponseEntity<SystemDto> getSystem(@PathVariable String systemName) {
+    System system = systemService.getSystem(systemName);
+    return ResponseEntity.ok(SystemDto.from(system));
+  }
 
-    return ResponseEntity.ok(SystemDTO.from(possibleSystem.get()));
+  @PostMapping
+  public ResponseEntity<?> createNewSystem(@RequestBody SystemPostPatchDTO systemPostPatchDTO) {
+    systemService.createNewSystem(systemPostPatchDTO);
+    return ResponseEntity.status(201).build();
   }
 }
