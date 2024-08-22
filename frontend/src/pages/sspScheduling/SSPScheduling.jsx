@@ -1,5 +1,6 @@
 import SystemModalButton from "../../components/SystemModalButton.jsx";
 import NewTaskModal from "./components/NewTaskModal.jsx";
+import UnplannedTasks from "./components/UnplannedTasks.jsx";
 
 export default function SSPSCheduling() {
   return (
@@ -19,9 +20,7 @@ export default function SSPSCheduling() {
             Nieuw Systeem
           </div>
         </SystemModalButton>
-        <div className="flex-grow rounded-md bg-neutral">
-          Nog in te plannen taken en systemen placeholder
-        </div>
+        <UnplannedTasks />
       </div>
       <div className="m-4 w-1/3 rounded-md bg-neutral">
         Wachtlijst taken/systemen ssp medewerker placeholder
