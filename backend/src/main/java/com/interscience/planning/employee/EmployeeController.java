@@ -20,6 +20,15 @@ public class EmployeeController {
     return employeeService.findAll();
   }
 
+  @GetMapping("ssp")
+  public List<EmployeeResponseDTO> findSSPEmployees() {
+    return employeeRepository
+        .findByEnabledTrueAndFunctionIn(List.of(Function.SSP, Function.SSP_TEAM_LEADER))
+        .stream()
+        .map(EmployeeResponseDTO::from)
+        .toList();
+  }
+
   @PostMapping
   public ResponseEntity<EmployeeResponseDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
     EmployeeResponseDTO employee = employeeService.createEmployee(employeeDTO);
