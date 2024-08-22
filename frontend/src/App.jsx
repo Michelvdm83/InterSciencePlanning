@@ -8,7 +8,6 @@ import EmployeeService from "./services/EmployeeService";
 import FtPlanning from "./pages/ftPlanning/FtPlanning";
 import Holidays from "./pages/holidays/Holidays";
 import SetPassword from "./pages/setPassword/SetPassword";
-import ScheduleService from "./services/ScheduleService.js";
 
 export default function App() {
   function getHomeRoute() {
