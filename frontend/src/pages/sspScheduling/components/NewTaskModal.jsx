@@ -7,7 +7,7 @@ export default function NewTaskModal({ updateOpenTasks }) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleEstimatedTimeValueChange = (newValue) => {
-    if (/^\d*$/.test(newValue)) {
+    if (/^\d*$/.test(newValue) && new Number(newValue) > 0) {
       //check if from beginning ^ to end $ of the input string it only consists of numbers \d*
       setEstimatedTime(newValue);
     }

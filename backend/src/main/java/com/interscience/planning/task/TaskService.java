@@ -18,6 +18,8 @@ public class TaskService {
     }
     if (createTaskDTO.estimatedTime() == null) {
       throw new BadRequestException("Estimated time is required");
+    } else if (createTaskDTO.estimatedTime() <= 0) {
+      throw new BadRequestException("Estimated time must be higher than 0");
     }
 
     Task newTask = new Task(createTaskDTO.name(), createTaskDTO.estimatedTime());

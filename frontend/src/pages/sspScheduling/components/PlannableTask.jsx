@@ -17,7 +17,7 @@ export default function PlannableTask({ task, employees, onChange }) {
           <select
             defaultValue={""}
             onChange={onChange}
-            className="select select-bordered select-accent select-sm w-1/2 cursor-pointer"
+            className="select select-bordered select-accent select-sm w-1/2 cursor-pointer text-black"
             onClick={(event) => event.stopPropagation()}
           >
             <option value="" disabled>

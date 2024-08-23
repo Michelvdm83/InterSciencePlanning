@@ -35,7 +35,7 @@ export default function SSPSCheduling() {
         <dialog id="new_task_modal" className="modal">
           <NewTaskModal updateOpenTasks={updateOpenTasks} />
         </dialog>
-        <SystemModalButton>
+        <SystemModalButton updateOpenTasks={updateOpenTasks}>
           <div className="btn btn-accent btn-lg mb-2 w-full rounded-md">
             Nieuw Systeem
           </div>
@@ -44,11 +44,14 @@ export default function SSPSCheduling() {
           employees={employees}
           openTasks={openTasks}
           setOpenTasks={setOpenTasks}
+          updateOpenTasks={updateOpenTasks}
         />
       </div>
-      <div className="m-4 w-1/3 rounded-md bg-neutral">
-        <TasksPerEmployee employees={employees} openTasks={openTasks} />
-      </div>
+      <TasksPerEmployee
+        employees={employees}
+        openTasks={openTasks}
+        updateOpenTasks={updateOpenTasks}
+      />
       <div className="m-4 w-1/3 rounded-md bg-neutral">
         Vertraagde systemen placeholder
       </div>

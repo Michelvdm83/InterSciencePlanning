@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { Reorder } from "framer-motion";
 import ApiService from "../../../services/ApiService";
+import SystemModalButton from "../../../components/SystemModalButton";
+import { MdDragHandle } from "react-icons/md";
 
-export default function TasksPerEmployee({ employees, openTasks }) {
+export default function TasksPerEmployee({
+  employees,
+  openTasks,
+  updateOpenTasks,
+}) {
   const [tasks, setTasks] = useState([]);
   const [currentEmployeeId, setCurrentEmployeeId] = useState("");
 
@@ -10,7 +16,6 @@ export default function TasksPerEmployee({ employees, openTasks }) {
     ? tasks.slice().sort((a, b) => Number(a.index) - Number(b.index))
     : [];
   const firstIndex = sortedTasks.length > 0 ? sortedTasks[0].index : 0;
-  console.log(firstIndex);
 
   useEffect(() => {
     if (currentEmployeeId.length > 1) {
@@ -30,8 +35,35 @@ export default function TasksPerEmployee({ employees, openTasks }) {
     setTasks(newTasks);
   }
 
+  function getStandardField(name, textClass) {
+    return <div className={textClass + " w-1/3"}>{name}</div>;
+  }
+
+  function getField(currentTask) {
+    if (currentTask.systemName) {
+      return (
+        <div className="w-fit whitespace-nowrap">
+          <SystemModalButton
+            systemName={currentTask.systemName}
+            updateOpenTasks={updateOpenTasks}
+          >
+            {getStandardField(
+              "Systeem: " + currentTask.systemName,
+              "text-primary cursor-pointer",
+            )}
+          </SystemModalButton>
+        </div>
+      );
+    } else {
+      return getStandardField(
+        "Taak: " + currentTask.taskName,
+        "text-secondary",
+      );
+    }
+  }
+
   return (
-    <div>
+    <div className="m-4 flex w-1/3 flex-grow flex-col items-center gap-2 rounded-md bg-neutral p-5">
       {employees && (
         <select
           defaultValue={""}
@@ -50,12 +82,19 @@ export default function TasksPerEmployee({ employees, openTasks }) {
           })}
         </select>
       )}
-      <Reorder.Group values={sortedTasks} onReorder={handleReorder}>
+      <Reorder.Group
+        values={sortedTasks}
+        onReorder={handleReorder}
+        className="w-full bg-transparent p-2"
+      >
         {sortedTasks.map((sortedTask) => (
-          <Reorder.Item key={sortedTask.id} value={sortedTask}>
-            {sortedTask.systemName
-              ? sortedTask.systemName
-              : sortedTask.taskName}
+          <Reorder.Item
+            key={sortedTask.id}
+            value={sortedTask}
+            className="m-2 flex cursor-ns-resize justify-between rounded-md bg-white p-3"
+          >
+            {getField(sortedTask)}
+            <MdDragHandle className="self-center text-2xl text-neutral" />
           </Reorder.Item>
         ))}
       </Reorder.Group>
