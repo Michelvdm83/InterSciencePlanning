@@ -212,8 +212,12 @@ export default class ScheduleService {
     });
 
     let schedule = [];
+    let currentDay = 0;
 
-    ApiService.get(`employees/schedules/` + employeeId).then((response) => {
+    try {
+      const response = await ApiService.get(
+        `employees/schedules/` + employeeId,
+      );
       const tasks = response.data.allTasks ? response.data.allTasks : [];
       let tasksEditable = JSON.parse(JSON.stringify(tasks));
 
@@ -492,7 +496,10 @@ export default class ScheduleService {
           schedule.push(scheduleEntries[i]);
         }
       }
-    });
-    return schedule;
+      return schedule;
+    } catch (error) {
+      console.error("Error fetching employee schedule:", error);
+      throw error;
+    }
   }
 }

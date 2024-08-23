@@ -1,5 +1,3 @@
-/* Safelist: border-holiday border-started border-planned border-task border-done bg-done bg-task bg-planned bg-holiday bg-started bg-accent */
-
 import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
 import ScheduleService from "../../services/ScheduleService.js";
@@ -16,18 +14,21 @@ export default function SSPPlanning() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const employeesResponse = await getEmployees();
-      await setEmployees(sortEmployeesOnFunction(employeesResponse));
-      const newEmployeeTasksArray = await getEmployeeTasks();
-      setEmployeeTasks(newEmployeeTasksArray);
-      console.log(employeeTasks);
+      try {
+        const employeesResponse = await getEmployees();
+        setEmployees(sortEmployeesOnFunction(employeesResponse));
+        const newEmployeeTasksArray = await getEmployeeTasks(employeesResponse);
+        setEmployeeTasks(newEmployeeTasksArray);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     setLoading(true);
     fetchData();
-
     setDateArray(ScheduleService.getDates(beginDate, planningDays));
-    setLoading(false);
   }, []);
 
   const getEmployees = async () => {
@@ -35,18 +36,27 @@ export default function SSPPlanning() {
     return await employeesResponse.data;
   };
 
-  const getEmployeeTasks = async () => {
-    console.log("before getting the employee tasks: ");
-    console.log(employees);
+  const getEmployeeTasks = async (employees) => {
     let newEmployeeTasksArray = [];
 
     for (const employee of employees) {
-      const newEmployeeTasks = await ScheduleService.getEmployeeSchedule(
-        beginDate,
-        planningDays,
-        employee.id,
-      );
-      newEmployeeTasksArray = [...newEmployeeTasksArray, newEmployeeTasks];
+      try {
+        const newEmployeeTasks = await ScheduleService.getEmployeeSchedule(
+          beginDate,
+          planningDays,
+          employee.id,
+        );
+
+        // Push only if tasks are retrieved, otherwise push an empty array
+        newEmployeeTasksArray.push(newEmployeeTasks || []);
+      } catch (error) {
+        console.error(
+          `Error fetching tasks for employee ${employee.id}:`,
+          error,
+        );
+        // Add an empty array for this employee if an error occurs
+        newEmployeeTasksArray.push([]);
+      }
     }
     return newEmployeeTasksArray;
   };
@@ -63,7 +73,7 @@ export default function SSPPlanning() {
     });
   };
 
-  if (loading === true) {
+  if (loading) {
     return <div>loading...</div>;
   }
 
@@ -94,16 +104,25 @@ export default function SSPPlanning() {
           ))}
 
           {employeeTasks.map((currentEmployeeTasks, employeeIndex) => {
+            if (
+              !Array.isArray(currentEmployeeTasks) ||
+              currentEmployeeTasks.length === 0
+            ) {
+              return null;
+            }
+
             return currentEmployeeTasks.map((task, taskIndex) => {
-              return Array.from({ length: task.numberOfDays }).map((_, i) => {
+              const numberOfDays = parseInt(task.numberOfDays, 10);
+
+              return Array.from({ length: numberOfDays }).map((_, i) => {
                 //index of amount of gridboxes of tasks in this column, it is the x't gridbox of this task + numberOfDays (aka gridboxes) of the preceding taks
                 const overallIndex =
                   currentEmployeeTasks
                     .slice(0, taskIndex)
-                    .reduce(
-                      (acc, task) => acc + parseInt(task.numberOfDays),
-                      0,
-                    ) + i;
+                    .reduce((acc, task) => {
+                      const days = parseInt(task.numberOfDays, 10) || 0;
+                      return acc + days;
+                    }, 0) + i;
 
                 let bgColor;
                 switch (task.status) {
@@ -130,7 +149,7 @@ export default function SSPPlanning() {
                 }
 
                 const borderClass =
-                  i === task.numberOfDays - 1 && (overallIndex + 1) % 5 != 0
+                  i === numberOfDays - 1 && (overallIndex + 1) % 5 !== 0
                     ? "border-black"
                     : `border-${bgColor}`;
 
