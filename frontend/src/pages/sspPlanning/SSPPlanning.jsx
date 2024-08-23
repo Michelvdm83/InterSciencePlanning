@@ -11,31 +11,41 @@ export default function SSPPlanning() {
   );
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
   const [dateArray, setDateArray] = useState([]);
   const [employeeTasks, setEmployeeTasks] = useState([]);
+
+  const setEmployeeTasksFunction = (newEmployeeTasks) => {
+    setEmployeeTasks(newEmployeeTasks);
+    console.log("set the employee tasks");
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       const employeesResponse = await getEmployees();
       await setEmployees(sortEmployeesOnFunction(employeesResponse));
-      const newEmployeeTasksArray = await getEmployeeTasks();
-      setEmployeeTasks(newEmployeeTasksArray);
-      console.log(employeeTasks);
+
+      const newEmployeeTasksArray = await getEmployeeTasks(
+        sortEmployeesOnFunction(employeesResponse),
+      );
+      setEmployeeTasksFunction(newEmployeeTasksArray);
+      console.log("tasks:");
+      console.log(newEmployeeTasksArray);
+      setLoading(false);
     };
 
-    setLoading(true);
     fetchData();
 
     setDateArray(ScheduleService.getDates(beginDate, planningDays));
-    setLoading(false);
-  }, []);
+    setLoading2(false);
+  }, [beginDate, planningDays]);
 
   const getEmployees = async () => {
     const employeesResponse = await ApiService.get("/employees/ssp-planning");
     return await employeesResponse.data;
   };
 
-  const getEmployeeTasks = async () => {
+  const getEmployeeTasks = async (employees) => {
     console.log("before getting the employee tasks: ");
     console.log(employees);
     let newEmployeeTasksArray = [];
@@ -46,10 +56,20 @@ export default function SSPPlanning() {
         planningDays,
         employee.id,
       );
-      newEmployeeTasksArray = [...newEmployeeTasksArray, newEmployeeTasks];
+      newEmployeeTasksArray.push(newEmployeeTasks || []);
     }
     return newEmployeeTasksArray;
   };
+
+  const employee1Tasks = [
+    { name: "Bakger004", numberOfDays: "2", status: "done" },
+    { name: "bakger005", numberOfDays: "7", status: "started" },
+    { name: "Opruimen", numberOfDays: "2", status: "task" },
+    { name: "Bakger006", numberOfDays: "5", status: "planned" },
+    { name: "vakantie", numberOfDays: "1", status: "holiday" },
+    { name: "Bakger007", numberOfDays: "3", status: "planned" },
+    { name: "Bakger007", numberOfDays: "3", status: "planned" },
+  ];
 
   const sortEmployeesOnFunction = (unsortedEmployees) => {
     return unsortedEmployees.sort(function (a, b) {
@@ -63,9 +83,11 @@ export default function SSPPlanning() {
     });
   };
 
-  if (loading === true) {
+  if (loading === true || loading2 === true) {
     return <div>loading...</div>;
   }
+  console.log("net voor het renderen");
+  console.log(employeeTasks);
 
   return (
     <div className="flex h-full w-full justify-center overflow-auto p-8">
@@ -94,7 +116,11 @@ export default function SSPPlanning() {
           ))}
 
           {employeeTasks.map((currentEmployeeTasks, employeeIndex) => {
+            console.log("RENDERING THE TASKS", currentEmployeeTasks);
+
+            console.log("TEST", currentEmployeeTasks, employee1Tasks);
             return currentEmployeeTasks.map((task, taskIndex) => {
+              return <p>TEST</p>;
               return Array.from({ length: task.numberOfDays }).map((_, i) => {
                 //index of amount of gridboxes of tasks in this column, it is the x't gridbox of this task + numberOfDays (aka gridboxes) of the preceding taks
                 const overallIndex =
