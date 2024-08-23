@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import ApiService from "../../../services/ApiService.js";
 
-export default function NewTaskModal() {
+export default function NewTaskModal({ updateOpenTasks }) {
   const [taskName, setTaskName] = useState("");
   const [estimatedTime, setEstimatedTime] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleEstimatedTimeValueChange = (newValue) => {
-    if (/^\d*$/.test(newValue)) {
+    if (/^\d*$/.test(newValue) && new Number(newValue) > 0) {
       //check if from beginning ^ to end $ of the input string it only consists of numbers \d*
       setEstimatedTime(newValue);
     }
@@ -31,7 +31,9 @@ export default function NewTaskModal() {
 
       const newTask = { name, estimatedTime };
 
-      ApiService.post("tasks", newTask);
+      ApiService.post("tasks", newTask).then(() => {
+        updateOpenTasks();
+      });
 
       setTaskName("");
       setEstimatedTime("");
