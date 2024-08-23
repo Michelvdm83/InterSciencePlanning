@@ -22,9 +22,8 @@ public class HolidayController {
 
   @GetMapping
   public List<HolidayResponseDTO> getAll() {
-    return holidayRepository.findAll().stream()
+    return holidayRepository.findAllByEndDateGreaterThanEqual(LocalDate.now()).stream()
         .sorted(Comparator.comparing(Holiday::getStartDate))
-        .filter(holiday -> !holiday.getEndDate().isBefore(LocalDate.now()))
         .map(HolidayResponseDTO::from)
         .toList();
   }
