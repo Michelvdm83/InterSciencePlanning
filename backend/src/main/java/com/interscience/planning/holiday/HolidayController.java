@@ -4,10 +4,10 @@ import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +22,10 @@ public class HolidayController {
 
   @GetMapping
   public List<HolidayResponseDTO> getAll() {
-    return holidayRepository.findAll().stream()
+    return holidayRepository.findAllByEndDateGreaterThanEqual(LocalDate.now()).stream()
         .sorted(Comparator.comparing(Holiday::getStartDate))
         .map(HolidayResponseDTO::from)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   @PostMapping
