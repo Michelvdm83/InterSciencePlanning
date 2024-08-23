@@ -67,7 +67,7 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
 
   return (
     <div className="w-2/5 rounded-md bg-neutral p-8">
-      <h2 className="px-1 py-2 font-Effra_Bd text-xl text-secondary">
+      <h2 className="py-2 font-Effra_Bd text-xl text-secondary">
         Vakantie toevoegen
       </h2>
       <form className="form-control" onSubmit={handleAddHoliday}>

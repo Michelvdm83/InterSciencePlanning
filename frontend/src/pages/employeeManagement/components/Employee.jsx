@@ -29,14 +29,16 @@ export default function Employee({ employee, employees, setEmployees }) {
       <p className="col-span-3 row-span-1 font-Effra_Bd text-secondary">
         {employee.name}
       </p>
-      <p className="col-span-1 row-span-1 text-accent">
-        {employee.function === "SSP_TEAM_LEADER"
-          ? "SSP Teamleider"
-          : employee.function === "FT_TEAM_LEADER"
-            ? "FT Teamleider"
-            : employee.function}
-      </p>
-      <p className="col-span-4 row-span-1">{employee.email}</p>
+      <div className="col-span-1 row-span-2 flex items-center justify-start text-nowrap text-accent">
+        <p>
+          {employee.function === "SSP_TEAM_LEADER"
+            ? "SSP Teamleider"
+            : employee.function === "FT_TEAM_LEADER"
+              ? "FT Teamleider"
+              : employee.function}
+        </p>
+      </div>
+      <p className="col-span-3 row-span-1">{employee.email}</p>
       <div className="col-start-5 row-span-2 row-start-1 flex items-center justify-end gap-2">
         <EditEmployee employee={employee} setEmployees={setEmployees} />
         <DeleteButton
