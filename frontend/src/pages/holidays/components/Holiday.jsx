@@ -29,7 +29,7 @@ export default function Holiday({
   }
 
   return (
-    <div className="flex justify-between rounded-md bg-base-100 p-3">
+    <div className="mb-2 flex justify-between rounded-md bg-base-100 p-4">
       <div>
         <p className="">
           {formatDate(holiday.startDate)} <span className="mx-2">-</span>
