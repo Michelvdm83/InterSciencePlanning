@@ -11,29 +11,28 @@ export default function SSPPlanning() {
   );
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingData, setLoadingData] = useState(false);
   const [dateArray, setDateArray] = useState([]);
   const [employeeTasks, setEmployeeTasks] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const employeesResponse = await getEmployees();
-      setEmployees(sortEmployeesOnFunction(employeesResponse));
+      await setEmployees(sortEmployeesOnFunction(employeesResponse));
       const newEmployeeTasksArray = await getEmployeeTasks();
       setEmployeeTasks(newEmployeeTasksArray);
+      console.log(employeeTasks);
     };
 
     setLoading(true);
     fetchData();
-    console.log(employeeTasks);
+
     setDateArray(ScheduleService.getDates(beginDate, planningDays));
     setLoading(false);
-  }, [loadingData]);
+  }, []);
 
   const getEmployees = async () => {
     const employeesResponse = await ApiService.get("/employees/ssp-planning");
-    const unsortedEmployees = await employeesResponse.data;
-    return unsortedEmployees;
+    return await employeesResponse.data;
   };
 
   const getEmployeeTasks = async () => {
