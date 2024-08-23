@@ -1,18 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ApiService from "../../../services/ApiService";
-import { json } from "react-router-dom";
-import SystemModalButton from "../../../components/SystemModalButton";
 import PlannableTask from "./PlannableTask";
 
 export default function UnplannedTasks({ employees, openTasks, setOpenTasks }) {
-  //   const [openTasks, setOpenTasks] = useState([]);
   const [error, setError] = useState("");
-
-  //   useEffect(() => {
-  //     ApiService.get("ssptasks/unplanned").then((response) => {
-  //       setOpenTasks(response.data);
-  //     });
-  //   }, []);
 
   function translateError(error) {
     switch (error.toString()) {
