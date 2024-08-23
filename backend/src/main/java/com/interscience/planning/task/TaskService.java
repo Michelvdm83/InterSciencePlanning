@@ -13,7 +13,7 @@ public class TaskService {
   private final SSPTaskRepository sspTaskRepository;
 
   public void createTask(CreateTaskDTO createTaskDTO) {
-    if (createTaskDTO.name() == null || createTaskDTO.name().isEmpty()) {
+    if (createTaskDTO.name() == null || createTaskDTO.name().isBlank()) {
       throw new BadRequestException("Name is required");
     }
     if (createTaskDTO.estimatedTime() == null) {
