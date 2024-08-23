@@ -73,6 +73,7 @@ public class Seeder implements CommandLineRunner {
 
     SSPTask ssp1 = new SSPTask();
     ssp1.setTask(task1);
+    ssp1.setIndex(0);
     ssp1.setEmployee(employeeRepository.findByEmail("teamleider@interscience.nl").orElse(null));
 
     SSPTask ssp2 = new SSPTask();
