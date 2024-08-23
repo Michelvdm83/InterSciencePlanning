@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Reorder } from "framer-motion";
 import ApiService from "../../../services/ApiService";
 
-export default function TasksPerEmployee({ employees }) {
+export default function TasksPerEmployee({ employees, openTasks }) {
   const [tasks, setTasks] = useState([]);
   const [currentEmployeeId, setCurrentEmployeeId] = useState("");
 
@@ -20,7 +20,7 @@ export default function TasksPerEmployee({ employees }) {
         },
       );
     }
-  }, [currentEmployeeId]);
+  }, [currentEmployeeId, openTasks]);
 
   function handleReorder(newTasks) {
     newTasks.forEach((t, index) => {

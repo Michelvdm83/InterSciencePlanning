@@ -7,8 +7,13 @@ import ApiService from "../../services/ApiService.js";
 
 export default function SSPSCheduling() {
   const [employees, setEmployees] = useState([]);
+  const [openTasks, setOpenTasks] = useState([]);
 
   useEffect(() => {
+    ApiService.get("ssptasks/unplanned").then((response) => {
+      setOpenTasks(response.data);
+    });
+
     ApiService.get("employees/ssp-planning").then((response) => {
       setEmployees(response.data);
     });
@@ -31,11 +36,14 @@ export default function SSPSCheduling() {
             Nieuw Systeem
           </div>
         </SystemModalButton>
-        <UnplannedTasks />
+        <UnplannedTasks
+          employees={employees}
+          openTasks={openTasks}
+          setOpenTasks={setOpenTasks}
+        />
       </div>
       <div className="m-4 w-1/3 rounded-md bg-neutral">
-        Wachtlijst taken/systemen ssp medewerker placeholder
-        <TasksPerEmployee employees={employees} />
+        <TasksPerEmployee employees={employees} openTasks={openTasks} />
       </div>
       <div className="m-4 w-1/3 rounded-md bg-neutral">
         Vertraagde systemen placeholder
