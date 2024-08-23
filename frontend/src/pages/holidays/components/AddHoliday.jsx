@@ -49,8 +49,11 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
       setError("De begindatum mag niet na de einddatum zijn");
     } else {
       ApiService.post("holidays", holiday)
+        .then(() => {
+          return ApiService.get("holidays");
+        })
         .then((response) => {
-          setHolidays([...holidays, response.data]);
+          setHolidays(response.data);
           setHoliday({ employeeId: "", startDate: today, endDate: today });
           setError("");
         })
