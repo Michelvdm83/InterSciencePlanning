@@ -10,6 +10,11 @@ export default function SystemSelectEmployeeField({
   const [employees] = useGetEmployees();
   let filteredEmployees = [];
 
+  const classes = `
+  select select-bordered select-sm w-full text-accent
+  ${!editable ? "disabled:bg-white disabled:text-accent" : ""}
+`;
+
   if (variable === "employeeSSP") {
     filteredEmployees = employees.filter(
       (employee) => employee.function === "SSP",
@@ -37,7 +42,7 @@ export default function SystemSelectEmployeeField({
             [variable]: event.target.value === "" ? null : event.target.value,
           });
         }}
-        className="select select-bordered select-sm w-full text-accent"
+        className={classes}
         disabled={!editable}
       >
         <option value=""></option>

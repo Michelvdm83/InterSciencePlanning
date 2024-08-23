@@ -28,6 +28,13 @@ public class HolidayController {
         .toList();
   }
 
+  @DeleteMapping("{id}")
+  public ResponseEntity<Void> deleteHoliday(@PathVariable UUID id) {
+    Holiday holiday = holidayRepository.findById(id).orElseThrow(NotFoundException::new);
+    holidayRepository.delete(holiday);
+    return ResponseEntity.noContent().build();
+  }
+
   @PostMapping
   public ResponseEntity<HolidayResponseDTO> addHoliday(@RequestBody HolidayDTO holidayDTO) {
     if (holidayDTO.employeeId() == null) {
@@ -45,16 +52,35 @@ public class HolidayController {
     if (holidayDTO.startDate().isAfter(holidayDTO.endDate())) {
       throw new BadRequestException("Start date can't be after end date");
     }
-    Holiday holiday = new Holiday(employee, holidayDTO.startDate(), holidayDTO.endDate());
-    holidayRepository.save(holiday);
 
-    return ResponseEntity.status(201).body(HolidayResponseDTO.from(holiday));
+    Holiday newHoliday = new Holiday(employee, holidayDTO.startDate(), holidayDTO.endDate());
+    Holiday newHolidayMerged = mergeHolidaysIfOverlapping(newHoliday, employee);
+    holidayRepository.save(newHolidayMerged);
+
+    return ResponseEntity.status(201).body(HolidayResponseDTO.from(newHolidayMerged));
   }
 
-  @DeleteMapping("{id}")
-  public ResponseEntity<Void> deleteHoliday(@PathVariable UUID id) {
-    Holiday holiday = holidayRepository.findById(id).orElseThrow(NotFoundException::new);
-    holidayRepository.delete(holiday);
-    return ResponseEntity.noContent().build();
+  private Holiday mergeHolidaysIfOverlapping(Holiday newHoliday, Employee employee) {
+    List<Holiday> existingHolidays = holidayRepository.findByEmployeeId(employee.getId());
+
+    for (Holiday h : existingHolidays) {
+      if (overlaps(h, newHoliday)) {
+        newHoliday = mergeHolidays(h, newHoliday);
+        holidayRepository.delete(h);
+      }
+    }
+    return newHoliday;
+  }
+
+  private boolean overlaps(Holiday h1, Holiday h2) {
+    return !(h1.getEndDate().isBefore(h2.getStartDate())
+        || h1.getStartDate().isAfter(h2.getEndDate()));
+  }
+
+  private Holiday mergeHolidays(Holiday h1, Holiday h2) {
+    return new Holiday(
+        h1.getEmployee(),
+        h1.getStartDate().isBefore(h2.getStartDate()) ? h1.getStartDate() : h2.getStartDate(),
+        h1.getEndDate().isAfter(h2.getEndDate()) ? h1.getEndDate() : h2.getEndDate());
   }
 }

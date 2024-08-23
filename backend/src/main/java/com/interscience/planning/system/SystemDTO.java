@@ -1,6 +1,7 @@
 package com.interscience.planning.system;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record SystemDTO(
     String name,
@@ -8,9 +9,9 @@ public record SystemDTO(
     String systemType,
     LocalDate agreedDate,
     LocalDate actualDeliveryDate,
-    String employeeResponsible,
-    String employeeFT,
-    String employeeSSP,
+    UUID employeeResponsible,
+    UUID employeeFT,
+    UUID employeeSSP,
     String notes,
     String customerContactInformation,
     String projectInformation,
@@ -28,14 +29,14 @@ public record SystemDTO(
 
   public static SystemDTO from(System system) {
 
-    String responsiblePerson =
-        system.getEmployeeResponsible() == null ? null : system.getEmployeeResponsible().getName();
+    UUID responsiblePerson =
+        system.getEmployeeResponsible() == null ? null : system.getEmployeeResponsible().getId();
 
-    String ftEmployee;
+    UUID ftEmployee;
     if (system.getTestTask() == null || system.getTestTask().getEmployee() == null) {
       ftEmployee = null;
     } else {
-      ftEmployee = system.getTestTask().getEmployee().getName();
+      ftEmployee = system.getTestTask().getEmployee().getId();
     }
 
     LocalDate startOfTest;
@@ -51,13 +52,13 @@ public record SystemDTO(
       estimatedTestDays = system.getTestTask().getEstimatedTime();
     }
 
-    String sspEmployee;
+    UUID sspEmployee;
     if (system.getConstructionTask() == null
         || system.getConstructionTask().getSspTask() == null
         || system.getConstructionTask().getSspTask().getEmployee() == null) {
       sspEmployee = null;
     } else {
-      sspEmployee = system.getConstructionTask().getSspTask().getEmployee().getName();
+      sspEmployee = system.getConstructionTask().getSspTask().getEmployee().getId();
     }
 
     LocalDate startOfConstruction;
