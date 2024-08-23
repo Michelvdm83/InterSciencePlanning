@@ -188,7 +188,7 @@ public class SystemService {
         systemPostPatchDTO.endOfConstruction() != null
             ? systemPostPatchDTO.endOfConstruction()
             : constructionTask.getDateCompleted();
-    if (endDate != null && !systemPostPatchDTO.startOfConstruction().isBefore(endDate)) {
+    if (endDate != null && systemPostPatchDTO.startOfConstruction().isAfter(endDate)) {
       throw new BadRequestException("Construction end date must be after construction start date");
     }
 
@@ -206,7 +206,7 @@ public class SystemService {
       throw new BadRequestException(
           "Construction start date required for setting construction end date");
     }
-    if (!systemPostPatchDTO.endOfConstruction().isAfter(startDate)) {
+    if (systemPostPatchDTO.endOfConstruction().isBefore(startDate)) {
       throw new BadRequestException("Construction end date must be after construction start date");
     }
 
@@ -214,7 +214,7 @@ public class SystemService {
         systemPostPatchDTO.startOfTest() != null
             ? systemPostPatchDTO.startOfTest()
             : system.getTestTask().getDateStarted();
-    if (testStartDate != null && !systemPostPatchDTO.endOfConstruction().isBefore(testStartDate)) {
+    if (testStartDate != null && systemPostPatchDTO.endOfConstruction().isAfter(testStartDate)) {
       throw new BadRequestException("Construction end date must be before test start date");
     }
 
@@ -279,7 +279,7 @@ public class SystemService {
         systemPostPatchDTO.endOfTest() != null
             ? systemPostPatchDTO.endOfTest()
             : testTask.getDateCompleted();
-    if (endDate != null && !systemPostPatchDTO.startOfTest().isBefore(endDate)) {
+    if (endDate != null && systemPostPatchDTO.startOfTest().isAfter(endDate)) {
       throw new BadRequestException("Test end date must be after test start date");
     }
     testTask.setDateStarted(systemPostPatchDTO.startOfTest());
@@ -294,7 +294,7 @@ public class SystemService {
     if (startDate == null) {
       throw new BadRequestException("Test start date required for setting test end date");
     }
-    if (!systemPostPatchDTO.endOfTest().isAfter(startDate)) {
+    if (systemPostPatchDTO.endOfTest().isBefore(startDate)) {
       throw new BadRequestException("Test end date must be after test start date");
     }
     testTask.setDateCompleted(systemPostPatchDTO.endOfTest());

@@ -22,7 +22,6 @@ export function translateError(error) {
       return "Testdagen vereist om startdatum test in te stellen";
     case "FT employee required for setting test start date":
       return "FT-medewerker vereist om startdatum test in te stellen";
-
     case "Construction end date must be after construction start date":
       return "Einddatum productie moet na startdatum productie zijn";
     case "Construction start date required for setting construction end date":
@@ -81,5 +80,55 @@ export function validateSystemData(system, setError) {
       return false;
     }
   }
+
+  if (system.endOfConstruction != null) {
+    if (system.startOfConstruction == null) {
+      setError(
+        "Startdatum productie vereist om einddatum productie in te stellen",
+      );
+      return false;
+    }
+    let startOfConstruction = new Date(system.startOfConstruction);
+    let endOfConstruction = new Date(system.endOfConstruction);
+
+    if (endOfConstruction < startOfConstruction) {
+      setError("Einddatum productie moet na startdatum productie zijn");
+      return false;
+    }
+    if (system.startOfTest != null) {
+      let startOftest = new Date(system.startOfTest);
+      if (endOfConstruction > startOftest) {
+        setError("Einddatum productie moet voor startdatum test zijn");
+        return false;
+      }
+    }
+  }
+
+  if (system.startOfTest != null) {
+    if (system.endOfConstruction == null) {
+      setError("Einddatum productie vereist om startdatum test in te stellen");
+      return false;
+    }
+    let startOfTest = new Date(system.startOfTest);
+    let endOfConstruction = new Date(system.endOfConstruction);
+    if (startOfTest < endOfConstruction) {
+      setError("Startdatum test moet na einddatum productie zijn");
+      return false;
+    }
+  }
+
+  if (system.endOfTest != null) {
+    if (system.startOfTest == null) {
+      setError("Startdatum test vereist om einddatum test in te stellen");
+      return false;
+    }
+    let endOfTest = new Date(system.endOfTest);
+    let startOfTest = new Date(system.startOfTest);
+    if (endOfTest < startOfTest) {
+      setError("Einddatum test moet na startdatum test zijn");
+      return false;
+    }
+  }
+
   return true;
 }
