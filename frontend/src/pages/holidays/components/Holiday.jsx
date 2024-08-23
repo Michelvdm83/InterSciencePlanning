@@ -2,7 +2,19 @@ import React from "react";
 import DeleteButton from "../../../components/DeleteButton";
 import ApiService from "../../../services/ApiService";
 
-export default function Holiday({ holiday, holidays, setHolidays }) {
+export default function Holiday({
+  holiday,
+  holidays,
+  setHolidays,
+  selectedEmployee,
+}) {
+  function formatDate(originalDate) {
+    const parts = originalDate.split("-");
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+    return `${day}/${month}/${year}`;
+  }
   function handleDeleteHoliday(e) {
     e.preventDefault();
 
@@ -20,7 +32,11 @@ export default function Holiday({ holiday, holidays, setHolidays }) {
     <div className="flex justify-between rounded-md bg-base-100 p-3">
       <div>
         <p className="">
-          {holiday.startDate} <span className="mx-2">-</span> {holiday.endDate}
+          {formatDate(holiday.startDate)} <span className="mx-2">-</span>
+          {formatDate(holiday.endDate)}
+          {selectedEmployee.id == "" && (
+            <span className="mx-5 text-accent">{holiday.employeeName}</span>
+          )}
         </p>
       </div>
       <DeleteButton

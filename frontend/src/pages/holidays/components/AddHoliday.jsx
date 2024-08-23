@@ -14,11 +14,13 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Set endDate to startDate when startDate is selected
-    setHoliday((prevHoliday) => ({
-      ...prevHoliday,
-      endDate: prevHoliday.startDate,
-    }));
+    // Set endDate to startDate when startDate is selected to be after endDate
+    if (holiday.startDate > holiday.endDate) {
+      setHoliday((prevHoliday) => ({
+        ...prevHoliday,
+        endDate: prevHoliday.startDate,
+      }));
+    }
   }, [holiday.startDate]);
 
   function translateError(error) {
