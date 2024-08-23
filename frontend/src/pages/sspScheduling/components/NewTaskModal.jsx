@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ApiService from "../../../services/ApiService.js";
 
-export default function NewTaskModal() {
+export default function NewTaskModal({ updateOpenTasks }) {
   const [taskName, setTaskName] = useState("");
   const [estimatedTime, setEstimatedTime] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,7 +31,9 @@ export default function NewTaskModal() {
 
       const newTask = { name, estimatedTime };
 
-      ApiService.post("tasks", newTask);
+      ApiService.post("tasks", newTask).then(() => {
+        updateOpenTasks();
+      });
 
       setTaskName("");
       setEstimatedTime("");

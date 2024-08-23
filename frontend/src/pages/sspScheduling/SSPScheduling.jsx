@@ -10,14 +10,18 @@ export default function SSPSCheduling() {
   const [openTasks, setOpenTasks] = useState([]);
 
   useEffect(() => {
-    ApiService.get("ssptasks/unplanned").then((response) => {
-      setOpenTasks(response.data);
-    });
+    updateOpenTasks();
 
     ApiService.get("employees/ssp-planning").then((response) => {
       setEmployees(response.data);
     });
   }, []);
+
+  function updateOpenTasks() {
+    ApiService.get("ssptasks/unplanned").then((response) => {
+      setOpenTasks(response.data);
+    });
+  }
 
   return (
     <div className="flex h-full w-screen flex-grow">
@@ -29,7 +33,7 @@ export default function SSPSCheduling() {
           Nieuwe Taak
         </div>
         <dialog id="new_task_modal" className="modal">
-          <NewTaskModal />
+          <NewTaskModal updateOpenTasks={updateOpenTasks} />
         </dialog>
         <SystemModalButton>
           <div className="btn btn-accent btn-lg mb-2 w-full rounded-md">
