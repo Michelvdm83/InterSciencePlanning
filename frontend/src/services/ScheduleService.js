@@ -204,7 +204,7 @@ export default class ScheduleService {
   }
 
   //returns the schedule of the employee with employeeId in a period of numberOfDays, starting at startDate
-  static getEmployeeSchedule(startDate, numberOfDays, employeeId) {
+  static async getEmployeeSchedule(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
     const today = new Date(new Date().toISOString().split("T")[0]);
     const todayIndex = allDays.findIndex(function (day) {

@@ -11,18 +11,46 @@ export default function SSPPlanning() {
   );
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingData, setLoadingData] = useState(false);
   const [dateArray, setDateArray] = useState([]);
+  const [employeeTasks, setEmployeeTasks] = useState([]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      const employeesResponse = await getEmployees();
+      setEmployees(sortEmployeesOnFunction(employeesResponse));
+      const newEmployeeTasksArray = await getEmployeeTasks();
+      setEmployeeTasks(newEmployeeTasksArray);
+    };
+
     setLoading(true);
-    ApiService.get("/employees/ssp-planning").then((response) =>
-      setEmployees(sortEmployeesOnFunction(response.data)),
-    );
-
+    fetchData();
+    console.log(employeeTasks);
     setDateArray(ScheduleService.getDates(beginDate, planningDays));
-
     setLoading(false);
-  }, []);
+  }, [loadingData]);
+
+  const getEmployees = async () => {
+    const employeesResponse = await ApiService.get("/employees/ssp-planning");
+    const unsortedEmployees = await employeesResponse.data;
+    return unsortedEmployees;
+  };
+
+  const getEmployeeTasks = async () => {
+    console.log("before getting the employee tasks: ");
+    console.log(employees);
+    let newEmployeeTasksArray = [];
+
+    for (const employee of employees) {
+      const newEmployeeTasks = await ScheduleService.getEmployeeSchedule(
+        beginDate,
+        planningDays,
+        employee.id,
+      );
+      newEmployeeTasksArray = [...newEmployeeTasksArray, newEmployeeTasks];
+    }
+    return newEmployeeTasksArray;
+  };
 
   const sortEmployeesOnFunction = (unsortedEmployees) => {
     return unsortedEmployees.sort(function (a, b) {
@@ -34,23 +62,6 @@ export default function SSPPlanning() {
         return a.name.localeCompare(b.name);
       }
     });
-  };
-
-  const employee1Tasks = [
-    { name: "Bakger001", numberOfDays: "3", status: "started" },
-    { name: "Vakantie", numberOfDays: "4", status: "holiday" },
-    { name: "10x kolomovens", numberOfDays: "2", status: "task" },
-    { name: "Bakger002", numberOfDays: "5", status: "planned" },
-    { name: "Bakger003", numberOfDays: "5", status: "planned" },
-    { name: "vakantie", numberOfDays: "1", status: "holiday" },
-  ];
-
-  const getTasks = (employeeId) => {
-    return ScheduleService.getEmployeeSchedule(
-      beginDate,
-      planningDays,
-      employeeId,
-    );
   };
 
   if (loading === true) {
@@ -83,57 +94,57 @@ export default function SSPPlanning() {
             </div>
           ))}
 
-          {employees.map((employee, employeeIndex) => {
-            const employeeTasks = getTasks(employee.id);
-            {
-              return employeeTasks.map((task, taskIndex) => {
-                return Array.from({ length: task.numberOfDays }).map((_, i) => {
-                  //index of amount of gridboxes of tasks in this column, it is the x't gridbox of this task + numberOfDays (aka gridboxes) of the preceding taks
-                  const overallIndex =
-                    employeeTasks
-                      .slice(0, taskIndex)
-                      .reduce(
-                        (acc, task) => acc + parseInt(task.numberOfDays),
-                        0,
-                      ) + i;
+          {employeeTasks.map((currentEmployeeTasks, employeeIndex) => {
+            return currentEmployeeTasks.map((task, taskIndex) => {
+              return Array.from({ length: task.numberOfDays }).map((_, i) => {
+                //index of amount of gridboxes of tasks in this column, it is the x't gridbox of this task + numberOfDays (aka gridboxes) of the preceding taks
+                const overallIndex =
+                  currentEmployeeTasks
+                    .slice(0, taskIndex)
+                    .reduce(
+                      (acc, task) => acc + parseInt(task.numberOfDays),
+                      0,
+                    ) + i;
 
-                  let bgColor;
-                  switch (task.status) {
-                    case "holiday":
-                      bgColor = "holiday";
-                      break;
-                    case "started":
-                      bgColor = "started";
-                      break;
-                    case "planned":
-                      bgColor = "planned";
-                      break;
-                    case "done":
-                      bgColor = "done";
-                      break;
-                    case "task":
-                      bgColor = "task";
-                      break;
-                    default:
-                      bgColor = "neutral";
-                  }
+                let bgColor;
+                switch (task.status) {
+                  case "holiday":
+                    bgColor = "holiday";
+                    break;
+                  case "started":
+                    bgColor = "started";
+                    break;
+                  case "planned":
+                    bgColor = "planned";
+                    break;
+                  case "done":
+                    bgColor = "done";
+                    break;
+                  case "task":
+                    bgColor = "task";
+                    break;
+                  case "conflict":
+                    bgColor = "error";
+                    break;
+                  default:
+                    bgColor = "neutral";
+                }
 
-                  const borderClass =
-                    i === task.numberOfDays - 1 && (overallIndex + 1) % 5 != 0
-                      ? "border-black"
-                      : `border-${bgColor}`;
+                const borderClass =
+                  i === task.numberOfDays - 1 && (overallIndex + 1) % 5 != 0
+                    ? "border-black"
+                    : `border-${bgColor}`;
 
-                  return (
-                    <div
-                      key={overallIndex}
-                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
-                    >
-                      {i === 0 ? task.name : ""}
-                    </div>
-                  );
-                });
+                return (
+                  <div
+                    key={overallIndex}
+                    className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
+                  >
+                    {i === 0 ? task.taskName : ""}
+                  </div>
+                );
               });
-            }
+            });
           })}
         </div>
       </div>
