@@ -34,7 +34,7 @@ export default function UnplannedTasks({ employees, openTasks, setOpenTasks }) {
   }
 
   return (
-    <div className="flex flex-grow flex-col gap-2 rounded-md bg-neutral p-5">
+    <div className="flex h-full flex-grow flex-col gap-2 overflow-auto rounded-md bg-neutral p-5">
       {error && <p className="mt-4 text-red-600">{error}</p>}
       {openTasks.length > 0 &&
         openTasks.map((task) => {
