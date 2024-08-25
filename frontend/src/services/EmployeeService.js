@@ -54,4 +54,28 @@ export default class EmployeeService {
   static getEmployeeFunction() {
     return localStorage.getItem(EMPLOYEE_FUNCTION_STORAGE_LOCATION);
   }
+
+  static setUpAutoLogout() {
+    const token = localStorage.getItem(TOKEN_STORAGE_LOCATION);
+
+    if (token && token.split(".").length === 3) {
+      const encodedPayload = token.split(".")[1];
+      const decodedPayload = JSON.parse(atob(encodedPayload));
+
+      if (decodedPayload && typeof decodedPayload.exp === "number") {
+        const expirationTime = decodedPayload.exp * 1000;
+
+        const currentTime = new Date().getTime();
+        const timeRemaining = expirationTime - currentTime;
+
+        if (timeRemaining <= 0) {
+          this.logout();
+        } else {
+          setTimeout(() => this.logout(), timeRemaining);
+        }
+        return;
+      }
+    }
+    this.logout();
+  }
 }
