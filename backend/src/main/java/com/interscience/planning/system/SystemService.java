@@ -36,7 +36,7 @@ public class SystemService {
 
   public List<String> searchByName(String contains) {
     List<SystemNameOnly> names =
-        systemRepository.findFirst3SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(contains);
+        systemRepository.findFirst6SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(contains);
     return names.stream().map(SystemNameOnly::getName).toList();
   }
 
