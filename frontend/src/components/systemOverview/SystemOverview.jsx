@@ -115,11 +115,7 @@ export default function SystemOverview({
           ApiService.patch(`systems/${systemName}`, editedFields)
             .then(() => handleClose())
             .catch((error) => {
-              if (error.response && error.response.status === 404) {
-                setError("Medewerker niet gevonden");
-              } else {
-                setError(translateError(error.response?.data?.detail));
-              }
+              setError(translateError(error.response?.data?.detail));
             });
         }
       }
