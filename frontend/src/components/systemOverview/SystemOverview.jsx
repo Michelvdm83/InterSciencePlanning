@@ -118,6 +118,8 @@ export default function SystemOverview({
               setError(translateError(error.response?.data?.detail));
             });
         }
+      } else {
+        handleClose();
       }
     }
   }
