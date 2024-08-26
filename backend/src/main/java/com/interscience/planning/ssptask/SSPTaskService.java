@@ -26,6 +26,15 @@ public class SSPTaskService {
       throw new BadRequestException("No enabled employee found");
     }
     var assignee = possibleAssignee.get();
+
+    if (sspTask.getEmployee() != null
+        && sspTask.getIndex() != null
+        && !assignee.equals(sspTask.getEmployee())) {
+      sspTaskRepository
+          .findByEmployeeAndIndexGreaterThan(sspTask.getEmployee(), sspTask.getIndex())
+          .forEach((sspT) -> sspT.setIndex(sspTask.getIndex() - 1));
+    }
+
     sspTask.setEmployee(assignee);
     sspTask.setIndex(sspTaskRepository.findByEmployee(assignee).size());
 
