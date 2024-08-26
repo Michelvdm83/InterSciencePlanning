@@ -2,19 +2,49 @@
 
 import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
+import ScheduleService from "../../services/ScheduleService.js";
 
 export default function SSPPlanning() {
+  const planningDays = 20;
+  //set begin date needed for later implementation of selecting the period you want to see
+  const [beginDate, setBeginDate] = useState(
+    ScheduleService.getMonday(new Date()),
+  );
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingSchedule, setLoadingSchedule] = useState(true);
+  const [dateArray, setDateArray] = useState([]);
+  const [employeeTasks, setEmployeeTasks] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
-    ApiService.get("/employees/ssp-planning").then((response) =>
-      setEmployees(sortEmployeesOnFunction(response.data)),
-    );
+    ApiService.get("/employees/ssp-planning")
+      .then((response) => {
+        return sortEmployeesOnFunction(response.data);
+      })
+      .then((sortedEmployees) => {
+        setEmployees(sortedEmployees);
+        getEmployeeTasks(sortedEmployees).then(() => {
+          setLoadingSchedule(false);
+        });
+      });
 
+    setDateArray(ScheduleService.getDates(beginDate, planningDays));
     setLoading(false);
   }, []);
+
+  const getEmployeeTasks = async (employees) => {
+    let newEmployeeTasksArray = [];
+    for (const employee of employees) {
+      const newEmployeeTasks = await ScheduleService.getEmployeeSchedule(
+        beginDate,
+        planningDays,
+        employee.id,
+      );
+
+      newEmployeeTasksArray.push(newEmployeeTasks);
+    }
+    setEmployeeTasks(newEmployeeTasksArray);
+  };
 
   const sortEmployeesOnFunction = (unsortedEmployees) => {
     return unsortedEmployees.sort(function (a, b) {
@@ -28,106 +58,7 @@ export default function SSPPlanning() {
     });
   };
 
-  const dateCol = [
-    "12-08-2024",
-    "13-08-2024",
-    "14-08-2024",
-    "15-08-2024",
-    "16-08-2024",
-    "19-08-2024",
-    "20-08-2024",
-    "21-08-2024",
-    "22-08-2024",
-    "23-08-2024",
-    "26-08-2024",
-    "27-08-2024",
-    "28-08-2024",
-    "29-08-2024",
-    "30-08-2024",
-    "02-09-2024",
-    "03-09-2024",
-    "04-09-2024",
-    "05-09-2024",
-    "06-09-2024",
-  ];
-  const employee1Tasks = [
-    { name: "Bakger001", numberOfDays: "3", status: "started" },
-    { name: "Vakantie", numberOfDays: "4", status: "holiday" },
-    { name: "10x kolomovens", numberOfDays: "2", status: "task" },
-    { name: "Bakger002", numberOfDays: "5", status: "planned" },
-    { name: "Bakger003", numberOfDays: "5", status: "planned" },
-    { name: "vakantie", numberOfDays: "1", status: "holiday" },
-  ];
-  const employee2Tasks = [
-    { name: "Bakger004", numberOfDays: "2", status: "done" },
-    { name: "bakger005", numberOfDays: "7", status: "started" },
-    { name: "Opruimen", numberOfDays: "2", status: "task" },
-    { name: "Bakger006", numberOfDays: "5", status: "planned" },
-    { name: "vakantie", numberOfDays: "1", status: "holiday" },
-    { name: "Bakger007", numberOfDays: "3", status: "planned" },
-  ];
-  const employee3Tasks = [
-    { name: "Bakger004", numberOfDays: "4", status: "done" },
-    { name: "bakger005", numberOfDays: "6", status: "started" },
-    { name: "Opruimen", numberOfDays: "2", status: "task" },
-    { name: "Bakger006", numberOfDays: "4", status: "planned" },
-    { name: "vakantie", numberOfDays: "1", status: "holiday" },
-    { name: "Bakger007", numberOfDays: "3", status: "planned" },
-  ];
-  const employee4Tasks = [
-    { name: "Bakger008", numberOfDays: "3", status: "done" },
-    { name: "kolomovens", numberOfDays: "2", status: "task" },
-    { name: "vrij", numberOfDays: "5", status: "holiday" },
-    { name: "Bakger009", numberOfDays: "3", status: "planned" },
-  ];
-  const employee5Tasks = [
-    { name: "Bakger011", numberOfDays: "2", status: "done" },
-    { name: "bakger111", numberOfDays: "3", status: "done" },
-    { name: "Bakger012", numberOfDays: "5", status: "started" },
-    { name: "bakger222", numberOfDays: "4", status: "planned" },
-    { name: "Bakger013", numberOfDays: "3", status: "planned" },
-    { name: "vrij", numberOfDays: "3", status: "holiday" },
-  ];
-  const employee6Tasks = [
-    { name: "Bakger014", numberOfDays: "4", status: "started" },
-    { name: "vrij", numberOfDays: "1", status: "holiday" },
-    { name: "Bakger015", numberOfDays: "6", status: "planned" },
-    { name: "opruimen", numberOfDays: "3", status: "task" },
-    { name: "Bakger016", numberOfDays: "5", status: "planned" },
-    { name: "bakger834", numberOfDays: "1", status: "planned" },
-  ];
-  const employee7Tasks = [
-    { name: "Bakger004", numberOfDays: "2", status: "done" },
-    { name: "bakger005", numberOfDays: "7", status: "started" },
-    { name: "Opruimen", numberOfDays: "2", status: "" },
-    { name: "Bakger006", numberOfDays: "5", status: "" },
-    { name: "vakantie", numberOfDays: "1", status: "holiday" },
-    { name: "Bakger007", numberOfDays: "3", status: "planned" },
-  ];
-
-  const getTasks = (employee) => {
-    //this function will get the correct task list from the service when that is done
-    switch (employee) {
-      case "SSP Medewerker":
-        return employee1Tasks;
-      case "Teamleider":
-        return employee2Tasks;
-      case "Henk":
-        return employee3Tasks;
-      case "Pieter":
-        return employee4Tasks;
-      case "Klaas":
-        return employee5Tasks;
-      case "Jan":
-        return employee6Tasks;
-      case "Ande":
-        return employee7Tasks;
-      default:
-        return employee7Tasks;
-    }
-  };
-
-  if (loading === true) {
+  if (loading === true || loadingSchedule === true) {
     return <div>loading...</div>;
   }
 
@@ -148,66 +79,66 @@ export default function SSPPlanning() {
             );
           })}
 
-          {dateCol.map((date, index) => (
+          {dateArray.map((date, index) => (
             <div
               key={index}
               className={`bg-base-100 text-secondary ${(index + 1) % 5 === 0 ? "mb-2" : ""} row-start-${index + 2} h-7 w-28 border-b-[1.5px] border-solid border-neutral px-3 font-Effra_Md`}
             >
-              {date}
+              {date.toLocaleDateString()}
             </div>
           ))}
 
-          {employees.map((employee, employeeIndex) => {
-            const employeeTasks = getTasks(employee.name);
-            {
-              return employeeTasks.map((task, taskIndex) => {
-                return Array.from({ length: task.numberOfDays }).map((_, i) => {
-                  //index of amount of gridboxes of tasks in this column, it is the x't gridbox of this task + numberOfDays (aka gridboxes) of the preceding taks
-                  const overallIndex =
-                    employeeTasks
-                      .slice(0, taskIndex)
-                      .reduce(
-                        (acc, task) => acc + parseInt(task.numberOfDays),
-                        0,
-                      ) + i;
+          {employeeTasks.map((currentEmployeeTasks, employeeIndex) => {
+            return currentEmployeeTasks.map((task, taskIndex) => {
+              return Array.from({ length: task.numberOfDays }).map((_, i) => {
+                //index of amount of gridboxes of tasks in this column, it is the x't gridbox of this task + numberOfDays (aka gridboxes) of the preceding taks
+                const overallIndex =
+                  currentEmployeeTasks
+                    .slice(0, taskIndex)
+                    .reduce(
+                      (acc, task) => acc + parseInt(task.numberOfDays),
+                      0,
+                    ) + i;
 
-                  let bgColor;
-                  switch (task.status) {
-                    case "holiday":
-                      bgColor = "holiday";
-                      break;
-                    case "started":
-                      bgColor = "started";
-                      break;
-                    case "planned":
-                      bgColor = "planned";
-                      break;
-                    case "done":
-                      bgColor = "done";
-                      break;
-                    case "task":
-                      bgColor = "task";
-                      break;
-                    default:
-                      bgColor = "neutral";
-                  }
+                let bgColor;
+                switch (task.status) {
+                  case "holiday":
+                    bgColor = "holiday";
+                    break;
+                  case "started":
+                    bgColor = "started";
+                    break;
+                  case "planned":
+                    bgColor = "planned";
+                    break;
+                  case "done":
+                    bgColor = "done";
+                    break;
+                  case "task":
+                    bgColor = "task";
+                    break;
+                  case "conflict":
+                    bgColor = "error";
+                    break;
+                  default:
+                    bgColor = "neutral";
+                }
 
-                  const borderClass =
-                    i === task.numberOfDays - 1 && (overallIndex + 1) % 5 != 0
-                      ? "border-black"
-                      : `border-${bgColor}`;
+                const borderClass =
+                  i === task.numberOfDays - 1 && (overallIndex + 1) % 5 != 0
+                    ? "border-black"
+                    : `border-${bgColor}`;
 
-                  return (
-                    <div
-                      key={overallIndex}
-                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
-                    >
-                      {i === 0 ? task.name : ""}
-                    </div>
-                  );
-                });
+                return (
+                  <div
+                    key={overallIndex}
+                    className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
+                  >
+                    {i === 0 ? task.taskName : ""}
+                  </div>
+                );
               });
-            }
+            });
           })}
         </div>
       </div>

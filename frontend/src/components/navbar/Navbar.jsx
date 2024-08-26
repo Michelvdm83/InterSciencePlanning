@@ -28,8 +28,8 @@ export default function Navbar() {
   });
 
   return (
-    <div className="navbar h-20 bg-primary">
-      <div className="flex-1">
+    <div className="navbar min-h-min flex-wrap bg-primary p-4">
+      <div className="min-w-min flex-1 flex-wrap">
         {showSSPPages && (
           <NavbarButton
             title="SSP Planning"
@@ -63,7 +63,7 @@ export default function Navbar() {
       </div>
 
       {EmployeeService.isLoggedIn() && (
-        <div className="flex-none gap-2">
+        <div className="min-w-min flex-none gap-2">
           <NavbarSearch />
 
           <NavbarButton
