@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import LabeledBasicInput from "../../../components/LabeledBasicInput";
 import ApiService from "../../../services/ApiService";
 
-export default function AddHoliday({ employees, holidays, setHolidays }) {
+export default function AddHoliday({ employees, setHolidays }) {
   const today = new Date().toISOString().split("T")[0];
 
   const [holiday, setHoliday] = useState({

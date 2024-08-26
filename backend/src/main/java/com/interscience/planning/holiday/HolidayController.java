@@ -60,6 +60,32 @@ public class HolidayController {
     return ResponseEntity.status(201).body(HolidayResponseDTO.from(newHolidayMerged));
   }
 
+  @PatchMapping("{id}")
+  public ResponseEntity<HolidayResponseDTO> updateHoliday(
+      @PathVariable UUID id, @RequestBody HolidayDTO holidayDTO) {
+    Holiday updatedHoliday = holidayRepository.findById(id).orElseThrow(NotFoundException::new);
+    Employee employee = updatedHoliday.getEmployee();
+
+    if (holidayDTO.startDate() != null) {
+      updatedHoliday.setStartDate(holidayDTO.startDate());
+    }
+    if (holidayDTO.endDate() != null) {
+      updatedHoliday.setEndDate(holidayDTO.endDate());
+    }
+
+    LocalDate startDate =
+        holidayDTO.startDate() != null ? holidayDTO.startDate() : updatedHoliday.getStartDate();
+    LocalDate endDate =
+        holidayDTO.endDate() != null ? holidayDTO.endDate() : updatedHoliday.getEndDate();
+    if (startDate.isAfter(endDate)) {
+      throw new BadRequestException("Start date can't be after end date");
+    }
+
+    Holiday updatedHolidayMerged = mergeHolidaysIfOverlapping(updatedHoliday, employee);
+    holidayRepository.save(updatedHolidayMerged);
+    return ResponseEntity.ok(HolidayResponseDTO.from(updatedHolidayMerged));
+  }
+
   private Holiday mergeHolidaysIfOverlapping(Holiday newHoliday, Employee employee) {
     List<Holiday> existingHolidays = holidayRepository.findByEmployeeId(employee.getId());
 

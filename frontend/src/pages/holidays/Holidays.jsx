@@ -17,11 +17,7 @@ export default function Holidays() {
   return (
     <div className="flex h-full w-screen items-start gap-8 p-8">
       <HolidayList holidays={holidays} setHolidays={setHolidays} />
-      <AddHoliday
-        employees={employees}
-        holidays={holidays}
-        setHolidays={setHolidays}
-      />
+      <AddHoliday employees={employees} setHolidays={setHolidays} />
     </div>
   );
 }
