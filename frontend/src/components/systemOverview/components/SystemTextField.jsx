@@ -10,7 +10,7 @@ export default function SystemTextField({
   let classes =
     "bg-white text-accent disabled:text-accent input input-sm w-full";
   if (!editable) {
-    classes += " input-disabled";
+    classes += " input-disabled disabled:bg-white disabled:text-accent";
   }
 
   return (

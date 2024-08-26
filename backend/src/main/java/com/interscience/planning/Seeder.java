@@ -73,6 +73,7 @@ public class Seeder implements CommandLineRunner {
 
     SSPTask ssp1 = new SSPTask();
     ssp1.setTask(task1);
+    ssp1.setIndex(0);
     ssp1.setEmployee(employeeRepository.findByEmail("teamleider@interscience.nl").orElse(null));
 
     SSPTask ssp2 = new SSPTask();
@@ -108,7 +109,7 @@ public class Seeder implements CommandLineRunner {
 
     ConstructionTask constructionTask = new ConstructionTask();
     constructionTask.setSystem(system);
-    //    constructionTask.setEstimatedTime(2);
+    constructionTask.setEstimatedTime(2);
 
     SSPTask sspTask = new SSPTask();
     sspTask.setConstructionTask(constructionTask);

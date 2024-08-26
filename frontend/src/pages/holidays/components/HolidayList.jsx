@@ -15,20 +15,20 @@ export default function HolidayList({ holidays, setHolidays }) {
     setSelectedEmployee(employee || { name: "", id: "" });
   }
 
-  const sortedHolidays = holidays
-    .filter((holiday) => holiday.employeeId === selectedEmployee.id)
-    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  const sortedHolidays = (
+    selectedEmployee.id != ""
+      ? holidays.filter((holiday) => holiday.employeeId === selectedEmployee.id)
+      : holidays
+  ).sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
   return (
-    <div className="flex h-full w-3/5 flex-col gap-4 overflow-auto rounded-md bg-neutral p-8 font-Effra_Md">
+    <div className="flex h-full w-3/5 flex-col gap-2 overflow-auto rounded-md bg-neutral p-8 font-Effra_Md">
       <select
         value={selectedEmployee.id}
         onChange={handleSelectEmployee}
         className="select select-bordered w-2/5"
       >
-        <option value="" disabled>
-          Medewerker
-        </option>
+        <option value="">Alle medewerkers</option>
         {employees.map((employee) => {
           return (
             <option value={employee.id} key={employee.id}>
@@ -37,7 +37,7 @@ export default function HolidayList({ holidays, setHolidays }) {
           );
         })}
       </select>
-      <h2 className="px-1 py-2 font-Effra_Bd text-xl text-secondary">
+      <h2 className="py-2 font-Effra_Bd text-xl text-secondary">
         {selectedEmployee.name
           ? `${selectedEmployee.name.split(" ")[0]}'s vakanties`
           : ""}
@@ -49,6 +49,7 @@ export default function HolidayList({ holidays, setHolidays }) {
           holiday={holiday}
           holidays={holidays}
           setHolidays={setHolidays}
+          selectedEmployee={selectedEmployee}
         />
       ))}
     </div>

@@ -1,6 +1,11 @@
 import SystemModalButton from "../../../components/SystemModalButton";
 
-export default function PlannableTask({ task, employees, onChange }) {
+export default function PlannableTask({
+  task,
+  employees,
+  onChange,
+  updateOpenTasks,
+}) {
   const taskName = task.taskName;
   const systemName = task.systemName;
   const estimatedTime = task.estimatedTime;
@@ -17,7 +22,7 @@ export default function PlannableTask({ task, employees, onChange }) {
           <select
             defaultValue={""}
             onChange={onChange}
-            className="select select-bordered select-accent select-sm w-1/2 cursor-pointer"
+            className="select select-bordered select-accent select-sm w-1/2 cursor-pointer text-black"
             onClick={(event) => event.stopPropagation()}
           >
             <option value="" disabled>
@@ -42,7 +47,10 @@ export default function PlannableTask({ task, employees, onChange }) {
   }
   if (systemName) {
     return (
-      <SystemModalButton systemName={systemName}>
+      <SystemModalButton
+        systemName={systemName}
+        updateOpenTasks={updateOpenTasks}
+      >
         {getStandardField(systemName)}
       </SystemModalButton>
     );

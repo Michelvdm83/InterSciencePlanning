@@ -19,7 +19,7 @@ public class ConstructionTask {
 
   @OneToOne private System system;
 
-  @OneToOne(mappedBy = "constructionTask")
+  @OneToOne(mappedBy = "constructionTask", cascade = CascadeType.PERSIST)
   private SSPTask sspTask;
 
   private Integer estimatedTime;

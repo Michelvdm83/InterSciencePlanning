@@ -1,23 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ApiService from "../../../services/ApiService";
-import { json } from "react-router-dom";
-import SystemModalButton from "../../../components/SystemModalButton";
 import PlannableTask from "./PlannableTask";
 
-export default function UnplannedTasks() {
-  const [openTasks, setOpenTasks] = useState([]);
-  const [employees, setEmployees] = useState([]);
+export default function UnplannedTasks({
+  employees,
+  openTasks,
+  setOpenTasks,
+  updateOpenTasks,
+}) {
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    ApiService.get("employees/ssp-planning").then((response) => {
-      setEmployees(response.data);
-    });
-
-    ApiService.get("ssptasks/unplanned").then((response) => {
-      setOpenTasks(response.data);
-    });
-  }, []);
 
   function translateError(error) {
     switch (error.toString()) {
@@ -48,18 +39,20 @@ export default function UnplannedTasks() {
   }
 
   return (
-    <div className="flex flex-grow flex-col gap-2 rounded-md bg-neutral p-5">
+    <div className="flex h-full flex-grow flex-col gap-2 overflow-auto rounded-md bg-neutral p-5">
       {error && <p className="mt-4 text-red-600">{error}</p>}
-      {openTasks.map((task) => {
-        return (
-          <PlannableTask
-            task={task}
-            employees={employees}
-            onChange={(event) => assignEmployee(event, task.id)}
-            key={task.id}
-          />
-        );
-      })}
+      {openTasks.length > 0 &&
+        openTasks.map((task) => {
+          return (
+            <PlannableTask
+              task={task}
+              employees={employees}
+              onChange={(event) => assignEmployee(event, task.id)}
+              key={task.id}
+              updateOpenTasks={updateOpenTasks}
+            />
+          );
+        })}
     </div>
   );
 }

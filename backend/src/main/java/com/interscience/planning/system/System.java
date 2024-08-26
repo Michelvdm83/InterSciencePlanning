@@ -36,10 +36,10 @@ public class System {
 
   @ManyToOne private Employee employeeResponsible;
 
-  @OneToOne(mappedBy = "system")
+  @OneToOne(mappedBy = "system", cascade = CascadeType.PERSIST)
   private TestTask testTask;
 
-  @OneToOne(mappedBy = "system")
+  @OneToOne(mappedBy = "system", cascade = CascadeType.PERSIST)
   private ConstructionTask constructionTask;
 
   private String notes;

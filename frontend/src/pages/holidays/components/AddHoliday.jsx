@@ -14,11 +14,13 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Set endDate to startDate when startDate is selected
-    setHoliday((prevHoliday) => ({
-      ...prevHoliday,
-      endDate: prevHoliday.startDate,
-    }));
+    // Set endDate to startDate when startDate is selected to be after endDate
+    if (holiday.startDate > holiday.endDate) {
+      setHoliday((prevHoliday) => ({
+        ...prevHoliday,
+        endDate: prevHoliday.startDate,
+      }));
+    }
   }, [holiday.startDate]);
 
   function translateError(error) {
@@ -49,8 +51,11 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
       setError("De begindatum mag niet na de einddatum zijn");
     } else {
       ApiService.post("holidays", holiday)
+        .then(() => {
+          return ApiService.get("holidays");
+        })
         .then((response) => {
-          setHolidays([...holidays, response.data]);
+          setHolidays(response.data);
           setHoliday({ employeeId: "", startDate: today, endDate: today });
           setError("");
         })
@@ -62,7 +67,7 @@ export default function AddHoliday({ employees, holidays, setHolidays }) {
 
   return (
     <div className="w-2/5 rounded-md bg-neutral p-8">
-      <h2 className="px-1 py-2 font-Effra_Bd text-xl text-secondary">
+      <h2 className="py-2 font-Effra_Bd text-xl text-secondary">
         Vakantie toevoegen
       </h2>
       <form className="form-control" onSubmit={handleAddHoliday}>
