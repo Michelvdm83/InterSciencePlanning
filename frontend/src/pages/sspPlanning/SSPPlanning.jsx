@@ -108,10 +108,15 @@ export default function SSPPlanning() {
                   case "started":
                     bgColor = "started";
                     break;
-                  case "planned":
+                  case "PLANNED":
                     bgColor = "planned";
                     break;
-                  case "done":
+                  case "TRANSFERRED":
+                  case "TESTING":
+                  case "FINISHED":
+                  case "INSTALLED":
+                  case "PROBLEMS":
+                  case "IN_WAIT":
                     bgColor = "done";
                     break;
                   case "task":
@@ -123,6 +128,17 @@ export default function SSPPlanning() {
                   default:
                     bgColor = "neutral";
                 }
+
+                /*
+  PLANNED,
+  BUILDING,
+  TRANSFERRED,
+  TESTING,
+  FINISHED,
+  INSTALLED,
+  PROBLEMS,
+  IN_WAIT
+                */
 
                 const borderClass =
                   i === task.numberOfDays - 1 && (overallIndex + 1) % 5 != 0

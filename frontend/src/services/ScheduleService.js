@@ -79,16 +79,16 @@ export default class ScheduleService {
     isSystem,
     nrOfDays,
     endDateTask,
+    status,
   ) {
+    console.log(status);
     let returnStatus = "";
     if (!isSystem) {
       returnStatus = "task";
-    } else if (startDateTask === null) {
-      returnStatus = "planned";
-    } else if (startDateNextTask === null && endDateTask === null) {
-      returnStatus = nrOfDays > estimatedDays ? "delayed" : "construction";
+    } else if (status === "BUILDING") {
+      returnStatus = nrOfDays > estimatedDays ? "delayed" : "started";
     } else {
-      returnStatus = "finished";
+      returnStatus = status;
     }
 
     return returnStatus;
@@ -166,6 +166,7 @@ export default class ScheduleService {
     calculatedNrOfDays,
   ) {
     const scheduleEntries = [];
+    console.log(task);
 
     let currentIterationNumber = 0;
     while (currentIterationNumber < daysWithTypes.length) {
@@ -195,6 +196,7 @@ export default class ScheduleService {
                     task.systemName,
                     calculatedNrOfDays,
                     task.dateCompleted,
+                    task.status,
                   ),
       };
       scheduleEntries.push(taskBlock);
@@ -215,6 +217,7 @@ export default class ScheduleService {
 
     await ApiService.get(`employees/schedules/` + employeeId).then(
       (response) => {
+        console.log(response.data);
         const tasks = response.data.allTasks ? response.data.allTasks : [];
         let tasksEditable = JSON.parse(JSON.stringify(tasks));
 
