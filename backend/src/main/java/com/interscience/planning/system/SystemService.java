@@ -15,6 +15,7 @@ import com.interscience.planning.testtask.TestTask;
 import com.interscience.planning.testtask.TestTaskRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,12 @@ public class SystemService {
 
   public System getSystem(String name) {
     return systemRepository.findByName(name).orElseThrow(NotFoundException::new);
+  }
+
+  public List<String> searchByName(String contains) {
+    List<SystemNameOnly> names =
+        systemRepository.findFirst6SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(contains);
+    return names.stream().map(SystemNameOnly::getName).toList();
   }
 
   public void createNewSystem(SystemPostPatchDTO systemPostPatchDTO) {

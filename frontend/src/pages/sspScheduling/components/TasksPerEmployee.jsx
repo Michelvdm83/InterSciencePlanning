@@ -85,7 +85,7 @@ export default function TasksPerEmployee({
       <Reorder.Group
         values={sortedTasks}
         onReorder={handleReorder}
-        className="w-full bg-transparent p-2"
+        className="w-full overflow-auto bg-transparent p-2"
       >
         {sortedTasks.map((sortedTask) => (
           <Reorder.Item
