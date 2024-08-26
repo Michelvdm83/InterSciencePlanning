@@ -2,7 +2,12 @@ import { useState } from "react";
 import ApiService from "../../../services/ApiService";
 import PlannableTask from "./PlannableTask";
 
-export default function UnplannedTasks({ employees, openTasks, setOpenTasks }) {
+export default function UnplannedTasks({
+  employees,
+  openTasks,
+  setOpenTasks,
+  updateOpenTasks,
+}) {
   const [error, setError] = useState("");
 
   function translateError(error) {
@@ -44,6 +49,7 @@ export default function UnplannedTasks({ employees, openTasks, setOpenTasks }) {
               employees={employees}
               onChange={(event) => assignEmployee(event, task.id)}
               key={task.id}
+              updateOpenTasks={updateOpenTasks}
             />
           );
         })}

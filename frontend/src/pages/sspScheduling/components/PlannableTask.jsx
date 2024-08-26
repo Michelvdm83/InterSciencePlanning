@@ -1,6 +1,11 @@
 import SystemModalButton from "../../../components/SystemModalButton";
 
-export default function PlannableTask({ task, employees, onChange }) {
+export default function PlannableTask({
+  task,
+  employees,
+  onChange,
+  updateOpenTasks,
+}) {
   const taskName = task.taskName;
   const systemName = task.systemName;
   const estimatedTime = task.estimatedTime;
@@ -42,7 +47,10 @@ export default function PlannableTask({ task, employees, onChange }) {
   }
   if (systemName) {
     return (
-      <SystemModalButton systemName={systemName}>
+      <SystemModalButton
+        systemName={systemName}
+        updateOpenTasks={updateOpenTasks}
+      >
         {getStandardField(systemName)}
       </SystemModalButton>
     );
