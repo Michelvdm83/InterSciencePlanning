@@ -213,103 +213,264 @@ export default class ScheduleService {
 
     let schedule = [];
 
-    ApiService.get(`employees/schedules/` + employeeId).then((response) => {
-      const tasks = response.data.allTasks ? response.data.allTasks : [];
-      let tasksEditable = JSON.parse(JSON.stringify(tasks));
+    await ApiService.get(`employees/schedules/` + employeeId).then(
+      (response) => {
+        const tasks = response.data.allTasks ? response.data.allTasks : [];
+        let tasksEditable = JSON.parse(JSON.stringify(tasks));
 
-      const holidays = this.#getDaysOfHolidays(response.data.holidays);
+        const holidays = this.#getDaysOfHolidays(response.data.holidays);
 
-      let currentDay = 0;
-      const firstDayHolidayIndex = holidays.findIndex(function (day) {
-        return allDays[0] - day < 86400000 && allDays[0] - day > -86400000;
-      });
+        let currentDay = 0;
+        const firstDayHolidayIndex = holidays.findIndex(function (day) {
+          return allDays[0] - day < 86400000 && allDays[0] - day > -86400000;
+        });
 
-      //if the first day in the allDays array is a holiday,
-      //let schedule start with that holiday and set currentDay to the correct day
-      if (firstDayHolidayIndex !== -1) {
-        let firstTaskStart;
-        if (tasks[0]) {
-          if (tasks[0].dateStarted) {
-            firstTaskStart = tasks[0].dateStarted;
+        //if the first day in the allDays array is a holiday,
+        //let schedule start with that holiday and set currentDay to the correct day
+        if (firstDayHolidayIndex !== -1) {
+          let firstTaskStart;
+          if (tasks[0]) {
+            if (tasks[0].dateStarted) {
+              firstTaskStart = tasks[0].dateStarted;
+            } else {
+              if (todayIndex === -1 || todayIndex < currentDay) {
+                firstTaskStart = allDays[currentDay];
+              } else {
+                firstTaskStart = allDays[todayIndex];
+              }
+            }
           } else {
-            if (todayIndex === -1 || todayIndex < currentDay) {
-              firstTaskStart = allDays[currentDay];
-            } else {
-              firstTaskStart = allDays[todayIndex];
-            }
+            firstTaskStart = allDays[allDays.length - 1];
           }
-        } else {
-          firstTaskStart = allDays[allDays.length - 1];
+          const numberOfDaysUntilStart = this.#getNumberOfWorkingDays(
+            allDays[currentDay],
+            firstTaskStart,
+            false,
+          );
+          const daysBeforeStart = this.#getDaysWithTypes(
+            currentDay,
+            numberOfDaysUntilStart,
+            holidays,
+            allDays,
+            tasks[0] && tasks[0].dateStarted,
+          );
+          const scheduleEntries = this.#getScheduleEntries(daysBeforeStart);
+          for (let i = 0; i < scheduleEntries.length; i++) {
+            schedule.push(scheduleEntries[i]);
+          }
+          currentDay += daysBeforeStart.length;
         }
-        const numberOfDaysUntilStart = this.#getNumberOfWorkingDays(
-          allDays[currentDay],
-          firstTaskStart,
-          false,
-        );
-        const daysBeforeStart = this.#getDaysWithTypes(
-          currentDay,
-          numberOfDaysUntilStart,
-          holidays,
-          allDays,
-          tasks[0] && tasks[0].dateStarted,
-        );
-        const scheduleEntries = this.#getScheduleEntries(daysBeforeStart);
-        for (let i = 0; i < scheduleEntries.length; i++) {
-          schedule.push(scheduleEntries[i]);
-        }
-        currentDay += daysBeforeStart.length;
-      }
 
-      for (let index = 0; index < tasks.length; index++) {
-        if (currentDay >= allDays.length) {
-          break;
-        }
-        let task = tasksEditable[index];
+        for (let index = 0; index < tasks.length; index++) {
+          if (currentDay >= allDays.length) {
+            break;
+          }
+          let task = tasksEditable[index];
 
-        const currentName = task.systemName ? task.systemName : task.taskName;
-        let nrOfDays = task.estimatedDays;
-        let taskStartDate;
-        let trailingTask;
+          const currentName = task.systemName ? task.systemName : task.taskName;
+          let nrOfDays = task.estimatedDays;
+          let taskStartDate;
+          let trailingTask;
 
-        if (index === 0) {
-          //if the first task doesn't have a start date, set it
-          if (!task.dateStarted) {
-            if (todayIndex === -1 || todayIndex < currentDay) {
+          if (index === 0) {
+            //if the first task doesn't have a start date, set it
+            if (!task.dateStarted) {
+              if (todayIndex === -1 || todayIndex < currentDay) {
+                task.dateStarted = allDays[currentDay];
+              } else {
+                task.dateStarted = allDays[todayIndex];
+              }
+            }
+            taskStartDate = new Date(task.dateStarted);
+
+            //if the start date of the first task is before the current day, adjust the number of days for it
+            if (taskStartDate < allDays[currentDay]) {
+              nrOfDays -= this.#getNumberOfWorkingDays(
+                taskStartDate,
+                allDays[currentDay],
+              );
               task.dateStarted = allDays[currentDay];
-            } else {
-              task.dateStarted = allDays[todayIndex];
+              //if the start date of the first task is after the current day,
+              //fill the period with an "empty" entry (possibly with holidays in between)
+            } else if (taskStartDate > allDays[currentDay]) {
+              const daysUntilStart = this.#getNumberOfWorkingDays(
+                allDays[currentDay],
+                taskStartDate,
+                false,
+              );
+              const daysInThisPeriod = this.#getDaysWithTypes(
+                currentDay,
+                daysUntilStart,
+                holidays,
+                allDays,
+                tasks.length > 1 && tasks[1].dateStarted !== null,
+              );
+              const scheduleEntries = this.#getScheduleEntries(
+                daysInThisPeriod,
+                "",
+                task,
+                tasksEditable[index + 1],
+                daysUntilStart,
+              );
+              for (let i = 0; i < scheduleEntries.length; i++) {
+                schedule.push(scheduleEntries[i]);
+              }
+              currentDay += daysInThisPeriod.length;
             }
           }
-          taskStartDate = new Date(task.dateStarted);
 
-          //if the start date of the first task is before the current day, adjust the number of days for it
-          if (taskStartDate < allDays[currentDay]) {
-            nrOfDays -= this.#getNumberOfWorkingDays(
-              taskStartDate,
-              allDays[currentDay],
-            );
-            task.dateStarted = allDays[currentDay];
-            //if the start date of the first task is after the current day,
-            //fill the period with an "empty" entry (possibly with holidays in between)
-          } else if (taskStartDate > allDays[currentDay]) {
-            const daysUntilStart = this.#getNumberOfWorkingDays(
-              allDays[currentDay],
-              taskStartDate,
-              false,
-            );
+          //if the task has a dateCompleted, use it for calculations
+          if (task.dateCompleted) {
+            taskStartDate = new Date(task.dateStarted);
+            let taskCompletedDate = new Date(task.dateCompleted);
+
+            if (tasks[index + 1]) {
+              let nextTask = tasksEditable[index + 1];
+
+              if (!nextTask.dateStarted) {
+                nrOfDays = this.#getNumberOfWorkingDays(
+                  taskStartDate,
+                  taskCompletedDate,
+                  true,
+                );
+                if (currentDay + nrOfDays < allDays.length) {
+                  nextTask.dateStarted = allDays[currentDay + nrOfDays];
+                }
+              } else {
+                //if the next task has a start date, check if it is before dateCompleted, if so, create "conflict" entry
+                let nextStartDate = new Date(
+                  tasksEditable[index + 1].dateStarted,
+                );
+                if (
+                  this.#getNumberOfWorkingDays(
+                    taskCompletedDate,
+                    nextStartDate,
+                    false,
+                  ) === 0
+                ) {
+                  const nrOfConflictingDays = this.#getNumberOfWorkingDays(
+                    nextStartDate,
+                    taskCompletedDate,
+                    true,
+                  );
+                  nrOfDays -= nrOfConflictingDays;
+
+                  taskCompletedDate = new Date(
+                    taskCompletedDate.setDate(
+                      taskCompletedDate.getDate() - nrOfConflictingDays,
+                    ),
+                  );
+                  task.dateCompleted = taskCompletedDate;
+
+                  nextStartDate = new Date(
+                    nextStartDate.setDate(
+                      nextStartDate.getDate() + nrOfConflictingDays,
+                    ),
+                  );
+                  nextTask.dateStarted = nextStartDate;
+                  trailingTask = {
+                    taskName: "conflict",
+                    numberOfDays: nrOfConflictingDays,
+                    status: "conflict",
+                  };
+                } else {
+                  //if the next task has a start date, check if it is the day after dateCompleted,
+                  //created "empty" block if not
+                  nrOfDays = this.#getNumberOfWorkingDays(
+                    taskStartDate,
+                    taskCompletedDate,
+                    true,
+                  );
+                  const daysUntillNext =
+                    this.#getNumberOfWorkingDays(
+                      taskCompletedDate,
+                      nextStartDate,
+                      false,
+                    ) - 1;
+                  if (daysUntillNext > 0) {
+                    trailingTask = {
+                      taskName: "",
+                      numberOfDays: daysUntillNext,
+                      status: "empty",
+                    };
+                  }
+                }
+              }
+            }
+          } else {
+            if (tasks[index + 1]) {
+              let nextTask = tasksEditable[index + 1];
+              //if next task has a start date and the current task doesn't have a dateCompleted,
+              //use that period to calculate nrOfDays
+              if (nextTask.dateStarted) {
+                const nextStartDate = new Date(tasks[index + 1].dateStarted);
+                nrOfDays = this.#getNumberOfWorkingDays(
+                  taskStartDate,
+                  nextStartDate,
+                  false,
+                );
+              } else {
+                //if next task doesn't have a start date, use estimatedDays for nrOfDays.
+                //if today is after period of estimatedDays, increase nrOfDays until today (included)
+                if (todayIndex !== -1) {
+                  if (currentDay + task.estimatedDays < todayIndex) {
+                    nrOfDays = todayIndex - currentDay;
+                  }
+                }
+              }
+            }
+          }
+
+          //if the task would go beyond the period of the schedule, adjust the nrOfDays
+          if (currentDay + nrOfDays >= allDays.length) {
+            nrOfDays = allDays.length - currentDay;
+          }
+
+          let endDateIsSet = true;
+          if (nrOfDays + currentDay === allDays.length - 1) {
+            endDateIsSet = true;
+          } else if (!tasks[index + 1]) {
+            endDateIsSet = false;
+          } else if (!tasks[index + 1].dateStarted) {
+            endDateIsSet = false;
+          }
+          const daysInThisPeriod = this.#getDaysWithTypes(
+            currentDay,
+            nrOfDays,
+            holidays,
+            allDays,
+            endDateIsSet,
+          );
+          const scheduleEntries = this.#getScheduleEntries(
+            daysInThisPeriod,
+            currentName,
+            tasks[index],
+            tasks[index + 1],
+            nrOfDays,
+          );
+          for (let i = 0; i < scheduleEntries.length; i++) {
+            schedule.push(scheduleEntries[i]);
+          }
+          currentDay += daysInThisPeriod.length;
+
+          if (tasks[index + 1] && !tasksEditable[index + 1].dateStarted) {
+            tasksEditable[index + 1].dateStarted = allDays[currentDay];
+          }
+
+          if (currentDay < allDays.length && trailingTask) {
+            if (currentDay + trailingTask.numberOfDays >= allDays.length) {
+              trailingTask.numberOfDays = allDays.length - currentDay;
+            }
             const daysInThisPeriod = this.#getDaysWithTypes(
               currentDay,
-              daysUntilStart,
+              trailingTask.numberOfDays,
               holidays,
               allDays,
-              tasks.length > 1 && tasks[1].dateStarted !== null,
+              true,
             );
             const scheduleEntries = this.#getScheduleEntries(
               daysInThisPeriod,
-              "",
-              task,
-              tasksEditable[index + 1],
-              daysUntilStart,
+              trailingTask.taskName,
             );
             for (let i = 0; i < scheduleEntries.length; i++) {
               schedule.push(scheduleEntries[i]);
@@ -318,181 +479,25 @@ export default class ScheduleService {
           }
         }
 
-        //if the task has a dateCompleted, use it for calculations
-        if (task.dateCompleted) {
-          taskStartDate = new Date(task.dateStarted);
-          let taskCompletedDate = new Date(task.dateCompleted);
-
-          if (tasks[index + 1]) {
-            let nextTask = tasksEditable[index + 1];
-
-            if (!nextTask.dateStarted) {
-              nrOfDays = this.#getNumberOfWorkingDays(
-                taskStartDate,
-                taskCompletedDate,
-                true,
-              );
-              if (currentDay + nrOfDays < allDays.length) {
-                nextTask.dateStarted = allDays[currentDay + nrOfDays];
-              }
-            } else {
-              //if the next task has a start date, check if it is before dateCompleted, if so, create "conflict" entry
-              let nextStartDate = new Date(
-                tasksEditable[index + 1].dateStarted,
-              );
-              if (
-                this.#getNumberOfWorkingDays(
-                  taskCompletedDate,
-                  nextStartDate,
-                  false,
-                ) === 0
-              ) {
-                const nrOfConflictingDays = this.#getNumberOfWorkingDays(
-                  nextStartDate,
-                  taskCompletedDate,
-                  true,
-                );
-                nrOfDays -= nrOfConflictingDays;
-
-                taskCompletedDate = new Date(
-                  taskCompletedDate.setDate(
-                    taskCompletedDate.getDate() - nrOfConflictingDays,
-                  ),
-                );
-                task.dateCompleted = taskCompletedDate;
-
-                nextStartDate = new Date(
-                  nextStartDate.setDate(
-                    nextStartDate.getDate() + nrOfConflictingDays,
-                  ),
-                );
-                nextTask.dateStarted = nextStartDate;
-                trailingTask = {
-                  taskName: "conflict",
-                  numberOfDays: nrOfConflictingDays,
-                  status: "conflict",
-                };
-              } else {
-                //if the next task has a start date, check if it is the day after dateCompleted,
-                //created "empty" block if not
-                nrOfDays = this.#getNumberOfWorkingDays(
-                  taskStartDate,
-                  taskCompletedDate,
-                  true,
-                );
-                const daysUntillNext =
-                  this.#getNumberOfWorkingDays(
-                    taskCompletedDate,
-                    nextStartDate,
-                    false,
-                  ) - 1;
-                if (daysUntillNext > 0) {
-                  trailingTask = {
-                    taskName: "",
-                    numberOfDays: daysUntillNext,
-                    status: "empty",
-                  };
-                }
-              }
-            }
-          }
-        } else {
-          if (tasks[index + 1]) {
-            let nextTask = tasksEditable[index + 1];
-            //if next task has a start date and the current task doesn't have a dateCompleted,
-            //use that period to calculate nrOfDays
-            if (nextTask.dateStarted) {
-              const nextStartDate = new Date(tasks[index + 1].dateStarted);
-              nrOfDays = this.#getNumberOfWorkingDays(
-                taskStartDate,
-                nextStartDate,
-                false,
-              );
-            } else {
-              //if next task doesn't have a start date, use estimatedDays for nrOfDays.
-              //if today is after period of estimatedDays, increase nrOfDays until today (included)
-              if (todayIndex !== -1) {
-                if (currentDay + task.estimatedDays < todayIndex) {
-                  nrOfDays = todayIndex - currentDay;
-                }
-              }
-            }
-          }
-        }
-
-        //if the task would go beyond the period of the schedule, adjust the nrOfDays
-        if (currentDay + nrOfDays >= allDays.length) {
-          nrOfDays = allDays.length - currentDay;
-        }
-
-        let endDateIsSet = true;
-        if (nrOfDays + currentDay === allDays.length - 1) {
-          endDateIsSet = true;
-        } else if (!tasks[index + 1]) {
-          endDateIsSet = false;
-        } else if (!tasks[index + 1].dateStarted) {
-          endDateIsSet = false;
-        }
-        const daysInThisPeriod = this.#getDaysWithTypes(
-          currentDay,
-          nrOfDays,
-          holidays,
-          allDays,
-          endDateIsSet,
-        );
-        const scheduleEntries = this.#getScheduleEntries(
-          daysInThisPeriod,
-          currentName,
-          tasks[index],
-          tasks[index + 1],
-          nrOfDays,
-        );
-        for (let i = 0; i < scheduleEntries.length; i++) {
-          schedule.push(scheduleEntries[i]);
-        }
-        currentDay += daysInThisPeriod.length;
-
-        if (tasks[index + 1] && !tasksEditable[index + 1].dateStarted) {
-          tasksEditable[index + 1].dateStarted = allDays[currentDay];
-        }
-
-        if (currentDay < allDays.length && trailingTask) {
-          if (currentDay + trailingTask.numberOfDays >= allDays.length) {
-            trailingTask.numberOfDays = allDays.length - currentDay;
-          }
+        if (currentDay < allDays.length) {
+          const extraDays = allDays.length - currentDay;
           const daysInThisPeriod = this.#getDaysWithTypes(
             currentDay,
-            trailingTask.numberOfDays,
+            extraDays,
             holidays,
             allDays,
             true,
           );
           const scheduleEntries = this.#getScheduleEntries(
             daysInThisPeriod,
-            trailingTask.taskName,
+            "",
           );
           for (let i = 0; i < scheduleEntries.length; i++) {
             schedule.push(scheduleEntries[i]);
           }
-          currentDay += daysInThisPeriod.length;
         }
-      }
-
-      if (currentDay < allDays.length) {
-        const extraDays = allDays.length - currentDay;
-        const daysInThisPeriod = this.#getDaysWithTypes(
-          currentDay,
-          extraDays,
-          holidays,
-          allDays,
-          true,
-        );
-        const scheduleEntries = this.#getScheduleEntries(daysInThisPeriod, "");
-        for (let i = 0; i < scheduleEntries.length; i++) {
-          schedule.push(scheduleEntries[i]);
-        }
-      }
-    });
+      },
+    );
     return schedule;
   }
 }
