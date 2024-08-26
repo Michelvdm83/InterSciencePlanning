@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import LabeledBasicInput from "../../../components/LabeledBasicInput";
 import ApiService from "../../../services/ApiService";
+import { translateError, validateHolidayData } from "./validateHoliday.js";
 
 export default function AddHoliday({ employees, setHolidays }) {
   const today = new Date().toISOString().split("T")[0];
@@ -23,33 +24,10 @@ export default function AddHoliday({ employees, setHolidays }) {
     }
   }, [holiday.startDate]);
 
-  function translateError(error) {
-    switch (error.toString()) {
-      case "EmployeeId can't be null":
-        return "Medewerker moet gekozen worden";
-      case "Start date can't be null":
-        return "Begindatum moet gekozen worden";
-      case "End date can't be null":
-        return "Einddatum moet gekozen worden";
-      case "Start date can't be after end date":
-        return "De begindatum mag niet na de einddatum zijn";
-      default:
-        return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
-    }
-  }
-
   function handleAddHoliday(e) {
     e.preventDefault();
 
-    if (!holiday.employeeId) {
-      setError("Medewerker moet gekozen worden");
-    } else if (!holiday.startDate) {
-      setError("Begindatum moet gekozen worden");
-    } else if (!holiday.endDate) {
-      setError("Einddatum moet gekozen worden");
-    } else if (holiday.startDate > holiday.endDate) {
-      setError("De begindatum mag niet na de einddatum zijn");
-    } else {
+    if (validateHolidayData(holiday, setError)) {
       ApiService.post("holidays", holiday)
         .then(() => {
           return ApiService.get("holidays");

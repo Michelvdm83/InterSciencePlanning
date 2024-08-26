@@ -2,27 +2,16 @@ import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import LabeledBasicInput from "../../../components/LabeledBasicInput";
 import ApiService from "../../../services/ApiService";
+import { translateError, validateHolidayData } from "./validateHoliday.js";
 
 export default function EditHoliday({ holiday, setHolidays }) {
   const [editedHoliday, setEditedHoliday] = useState({
+    employeeId: holiday.employeeId,
     startDate: holiday.startDate,
     endDate: holiday.endDate,
   });
 
   const [error, setError] = useState("");
-
-  function translateError(error) {
-    switch (error.toString()) {
-      case "Start date can't be null":
-        return "Begindatum moet gekozen worden";
-      case "End date can't be null":
-        return "Einddatum moet gekozen worden";
-      case "Start date can't be after end date":
-        return "De begindatum mag niet na de einddatum zijn";
-      default:
-        return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
-    }
-  }
 
   function handleClose() {
     setError("");
@@ -38,42 +27,31 @@ export default function EditHoliday({ holiday, setHolidays }) {
   function handleSaveEditedHoliday(e) {
     e.preventDefault();
 
-    if (!editedHoliday.startDate) {
-      setError("Begindatum moet gekozen worden");
-      return;
-    }
-    if (!editedHoliday.endDate) {
-      setError("Einddatum moet gekozen worden");
-      return;
-    }
-    if (editedHoliday.startDate > editedHoliday.endDate) {
-      setError("De begindatum mag niet na de einddatum zijn");
-      return;
-    }
+    if (validateHolidayData(editedHoliday, setError)) {
+      const updatedFields = {};
+      if (editedHoliday.startDate !== holiday.startDate) {
+        updatedFields.startDate = editedHoliday.startDate;
+      }
+      if (editedHoliday.endDate !== holiday.endDate) {
+        updatedFields.endDate = editedHoliday.endDate;
+      }
 
-    const updatedFields = {};
-    if (editedHoliday.startDate !== holiday.startDate) {
-      updatedFields.startDate = editedHoliday.startDate;
-    }
-    if (editedHoliday.endDate !== holiday.endDate) {
-      updatedFields.endDate = editedHoliday.endDate;
-    }
-
-    if (Object.keys(updatedFields).length > 0) {
-      ApiService.patch(`holidays/${holiday.id}`, editedHoliday)
-        .then(() => {
-          return ApiService.get("holidays");
-        })
-        .then((response) => {
-          setHolidays(response.data);
-          setError("");
-          handleClose();
-        })
-        .catch((error) =>
-          setError(translateError(error.response?.data?.detail)),
-        );
-    } else {
-      handleClose();
+      if (Object.keys(updatedFields).length > 0) {
+        ApiService.patch(`holidays/${holiday.id}`, editedHoliday)
+          .then(() => {
+            return ApiService.get("holidays");
+          })
+          .then((response) => {
+            setHolidays(response.data);
+            setError("");
+            handleClose();
+          })
+          .catch((error) =>
+            setError(translateError(error.response?.data?.detail)),
+          );
+      } else {
+        handleClose();
+      }
     }
   }
 
@@ -94,7 +72,11 @@ export default function EditHoliday({ holiday, setHolidays }) {
         <div className="modal-box">
           <div className="items-between flex justify-center">
             <form className="flex w-full flex-col" onKeyDown={handleOnKeyDown}>
-              <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
+              <button
+                type="button"
+                className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                onClick={handleClose}
+              >
                 ✕
               </button>
               <LabeledBasicInput
@@ -114,7 +96,7 @@ export default function EditHoliday({ holiday, setHolidays }) {
                 value={editedHoliday.endDate}
                 onChange={(e) =>
                   setEditedHoliday({
-                    ...editedHolidayholiday,
+                    ...editedHoliday,
                     endDate: e.target.value,
                   })
                 }

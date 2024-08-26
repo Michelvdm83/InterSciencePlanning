@@ -75,7 +75,11 @@ export default function EditEmployee({ employee, setEmployees }) {
         <div className="modal-box">
           <div className="items-between flex justify-center">
             <form className="flex w-full flex-col" onKeyDown={handleOnKeyDown}>
-              <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
+              <button
+                type="button"
+                onClick="handleClose"
+                className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+              >
                 ✕
               </button>
 
