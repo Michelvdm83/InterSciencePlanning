@@ -28,7 +28,9 @@ export default function SystemDateField({
       <div>{title}</div>
       <input
         type="date"
-        value={date || system[variable] || ""}
+        value={
+          variable === "expectedFinish" ? date || "" : system[variable] || ""
+        }
         onChange={(event) => {
           setSystem({ ...system, [variable]: event.target.value });
         }}
