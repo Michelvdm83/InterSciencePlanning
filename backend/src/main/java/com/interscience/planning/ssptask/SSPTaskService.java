@@ -32,7 +32,11 @@ public class SSPTaskService {
         && !assignee.equals(sspTask.getEmployee())) {
       sspTaskRepository
           .findByEmployeeAndIndexGreaterThan(sspTask.getEmployee(), sspTask.getIndex())
-          .forEach((sspT) -> sspT.setIndex(sspTask.getIndex() - 1));
+          .forEach(
+              (sspT) -> {
+                sspT.setIndex(sspTask.getIndex() - 1);
+                sspTaskRepository.save(sspT);
+              });
     }
 
     sspTask.setEmployee(assignee);
