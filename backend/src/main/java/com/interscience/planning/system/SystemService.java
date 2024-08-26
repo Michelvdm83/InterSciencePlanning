@@ -173,8 +173,9 @@ public class SystemService {
         employeeRepository
             .findById(systemPostPatchDTO.employeeSSP())
             .orElseThrow(NotFoundException::new);
-    if (sspEmployee.getFunction() != Function.SSP) {
-      throw new BadRequestException("SSP employee needs to have function SSP");
+    if (sspEmployee.getFunction() != Function.SSP
+        && sspEmployee.getFunction() != Function.SSP_TEAM_LEADER) {
+      throw new BadRequestException("SSP employee needs to have function SSP or SSP team leader");
     }
     sspTaskService.assignEmployee(new SSPTaskAssignDTO(sspTask.getId(), sspEmployee.getId()));
   }
