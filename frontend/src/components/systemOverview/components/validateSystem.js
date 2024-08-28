@@ -8,8 +8,8 @@ export function translateError(error) {
       return "Eindverantwoordelijke mag geen SSP medewerker zijn";
     case "Estimated construction days required for assigning an SSP employee":
       return "Productiedagen vereist om een SSP-medewerker toe te wijzen";
-    case "SSP employee needs to have function SSP":
-      return "SSP-medewerker moet de functie SSP hebben";
+    case "SSP employee needs to have function SSP or SSP team leader":
+      return "SSP-medewerker moet de functie SSP of SSP-teamleider hebben";
     case "Estimated construction days required for setting construction start date":
       return "Productiedagen vereist om startdatum productie in te stellen";
     case "SSP employee required for setting construction start date":
