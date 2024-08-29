@@ -17,7 +17,8 @@ export default function SystemSelectEmployeeField({
 
   if (variable === "employeeSSP") {
     filteredEmployees = employees.filter(
-      (employee) => employee.function === "SSP",
+      (employee) =>
+        employee.function === "SSP" || employee.function === "SSP_TEAM_LEADER",
     );
   } else if (variable === "employeeFT") {
     filteredEmployees = employees.filter(
