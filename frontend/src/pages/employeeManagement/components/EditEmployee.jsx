@@ -77,7 +77,7 @@ export default function EditEmployee({ employee, setEmployees }) {
             <form className="flex w-full flex-col" onKeyDown={handleOnKeyDown}>
               <button
                 type="button"
-                onClick="handleClose"
+                onClick={handleClose}
                 className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
               >
                 ✕

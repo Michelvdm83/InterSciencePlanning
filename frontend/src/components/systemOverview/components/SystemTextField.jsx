@@ -24,6 +24,7 @@ export default function SystemTextField({
           setSystem({ ...system, [variable]: event.target.value })
         }
         disabled={!editable}
+        spellcheck="false"
       />
     </div>
   );
