@@ -215,8 +215,8 @@ export default class ScheduleService {
 
     let schedule = [];
 
-    await ApiService.get(`employees/schedules/` + employeeId).then(
-      (response) => {
+    await ApiService.get(`employees/schedules/` + employeeId)
+      .then((response) => {
         console.log(response.data);
         const tasks = response.data.allTasks ? response.data.allTasks : [];
         let tasksEditable = JSON.parse(JSON.stringify(tasks));
@@ -499,8 +499,16 @@ export default class ScheduleService {
             schedule.push(scheduleEntries[i]);
           }
         }
-      },
-    );
+      })
+      .catch(() => {
+        return [
+          {
+            taskName: "fout bij ophalen",
+            numberOfDays: numberOfDays,
+            status: "error",
+          },
+        ];
+      });
     return schedule;
   }
 }
