@@ -33,6 +33,10 @@ export default function SSPPlanning() {
     setLoading(false);
   }, []);
 
+  function update() {
+    getEmployeeTasks(employees);
+  }
+
   const getEmployeeTasks = async (employees) => {
     let newEmployeeTasksArray = [];
     for (const employee of employees) {
@@ -139,10 +143,13 @@ export default function SSPPlanning() {
                   return (
                     <div
                       key={overallIndex}
-                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] flex h-7 w-auto justify-center border-b-[1.5px] border-solid`}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] flex h-7 w-auto justify-center border-b-[1.5px] border-solid text-start`}
                     >
-                      <SystemModalButton systemName={task.taskName}>
-                        <div className="underline hover:text-primary">
+                      <SystemModalButton
+                        systemName={task.taskName}
+                        updateOpenTasks={update}
+                      >
+                        <div className="underline hover:text-white">
                           {task.taskName}
                         </div>
                       </SystemModalButton>
