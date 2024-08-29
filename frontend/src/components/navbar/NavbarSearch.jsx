@@ -48,11 +48,11 @@ export default function NavbarSearch() {
           {namesList.length > 0 &&
             namesList.map((systemName) => {
               return (
-                <li key={systemName}>
-                  <SystemModalButton systemName={systemName}>
+                <SystemModalButton key={systemName} systemName={systemName}>
+                  <li>
                     <div className="text-primary">{systemName}</div>
-                  </SystemModalButton>
-                </li>
+                  </li>
+                </SystemModalButton>
               );
             })}
         </ul>
