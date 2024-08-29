@@ -27,7 +27,7 @@ export default function SystemSelectStatusField({
         <option value="TO_BE_PLANNED">aangemaakt</option>
         <option value="PLANNED">SSP: ingepland</option>
         <option value="BUILDING">SSP: in bouw</option>
-        <option value="BUILD">overgedragen</option>
+        <option value="TRANSFERRED">overgedragen</option>
         <option value="TESTING">FT: in test</option>
         <option value="FINISHED">FT: testen gereed</option>
         <option value="PROBLEMS">FT: problemen</option>
