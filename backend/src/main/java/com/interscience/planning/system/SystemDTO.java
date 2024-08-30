@@ -1,5 +1,6 @@
 package com.interscience.planning.system;
 
+import com.interscience.planning.ssptask.SSPTask;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -64,14 +65,15 @@ public record SystemDTO(
     LocalDate startOfConstruction;
     LocalDate endOfConstruction;
     Integer estimatedConstructionDays;
-    if (system.getConstructionTask() == null) {
+    if (system.getConstructionTask() == null || system.getConstructionTask().getSspTask() == null) {
       startOfConstruction = null;
       endOfConstruction = null;
       estimatedConstructionDays = null;
     } else {
-      startOfConstruction = system.getConstructionTask().getDateStarted();
-      endOfConstruction = system.getConstructionTask().getDateCompleted();
-      estimatedConstructionDays = system.getConstructionTask().getEstimatedTime();
+      SSPTask thisSSPTask = system.getConstructionTask().getSspTask();
+      startOfConstruction = thisSSPTask.getDateStarted();
+      endOfConstruction = thisSSPTask.getDateCompleted();
+      estimatedConstructionDays = thisSSPTask.getEstimatedTime();
     }
 
     return new SystemDTO(

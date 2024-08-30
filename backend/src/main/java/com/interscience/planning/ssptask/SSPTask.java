@@ -4,6 +4,7 @@ import com.interscience.planning.constructiontask.ConstructionTask;
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.task.Task;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,12 @@ public class SSPTask {
   @OneToOne private ConstructionTask constructionTask;
 
   @OneToOne private Task task;
+
+  private Integer estimatedTime;
+
+  private LocalDate dateStarted;
+
+  private LocalDate dateCompleted;
 
   private Integer index;
 }

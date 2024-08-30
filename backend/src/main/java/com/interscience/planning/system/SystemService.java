@@ -100,7 +100,10 @@ public class SystemService {
       system.setStatus(systemPostPatchDTO.status());
     }
     if (systemPostPatchDTO.estimatedConstructionDays() != null) {
-      system.getConstructionTask().setEstimatedTime(systemPostPatchDTO.estimatedConstructionDays());
+      system
+          .getConstructionTask()
+          .getSspTask()
+          .setEstimatedTime(systemPostPatchDTO.estimatedConstructionDays());
     }
     if (systemPostPatchDTO.employeeSSP() != null) {
       setSSPEmployee(systemPostPatchDTO, system.getConstructionTask().getSspTask());
@@ -165,7 +168,7 @@ public class SystemService {
 
   private void setSSPEmployee(SystemPostPatchDTO systemPostPatchDTO, SSPTask sspTask) {
     if (systemPostPatchDTO.estimatedConstructionDays() == null
-        && sspTask.getConstructionTask().getEstimatedTime() == null) {
+        && sspTask.getEstimatedTime() == null) {
       throw new BadRequestException(
           "Estimated construction days required for assigning an SSP employee");
     }
@@ -183,7 +186,7 @@ public class SystemService {
   private void setConstructionStartDate(
       SystemPostPatchDTO systemPostPatchDTO, ConstructionTask constructionTask) {
     if (systemPostPatchDTO.estimatedConstructionDays() == null
-        && constructionTask.getEstimatedTime() == null) {
+        && constructionTask.getSspTask().getEstimatedTime() == null) {
       throw new BadRequestException(
           "Estimated construction days required for setting construction start date");
     }
@@ -195,12 +198,12 @@ public class SystemService {
     LocalDate endDate =
         systemPostPatchDTO.endOfConstruction() != null
             ? systemPostPatchDTO.endOfConstruction()
-            : constructionTask.getDateCompleted();
+            : constructionTask.getSspTask().getDateCompleted();
     if (endDate != null && systemPostPatchDTO.startOfConstruction().isAfter(endDate)) {
       throw new BadRequestException("Construction end date must be after construction start date");
     }
 
-    constructionTask.setDateStarted(systemPostPatchDTO.startOfConstruction());
+    constructionTask.getSspTask().setDateStarted(systemPostPatchDTO.startOfConstruction());
   }
 
   private void setConstructionEndDate(SystemPostPatchDTO systemPostPatchDTO, System system) {
@@ -208,7 +211,7 @@ public class SystemService {
     LocalDate startDate =
         systemPostPatchDTO.startOfConstruction() != null
             ? systemPostPatchDTO.startOfConstruction()
-            : constructionTask.getDateStarted();
+            : constructionTask.getSspTask().getDateStarted();
 
     if (startDate == null) {
       throw new BadRequestException(
@@ -226,7 +229,7 @@ public class SystemService {
       throw new BadRequestException("Construction end date must be before test start date");
     }
 
-    constructionTask.setDateCompleted(systemPostPatchDTO.endOfConstruction());
+    constructionTask.getSspTask().setDateCompleted(systemPostPatchDTO.endOfConstruction());
   }
 
   private void createConstructionTask(SystemPostPatchDTO systemPostPatchDTO, System system) {
@@ -238,7 +241,7 @@ public class SystemService {
       setSSPEmployee(systemPostPatchDTO, newSSPTask);
     }
 
-    newConstructionTask.setEstimatedTime(systemPostPatchDTO.estimatedConstructionDays());
+    newSSPTask.setEstimatedTime(systemPostPatchDTO.estimatedConstructionDays());
 
     newSSPTask.setConstructionTask(newConstructionTask);
     newConstructionTask.setSspTask(newSSPTask);
@@ -268,7 +271,7 @@ public class SystemService {
     LocalDate constructionEndDate =
         systemPostPatchDTO.endOfConstruction() != null
             ? systemPostPatchDTO.endOfConstruction()
-            : system.getConstructionTask().getDateCompleted();
+            : system.getConstructionTask().getSspTask().getDateCompleted();
     if (constructionEndDate == null) {
       throw new BadRequestException("Construction end date required for setting test start date");
     }
