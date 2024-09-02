@@ -22,6 +22,7 @@ public record SSPTaskDTO(
     if (sspTask.getConstructionTask() != null) {
       System thisSystem = sspTask.getConstructionTask().getSystem();
       systemName = thisSystem == null ? null : thisSystem.getName();
+      status = thisSystem == null ? null : thisSystem.getStatus().name();
     } else if (sspTask.getTask() != null) {
       taskName = sspTask.getTask().getName();
     }
