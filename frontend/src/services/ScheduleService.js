@@ -166,7 +166,6 @@ export default class ScheduleService {
     calculatedNrOfDays,
   ) {
     const scheduleEntries = [];
-    console.log(task);
 
     let currentIterationNumber = 0;
     while (currentIterationNumber < daysWithTypes.length) {
@@ -291,6 +290,7 @@ export default class ScheduleService {
               nrOfDays -= this.#getNumberOfWorkingDays(
                 taskStartDate,
                 allDays[currentDay],
+                false,
               );
               task.dateStarted = allDays[currentDay];
               //if the start date of the first task is after the current day,
@@ -406,6 +406,9 @@ export default class ScheduleService {
               //if next task has a start date and the current task doesn't have a dateCompleted,
               //use that period to calculate nrOfDays
               if (nextTask.dateStarted) {
+                console.log("startdatum");
+                console.log(taskStartDate);
+                console.log(nextTask.dateStarted);
                 const nextStartDate = new Date(tasks[index + 1].dateStarted);
                 nrOfDays = this.#getNumberOfWorkingDays(
                   taskStartDate,

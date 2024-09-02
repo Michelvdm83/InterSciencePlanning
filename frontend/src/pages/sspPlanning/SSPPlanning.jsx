@@ -43,6 +43,7 @@ export default function SSPPlanning() {
 
       newEmployeeTasksArray.push(newEmployeeTasks);
     }
+    console.log(newEmployeeTasksArray);
     setEmployeeTasks(newEmployeeTasksArray);
   };
 
@@ -122,7 +123,9 @@ export default function SSPPlanning() {
                   case "task":
                     bgColor = "task";
                     break;
+                  case "delayed":
                   case "conflict":
+                  case "error":
                     bgColor = "error";
                     break;
                   default:
