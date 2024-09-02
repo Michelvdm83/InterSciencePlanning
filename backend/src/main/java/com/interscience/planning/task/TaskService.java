@@ -22,10 +22,11 @@ public class TaskService {
       throw new BadRequestException("Estimated time must be higher than 0");
     }
 
-    Task newTask = new Task(createTaskDTO.name(), createTaskDTO.estimatedTime());
+    Task newTask = new Task(createTaskDTO.name());
     taskRepository.save(newTask);
 
     SSPTask newSSPTask = new SSPTask();
+    newSSPTask.setEstimatedTime(createTaskDTO.estimatedTime());
     newSSPTask.setTask(newTask);
     sspTaskRepository.save(newSSPTask);
   }

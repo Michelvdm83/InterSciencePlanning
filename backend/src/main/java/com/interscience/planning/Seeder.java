@@ -12,6 +12,7 @@ import com.interscience.planning.system.SystemRepository;
 import com.interscience.planning.system.SystemStatus;
 import com.interscience.planning.task.Task;
 import com.interscience.planning.task.TaskRepository;
+import com.interscience.planning.task.TaskService;
 import com.interscience.planning.testtask.TestTask;
 import com.interscience.planning.testtask.TestTaskRepository;
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ public class Seeder implements CommandLineRunner {
   private final ConstructionTaskRepository constructionTaskRepository;
   private final SSPTaskRepository sspTaskRepository;
   private final TaskRepository taskRepository;
+  private final TaskService taskService;
 
   @Override
   public void run(String... args) throws Exception {
@@ -65,21 +67,22 @@ public class Seeder implements CommandLineRunner {
   }
 
   private void createSSPTasks() {
-    Task task1 = new Task("opruimen", 2);
-    Task task2 = new Task("klaarzetten", 1);
-    Task task3 = new Task("afstoffen", 1);
+    Task task1 = new Task("opruimen");
+    Task task2 = new Task("klaarzetten");
+    Task task3 = new Task("afstoffen");
 
     taskRepository.saveAll(List.of(task1, task2, task3));
 
     SSPTask ssp1 = new SSPTask();
+    ssp1.setEstimatedTime(2);
     ssp1.setTask(task1);
-    ssp1.setIndex(0);
-    ssp1.setEmployee(employeeRepository.findByEmail("teamleider@interscience.nl").orElse(null));
 
     SSPTask ssp2 = new SSPTask();
+    ssp2.setEstimatedTime(1);
     ssp2.setTask(task2);
 
     SSPTask ssp3 = new SSPTask();
+    ssp3.setEstimatedTime(1);
     ssp3.setTask(task3);
 
     sspTaskRepository.saveAll(List.of(ssp1, ssp2, ssp3));
@@ -109,10 +112,10 @@ public class Seeder implements CommandLineRunner {
 
     ConstructionTask constructionTask = new ConstructionTask();
     constructionTask.setSystem(system);
-    constructionTask.setEstimatedTime(2);
 
     SSPTask sspTask = new SSPTask();
     sspTask.setConstructionTask(constructionTask);
+    sspTask.setEstimatedTime(2);
     sspTask.setIndex(1);
 
     Employee sspEmployee = employeeRepository.findByEmail("ssp@interscience.nl").orElse(null);

@@ -401,6 +401,12 @@ export default class ScheduleService {
                   }
                 }
               }
+            } else {
+              nrOfDays = this.#getNumberOfWorkingDays(
+                taskStartDate,
+                taskCompletedDate,
+                true,
+              );
             }
           } else {
             if (tasks[index + 1]) {
@@ -439,7 +445,11 @@ export default class ScheduleService {
           }
 
           let endDateIsSet = true;
-          if (nrOfDays + currentDay === allDays.length - 1) {
+
+          if (
+            nrOfDays + currentDay === allDays.length - 1 ||
+            task.dateCompleted
+          ) {
             endDateIsSet = true;
           } else if (!tasks[index + 1]) {
             endDateIsSet = false;

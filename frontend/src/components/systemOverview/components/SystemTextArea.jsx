@@ -23,7 +23,7 @@ export default function SystemTextArea({
           setSystem({ ...system, [variable]: event.target.value })
         }
         disabled={!editable}
-        spellcheck="false"
+        spellCheck="false"
       />
     </div>
   );
