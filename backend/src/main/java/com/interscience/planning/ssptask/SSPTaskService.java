@@ -4,6 +4,7 @@ import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SSPTaskService {
   private final EmployeeRepository employeeRepository;
   private final SSPTaskRepository sspTaskRepository;
@@ -34,7 +36,7 @@ public class SSPTaskService {
           .findByEmployeeAndIndexGreaterThan(sspTask.getEmployee(), sspTask.getIndex())
           .forEach(
               (sspT) -> {
-                sspT.setIndex(sspTask.getIndex() - 1);
+                sspT.setIndex(sspT.getIndex() - 1);
                 sspTaskRepository.save(sspT);
               });
     }

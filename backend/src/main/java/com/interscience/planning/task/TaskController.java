@@ -1,5 +1,6 @@
 package com.interscience.planning.task;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,5 +17,11 @@ public class TaskController {
 
     taskService.createTask(createTaskDTO);
     return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("{id}")
+  public ResponseEntity<?> deleteTask(@PathVariable UUID id) {
+    taskService.deleteTask(id);
+    return ResponseEntity.noContent().build();
   }
 }
