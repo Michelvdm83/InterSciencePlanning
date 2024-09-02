@@ -10,6 +10,8 @@ public interface SSPTaskRepository extends JpaRepository<SSPTask, UUID> {
 
   List<SSPTask> findByEmployee(Employee employee);
 
+  List<SSPTask> findByEmployeeOrderByIndex(Employee employee);
+
   List<SSPTask> findByEmployeeId(UUID employeeId);
 
   List<SSPTask> findByEmployeeAndIndexGreaterThan(Employee employee, Integer index);

@@ -1,4 +1,4 @@
-/* Safelist: border-holiday border-started border-planned border-task border-done bg-done bg-task bg-planned bg-holiday bg-started bg-accent */
+/* Safelist: border-primary border-holiday border-started border-planned border-task border-done border-conflict bg-primary bg-done bg-task bg-planned bg-holiday bg-started bg-accent bg-conflict */
 
 import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
@@ -113,21 +113,43 @@ export default function SSPPlanning() {
                   case "started":
                     bgColor = "started";
                     break;
-                  case "planned":
+                  case "PLANNED":
+                  case "TO_BE_PLANNED": //NEED to be REMOVED WHEN the automatic status changed to planned when assigning employee is implemented
                     bgColor = "planned";
                     break;
-                  case "finished":
+
+                  case "TRANSFERRED":
+                  case "TESTING":
+                  case "FINISHED":
+                  case "INSTALLED":
+                  case "PROBLEMS":
+                  case "IN_WAIT":
                     bgColor = "done";
                     break;
                   case "task":
                     bgColor = "task";
                     break;
+                  case "delayed":
+                    bgColor = "primary";
+                    break;
                   case "conflict":
-                    bgColor = "error";
+                  case "error":
+                    bgColor = "conflict";
                     break;
                   default:
                     bgColor = "neutral";
                 }
+
+                /*
+  PLANNED,
+  BUILDING,
+  TRANSFERRED,
+  TESTING,
+  FINISHED,
+  INSTALLED,
+  PROBLEMS,
+  IN_WAIT
+                */
 
                 const borderClass =
                   i === task.numberOfDays - 1 && (overallIndex + 1) % 5 != 0
@@ -135,9 +157,10 @@ export default function SSPPlanning() {
                     : `border-${bgColor}`;
 
                 if (
-                  (task.status === "started" ||
-                    task.status === "planned" ||
-                    task.status === "finished") &&
+                  (bgColor === "started" ||
+                    bgColor === "planned" ||
+                    bgColor === "done" ||
+                    bgColor === "primary") &&
                   i === 0
                 ) {
                   return (

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public record SSPTaskDTO(
     Integer index,
     String systemName,
+    String status,
     String taskName,
     Integer estimatedDays,
     LocalDate dateStarted,
@@ -16,15 +17,23 @@ public record SSPTaskDTO(
     LocalDate dateStarted = sspTask.getDateStarted();
     LocalDate dateCompleted = sspTask.getDateCompleted();
     String systemName = null;
+    String status = null;
     String taskName = null;
     if (sspTask.getConstructionTask() != null) {
       System thisSystem = sspTask.getConstructionTask().getSystem();
       systemName = thisSystem == null ? null : thisSystem.getName();
+      status = thisSystem == null ? null : thisSystem.getStatus().name();
     } else if (sspTask.getTask() != null) {
       taskName = sspTask.getTask().getName();
     }
 
     return new SSPTaskDTO(
-        sspTask.getIndex(), systemName, taskName, estimatedDays, dateStarted, dateCompleted);
+        sspTask.getIndex(),
+        systemName,
+        status,
+        taskName,
+        estimatedDays,
+        dateStarted,
+        dateCompleted);
   }
 }

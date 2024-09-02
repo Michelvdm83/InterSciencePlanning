@@ -151,7 +151,7 @@ public class EmployeeService {
 
   public List<SSPTaskDTO> getEmployeeSSPTasks(UUID employeeId) {
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
-    return sspTaskRepository.findByEmployeeId(employeeId).stream()
+    return sspTaskRepository.findByEmployeeOrderByIndex(employee).stream()
         .map(SSPTaskDTO::from)
         .collect(Collectors.toList());
   }

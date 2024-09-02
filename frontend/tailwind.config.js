@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import("tailwindcss").Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", "./src/assets/fonts"],
   safelist: [
@@ -33,6 +33,7 @@ export default {
         planned: "#7BB141",
         done: "#1B5D20",
         task: "#F47D01",
+        conflict: "#cc0000",
       },
     },
   },

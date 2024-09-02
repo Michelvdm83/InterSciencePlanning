@@ -49,7 +49,7 @@ public class SSPTaskService {
 
   public List<SSPTaskAssignedDTO> getAllByEmployeeId(UUID employeeId) {
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
-    return sspTaskRepository.findByEmployee(employee).stream()
+    return sspTaskRepository.findByEmployeeOrderByIndex(employee).stream()
         .map(SSPTaskAssignedDTO::from)
         .toList();
   }
