@@ -114,8 +114,10 @@ export default function SSPPlanning() {
                     bgColor = "started";
                     break;
                   case "PLANNED":
+                  case "TO_BE_PLANNED": //NEED to be REMOVED WHEN the automatic status changed to planned when assigning employee is implemented
                     bgColor = "planned";
                     break;
+
                   case "TRANSFERRED":
                   case "TESTING":
                   case "FINISHED":
@@ -155,9 +157,10 @@ export default function SSPPlanning() {
                     : `border-${bgColor}`;
 
                 if (
-                  (task.status === "started" ||
-                    task.status === "planned" ||
-                    task.status === "finished") &&
+                  (bgColor === "started" ||
+                    bgColor === "planned" ||
+                    bgColor === "done" ||
+                    bgColor === "primary") &&
                   i === 0
                 ) {
                   return (
