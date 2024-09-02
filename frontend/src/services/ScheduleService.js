@@ -21,7 +21,9 @@ export default class ScheduleService {
     if (numberOfDays <= 0) {
       return [];
     }
-    const startAsDate = new Date(startDate);
+    const startAsDate = new Date(
+      new Date(startDate).toISOString().split("T")[0],
+    );
     let datesArray =
       startAsDate.getDay() === 0 || startAsDate.getDay() === 6
         ? []
@@ -402,19 +404,23 @@ export default class ScheduleService {
             }
           } else {
             if (tasks[index + 1]) {
+              console.log(task.taskName + ", " + nrOfDays);
               let nextTask = tasksEditable[index + 1];
               //if next task has a start date and the current task doesn't have a dateCompleted,
               //use that period to calculate nrOfDays
               if (nextTask.dateStarted) {
                 console.log("startdatum");
                 console.log(taskStartDate);
-                console.log(nextTask.dateStarted);
+                console.log(tasks[index + 1].dateStarted);
                 const nextStartDate = new Date(tasks[index + 1].dateStarted);
+                console.log(nextStartDate);
                 nrOfDays = this.#getNumberOfWorkingDays(
                   taskStartDate,
                   nextStartDate,
                   false,
                 );
+
+                console.log(task.taskName + ", " + nrOfDays);
               } else {
                 //if next task doesn't have a start date, use estimatedDays for nrOfDays.
                 //if today is after period of estimatedDays, increase nrOfDays until today (included)
