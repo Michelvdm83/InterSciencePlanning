@@ -83,7 +83,6 @@ export default class ScheduleService {
     endDateTask,
     status,
   ) {
-    console.log(status);
     let returnStatus = "";
     if (!isSystem) {
       returnStatus = "task";
@@ -218,7 +217,6 @@ export default class ScheduleService {
 
     await ApiService.get(`employees/schedules/` + employeeId)
       .then((response) => {
-        console.log(response.data);
         const tasks = response.data.allTasks ? response.data.allTasks : [];
         let tasksEditable = JSON.parse(JSON.stringify(tasks));
 
@@ -411,23 +409,16 @@ export default class ScheduleService {
             }
           } else {
             if (tasks[index + 1]) {
-              console.log(task.taskName + ", " + nrOfDays);
               let nextTask = tasksEditable[index + 1];
               //if next task has a start date and the current task doesn't have a dateCompleted,
               //use that period to calculate nrOfDays
               if (nextTask.dateStarted) {
-                console.log("startdatum");
-                console.log(taskStartDate);
-                console.log(tasks[index + 1].dateStarted);
                 const nextStartDate = new Date(tasks[index + 1].dateStarted);
-                console.log(nextStartDate);
                 nrOfDays = this.#getNumberOfWorkingDays(
                   taskStartDate,
                   nextStartDate,
                   false,
                 );
-
-                console.log(task.taskName + ", " + nrOfDays);
               } else {
                 //if next task doesn't have a start date, use estimatedDays for nrOfDays.
                 //if today is after period of estimatedDays, increase nrOfDays until today (included)
