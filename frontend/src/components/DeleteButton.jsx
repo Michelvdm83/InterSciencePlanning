@@ -22,7 +22,9 @@ export default function DeleteButton({ question, onClick, id, error }) {
               >
                 Verwijderen
               </button>
-              {error && <p className="mt-4 text-red-600">{error}</p>}
+              {error && (
+                <p className="mt-4 text-center text-red-600">{error}</p>
+              )}
             </form>
           </div>
         </div>

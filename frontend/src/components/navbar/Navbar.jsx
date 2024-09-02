@@ -28,7 +28,9 @@ export default function Navbar() {
   });
 
   return (
-    <div className="navbar min-h-min flex-wrap bg-primary p-4">
+    <div
+      className={`navbar ${EmployeeService.isLoggedIn() ? "min-h-min" : "min-h-20"} flex-wrap bg-primary p-4`}
+    >
       <div className="min-w-min flex-1 flex-wrap">
         {showSSPPages && (
           <NavbarButton

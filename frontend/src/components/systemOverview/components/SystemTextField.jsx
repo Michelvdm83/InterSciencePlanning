@@ -13,6 +13,8 @@ export default function SystemTextField({
     classes += " input-disabled disabled:bg-white disabled:text-accent";
   }
 
+  const maxLength = variable === "name" ? 15 : undefined;
+
   return (
     <div>
       <div>{title}</div>
@@ -25,6 +27,7 @@ export default function SystemTextField({
         }
         disabled={!editable}
         spellCheck="false"
+        maxLength={maxLength}
       />
     </div>
   );
