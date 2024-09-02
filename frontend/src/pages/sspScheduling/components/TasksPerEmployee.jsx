@@ -3,6 +3,7 @@ import { Reorder } from "framer-motion";
 import ApiService from "../../../services/ApiService";
 import SystemModalButton from "../../../components/SystemModalButton";
 import { MdDragHandle } from "react-icons/md";
+import DeleteTaskButton from "./DeleteTaskButton";
 
 export default function TasksPerEmployee({
   employees,
@@ -18,6 +19,10 @@ export default function TasksPerEmployee({
   const firstIndex = sortedTasks.length > 0 ? sortedTasks[0].index : 0;
 
   useEffect(() => {
+    getCurrentEmployeeTasks();
+  }, [currentEmployeeId, openTasks]);
+
+  function getCurrentEmployeeTasks() {
     if (currentEmployeeId.length > 1) {
       ApiService.get("/ssptasks/by-employee/" + currentEmployeeId).then(
         (response) => {
@@ -25,7 +30,7 @@ export default function TasksPerEmployee({
         },
       );
     }
-  }, [currentEmployeeId, openTasks]);
+  }
 
   function handleReorder(newTasks) {
     newTasks.forEach((t, index) => {
@@ -94,7 +99,16 @@ export default function TasksPerEmployee({
             className="m-2 flex cursor-ns-resize justify-between rounded-md bg-white p-3"
           >
             {getField(sortedTask)}
-            <MdDragHandle className="self-center text-2xl text-neutral" />
+            <div className="flex justify-end gap-3">
+              {sortedTask.taskId && (
+                <DeleteTaskButton
+                  question={`Weet je zeker dat je de taak '${sortedTask.taskName}' wilt verwijderen?`}
+                  taskId={sortedTask.taskId}
+                  afterDelete={getCurrentEmployeeTasks}
+                />
+              )}
+              <MdDragHandle className="self-center text-2xl text-neutral" />
+            </div>
           </Reorder.Item>
         ))}
       </Reorder.Group>
