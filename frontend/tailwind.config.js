@@ -33,6 +33,7 @@ export default {
         planned: "#7BB141",
         done: "#1B5D20",
         task: "#F47D01",
+        conflict: "#cc0000",
       },
     },
   },

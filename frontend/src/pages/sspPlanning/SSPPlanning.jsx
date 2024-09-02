@@ -1,4 +1,4 @@
-/* Safelist: border-primary border-holiday border-started border-planned border-task border-done bg-primary bg-done bg-task bg-planned bg-holiday bg-started bg-accent */
+/* Safelist: border-primary border-holiday border-started border-planned border-task border-done border-conflict bg-primary bg-done bg-task bg-planned bg-holiday bg-started bg-accent bg-conflict */
 
 import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
@@ -134,7 +134,7 @@ export default function SSPPlanning() {
                     break;
                   case "conflict":
                   case "error":
-                    bgColor = "error";
+                    bgColor = "conflict";
                     break;
                   default:
                     bgColor = "neutral";

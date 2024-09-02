@@ -373,6 +373,7 @@ export default class ScheduleService {
                     ),
                   );
                   nextTask.dateStarted = nextStartDate;
+                  nextTask.estimatedDays -= nrOfConflictingDays;
                   trailingTask = {
                     taskName: "conflict",
                     numberOfDays: nrOfConflictingDays,
