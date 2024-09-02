@@ -53,7 +53,9 @@ export default function SSPSCheduling() {
         updateOpenTasks={updateOpenTasks}
       />
       <div className="m-4 w-1/3 rounded-md bg-neutral">
-        Vertraagde systemen placeholder
+        <h2 className="px-8 py-6 font-Effra_Bd text-xl text-secondary">
+          Vertraagde systemen
+        </h2>
       </div>
     </div>
   );

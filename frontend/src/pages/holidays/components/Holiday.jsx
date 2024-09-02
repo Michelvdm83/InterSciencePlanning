@@ -1,6 +1,7 @@
 import React from "react";
 import DeleteButton from "../../../components/DeleteButton";
 import ApiService from "../../../services/ApiService";
+import EditHoliday from "./EditHoliday";
 
 export default function Holiday({
   holiday,
@@ -39,11 +40,14 @@ export default function Holiday({
           )}
         </p>
       </div>
-      <DeleteButton
-        question="Weet je zeker dat je deze vakantie wilt verwijderen?"
-        onClick={handleDeleteHoliday}
-        id={`delete-employee-${holiday.id}`}
-      />
+      <div className="flex items-center gap-2">
+        <EditHoliday holiday={holiday} setHolidays={setHolidays} />
+        <DeleteButton
+          question="Weet je zeker dat je deze vakantie wilt verwijderen?"
+          onClick={handleDeleteHoliday}
+          id={`delete-employee-${holiday.id}`}
+        />
+      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
 import ScheduleService from "../../services/ScheduleService.js";
+import SystemModalButton from "../../components/SystemModalButton.jsx";
 
 export default function SSPPlanning() {
   const planningDays = 20;
@@ -31,6 +32,10 @@ export default function SSPPlanning() {
     setDateArray(ScheduleService.getDates(beginDate, planningDays));
     setLoading(false);
   }, []);
+
+  function update() {
+    getEmployeeTasks(employees);
+  }
 
   const getEmployeeTasks = async (employees) => {
     let newEmployeeTasksArray = [];
@@ -148,14 +153,36 @@ export default function SSPPlanning() {
                     ? "border-black"
                     : `border-${bgColor}`;
 
-                return (
-                  <div
-                    key={overallIndex}
-                    className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
-                  >
-                    {i === 0 ? task.taskName : ""}
-                  </div>
-                );
+                if (
+                  (task.status === "started" ||
+                    task.status === "planned" ||
+                    task.status === "finished") &&
+                  i === 0
+                ) {
+                  return (
+                    <div
+                      key={overallIndex}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] flex h-7 w-auto justify-center border-b-[1.5px] border-solid text-start`}
+                    >
+                      <SystemModalButton
+                        systemName={task.taskName}
+                        updateOpenTasks={update}
+                      >
+                        <div className="underline hover:text-white">
+                          {task.taskName}
+                        </div>
+                      </SystemModalButton>
+                    </div>
+                  );
+                } else
+                  return (
+                    <div
+                      key={overallIndex}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
+                    >
+                      {i === 0 ? task.taskName : ""}
+                    </div>
+                  );
               });
             });
           })}

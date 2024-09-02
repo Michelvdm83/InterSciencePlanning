@@ -10,7 +10,7 @@ export default function SystemNumberField({
   let classes =
     "input input-bordered bg-white text-accent disabled:text-accent input-sm w-full";
   if (!editable) {
-    classes += " input-disabled";
+    classes += " input-disabled disabled:bg-white";
   }
 
   function checkKeyPressed(event) {
@@ -31,6 +31,8 @@ export default function SystemNumberField({
           setSystem({ ...system, [variable]: event.target.value })
         }
         onKeyDown={(event) => checkKeyPressed(event)}
+        readOnly={!editable}
+        disabled={!editable}
       />
     </div>
   );
