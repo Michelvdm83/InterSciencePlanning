@@ -102,7 +102,7 @@ export default function TasksPerEmployee({
             <div className="flex justify-end gap-3">
               {sortedTask.taskId && (
                 <DeleteTaskButton
-                  question={`Weet je zeker dat je de taak: ${sortedTask.taskName} wilt verwijderen?`}
+                  question={`Weet je zeker dat je de taak '${sortedTask.taskName}' wilt verwijderen?`}
                   taskId={sortedTask.taskId}
                   afterDelete={getCurrentEmployeeTasks}
                 />

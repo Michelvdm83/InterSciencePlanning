@@ -47,7 +47,7 @@ export default function PlannableTask({
           <div className="w-1/12">
             {taskName && (
               <DeleteTaskButton
-                question={`Weet je zeker dat je de taak: ${taskName} wilt verwijderen?`}
+                question={`Weet je zeker dat je de taak '${taskName}' wilt verwijderen?`}
                 taskId={task.taskId}
                 afterDelete={updateOpenTasks}
               />
@@ -67,6 +67,6 @@ export default function PlannableTask({
       </SystemModalButton>
     );
   } else {
-    return getStandardField(taskName); //deleteButton toevoegen
+    return getStandardField(taskName);
   }
 }
