@@ -1,4 +1,4 @@
-/* Safelist: border-holiday border-started border-planned border-task border-done bg-done bg-task bg-planned bg-holiday bg-started bg-accent */
+/* Safelist: border-primary border-holiday border-started border-planned border-task border-done bg-primary bg-done bg-task bg-planned bg-holiday bg-started bg-accent */
 
 import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
@@ -48,7 +48,6 @@ export default function SSPPlanning() {
 
       newEmployeeTasksArray.push(newEmployeeTasks);
     }
-    console.log(newEmployeeTasksArray);
     setEmployeeTasks(newEmployeeTasksArray);
   };
 
@@ -129,6 +128,8 @@ export default function SSPPlanning() {
                     bgColor = "task";
                     break;
                   case "delayed":
+                    bgColor = "primary";
+                    break;
                   case "conflict":
                   case "error":
                     bgColor = "error";
