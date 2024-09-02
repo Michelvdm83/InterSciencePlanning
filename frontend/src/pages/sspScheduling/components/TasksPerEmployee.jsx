@@ -36,7 +36,7 @@ export default function TasksPerEmployee({
   }
 
   function getStandardField(name, textClass) {
-    return <div className={textClass + " w-1/3"}>{name}</div>;
+    return <div className={textClass + " w-1/3 text-nowrap"}>{name}</div>;
   }
 
   function getField(currentTask) {

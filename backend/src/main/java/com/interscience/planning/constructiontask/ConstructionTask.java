@@ -3,7 +3,6 @@ package com.interscience.planning.constructiontask;
 import com.interscience.planning.ssptask.SSPTask;
 import com.interscience.planning.system.System;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,10 +20,5 @@ public class ConstructionTask {
 
   @OneToOne(mappedBy = "constructionTask", cascade = CascadeType.PERSIST)
   private SSPTask sspTask;
-
-  private Integer estimatedTime;
-
-  private LocalDate dateStarted;
-
-  private LocalDate dateCompleted;
+  
 }
