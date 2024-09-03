@@ -30,6 +30,8 @@ public class SecurityConfiguration {
                 requests
                     .requestMatchers(HttpMethod.POST, "api/v1/employees/**")
                     .hasRole("TEAM_LEADER")
+                    .requestMatchers(HttpMethod.PATCH, "api/v1/employees/{id}/password")
+                    .permitAll()
                     .requestMatchers(HttpMethod.PATCH, "api/v1/employees/**")
                     .hasRole("TEAM_LEADER")
                     .requestMatchers(HttpMethod.GET, "api/v1/employees")
