@@ -21,7 +21,9 @@ export default class ScheduleService {
     if (numberOfDays <= 0) {
       return [];
     }
-    const startAsDate = new Date(startDate);
+    const startAsDate = new Date(
+      new Date(startDate).toISOString().split("T")[0],
+    );
     let datesArray =
       startAsDate.getDay() === 0 || startAsDate.getDay() === 6
         ? []
@@ -79,16 +81,15 @@ export default class ScheduleService {
     isSystem,
     nrOfDays,
     endDateTask,
+    status,
   ) {
     let returnStatus = "";
     if (!isSystem) {
       returnStatus = "task";
-    } else if (startDateTask === null) {
-      returnStatus = "planned";
-    } else if (startDateNextTask === null && endDateTask === null) {
-      returnStatus = nrOfDays > estimatedDays ? "delayed" : "construction";
+    } else if (status === "BUILDING") {
+      returnStatus = nrOfDays > estimatedDays ? "delayed" : "started";
     } else {
-      returnStatus = "finished";
+      returnStatus = status;
     }
 
     return returnStatus;
@@ -195,6 +196,7 @@ export default class ScheduleService {
                     task.systemName,
                     calculatedNrOfDays,
                     task.dateCompleted,
+                    task.status,
                   ),
       };
       scheduleEntries.push(taskBlock);
@@ -213,8 +215,8 @@ export default class ScheduleService {
 
     let schedule = [];
 
-    await ApiService.get(`employees/schedules/` + employeeId).then(
-      (response) => {
+    await ApiService.get(`employees/schedules/` + employeeId)
+      .then((response) => {
         const tasks = response.data.allTasks ? response.data.allTasks : [];
         let tasksEditable = JSON.parse(JSON.stringify(tasks));
 
@@ -288,6 +290,7 @@ export default class ScheduleService {
               nrOfDays -= this.#getNumberOfWorkingDays(
                 taskStartDate,
                 allDays[currentDay],
+                false,
               );
               task.dateStarted = allDays[currentDay];
               //if the start date of the first task is after the current day,
@@ -368,6 +371,7 @@ export default class ScheduleService {
                     ),
                   );
                   nextTask.dateStarted = nextStartDate;
+                  nextTask.estimatedDays -= nrOfConflictingDays;
                   trailingTask = {
                     taskName: "conflict",
                     numberOfDays: nrOfConflictingDays,
@@ -506,8 +510,16 @@ export default class ScheduleService {
             schedule.push(scheduleEntries[i]);
           }
         }
-      },
-    );
+      })
+      .catch(() => {
+        return [
+          {
+            taskName: "fout bij ophalen",
+            numberOfDays: numberOfDays,
+            status: "error",
+          },
+        ];
+      });
     return schedule;
   }
 }
