@@ -18,6 +18,9 @@ public class Task {
 
   private String name;
 
+  @Enumerated(EnumType.STRING)
+  private TaskStatus status;
+
   @OneToOne(mappedBy = "task")
   private SSPTask sspTask;
 

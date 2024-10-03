@@ -1,11 +1,14 @@
 package com.interscience.planning.task;
 
+import com.interscience.planning.employee.Employee;
+import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
 import com.interscience.planning.ssptask.SSPTask;
 import com.interscience.planning.ssptask.SSPTaskRepository;
 import com.interscience.planning.ssptask.SSPTaskService;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,11 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final SSPTaskRepository sspTaskRepository;
   private final SSPTaskService sspTaskService;
+  private final EmployeeRepository employeeRepository;
+
+  public Task getTask(UUID id) {
+    return taskRepository.findById(id).orElseThrow(NotFoundException::new);
+  }
 
   public void createTask(CreateTaskDTO createTaskDTO) {
     if (createTaskDTO.name() == null || createTaskDTO.name().isBlank()) {
@@ -29,12 +37,60 @@ public class TaskService {
     }
 
     Task newTask = new Task(createTaskDTO.name());
+    newTask.setStatus(TaskStatus.TO_BE_PLANNED);
     taskRepository.save(newTask);
 
     SSPTask newSSPTask = new SSPTask();
     newSSPTask.setEstimatedTime(createTaskDTO.estimatedTime());
     newSSPTask.setTask(newTask);
     sspTaskRepository.save(newSSPTask);
+  }
+
+  public void updateTask(TaskDTO taskDTO, UUID id) {
+    Task task = taskRepository.findById(id).orElseThrow(NotFoundException::new);
+    if (taskDTO.name() != null && !taskDTO.name().isBlank()) {
+      task.setName(taskDTO.name());
+    }
+
+    if (taskDTO.estimatedTime() != null) {
+      if (taskDTO.estimatedTime() <= 0) {
+        throw new BadRequestException("Estimated time must be higher than 0");
+      }
+      task.getSspTask().setEstimatedTime(taskDTO.estimatedTime());
+    }
+
+    if (taskDTO.dateStarted() != null) {
+      LocalDate endDate =
+          taskDTO.dateCompleted() != null
+              ? taskDTO.dateCompleted()
+              : task.getSspTask().getDateCompleted();
+      if (endDate != null && taskDTO.dateStarted().isAfter(endDate)) {
+        throw new BadRequestException("Start date must be before end date");
+      }
+      task.getSspTask().setDateStarted(taskDTO.dateStarted());
+      task.setStatus(TaskStatus.IN_PROGRESS);
+    }
+
+    if (taskDTO.dateCompleted() != null) {
+      LocalDate startDate =
+          taskDTO.dateStarted() != null
+              ? taskDTO.dateStarted()
+              : task.getSspTask().getDateStarted();
+      if (startDate == null) {
+        throw new BadRequestException("Start date required for setting end date");
+      }
+      if (taskDTO.dateCompleted().isBefore(startDate)) {
+        throw new BadRequestException("End date must be after start date");
+      }
+      task.getSspTask().setDateCompleted(taskDTO.dateCompleted());
+      task.setStatus(TaskStatus.FINISHED);
+    }
+
+    if (taskDTO.employee() != null) {
+      Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+      task.getSspTask().setEmployee(employee);
+    }
+    taskRepository.save(task);
   }
 
   public void deleteTask(UUID id) {

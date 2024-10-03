@@ -12,10 +12,22 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
   private final TaskService taskService;
 
+  @GetMapping("{id}")
+  public ResponseEntity<TaskDTO> getTask(@PathVariable UUID id) {
+    Task task = taskService.getTask(id);
+    return ResponseEntity.ok(TaskDTO.from(task));
+  }
+
   @PostMapping
   public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO createTaskDTO) {
 
     taskService.createTask(createTaskDTO);
+    return ResponseEntity.ok().build();
+  }
+
+  @PatchMapping("{id}")
+  public ResponseEntity<?> updateTask(@PathVariable UUID id, @RequestBody TaskDTO taskDTO) {
+    taskService.updateTask(taskDTO, id);
     return ResponseEntity.ok().build();
   }
 
