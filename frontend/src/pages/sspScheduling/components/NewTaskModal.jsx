@@ -1,180 +1,94 @@
 import { useEffect, useState } from "react";
 import ApiService from "../../../services/ApiService.js";
-import EmployeeService from "../../../services/EmployeeService.js";
-import TaskTextField from "./TaskTextField.jsx";
-import TaskNumberField from "./TaskNumberField.jsx";
-import TaskDateField from "./TaskDateField.jsx";
-import TaskSelectEmployeeField from "./TaskSelectEmployeeField.jsx";
-import { translateError, validateTaskData } from "./validateTaskData.js";
 
-export default function NewTaskModal({
-  updateOpenTasks,
-  id,
-  modalIsOpen,
-  setModalIsOpen,
-}) {
-  const [task, setTask] = useState({});
-  const [editedTask, setEditedTask] = useState({});
-  const [error, setError] = useState("");
-  const [assigned, setAssigned] = useState(false);
+export default function NewTaskModal({ updateOpenTasks }) {
+  const [taskName, setTaskName] = useState("");
+  const [estimatedTime, setEstimatedTime] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const employeeFunction = EmployeeService.getEmployeeFunction();
-
-  useEffect(() => {
-    if (id) {
-      const fetchData = async () => {
-        const response = await ApiService.get(
-          `http://localhost:8080/api/v1/tasks/${id}`,
-        );
-        const data = response.data;
-
-        setTask(data);
-
-        if (data.employee) {
-          setAssigned(true);
-        }
-      };
-      fetchData();
+  const handleEstimatedTimeValueChange = (newValue) => {
+    if (/^\d*$/.test(newValue) && new Number(newValue) > 0) {
+      //check if from beginning ^ to end $ of the input string it only consists of numbers \d*
+      setEstimatedTime(newValue);
     }
-  }, [id]);
-
-  useEffect(() => {
-    if (modalIsOpen) {
-      const modal = document.getElementById(`edit-${id}` || "new-task");
-      if (modal) {
-        modal.showModal();
-      }
-      if (id) {
-        setEditedTask({ ...task });
-      }
-    }
-  }, [modalIsOpen, id, task]);
+  };
 
   const handleOnKeyDown = (e) => {
     if (e.key === "Enter") {
       handleNewTaskSave(e);
     }
-    if (e.key === "Escape") {
-      e.preventDefault();
-    }
   };
 
   const handleClose = () => {
-    setTask({});
-    setEditedTask({});
-    setError("");
-    setModalIsOpen(false);
+    setTaskName("");
+    setEstimatedTime("");
+    setErrorMessage(null);
   };
 
-  const handleNewTaskSave = (e) => {
-    e.preventDefault();
+  const handleNewTaskSave = (event) => {
+    if (taskName != "" && estimatedTime != "") {
+      const name = taskName;
 
-    if (!id) {
-      if (validateTaskData(task, setError)) {
-        ApiService.post("tasks", task)
-          .then(() => handleClose())
-          .then(updateOpenTasks())
-          .catch((error) => {
-            if (error.response && error.response.status === 404) {
-              setError("Medewerker niet gevonden");
-            } else {
-              setError(translateError(error.response?.data?.detail));
-            }
-          });
-      }
+      const newTask = { name, estimatedTime };
+
+      ApiService.post("tasks", newTask).then(() => {
+        updateOpenTasks();
+      });
+
+      setTaskName("");
+      setEstimatedTime("");
+      setErrorMessage();
     } else {
-      // Determine which fields have been edited
-      const editedFields = {};
-      for (const key in editedTask) {
-        if (editedTask[key] !== task[key]) {
-          editedFields[key] = editedTask[key];
-        }
-      }
-      if (Object.keys(editedFields).length > 0) {
-        if (validateTaskData(editedTask, setError)) {
-          ApiService.patch(`tasks/${id}`, editedFields)
-            .then(() => handleClose())
-            .catch((error) => {
-              setError(translateError(error.response?.data?.detail));
-            });
-        }
-      } else {
-        handleClose();
-      }
+      event.preventDefault();
+      setErrorMessage("Beide velden zijn verplicht");
     }
   };
 
   return (
-    <dialog id={`edit-${id}` || "new-task"} className="modal">
-      <div className="modal-box w-96">
-        <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-              onClick={() => handleClose()}
-            >
-              ✕
-            </button>
-            <TaskTextField
-              task={id ? editedTask : task}
-              setTask={id ? setEditedTask : setTask}
-              editable={employeeFunction == "TEAM_LEADER"}
-              title="Taaknaam"
-              variable="name"
-            />
-            <TaskNumberField
-              task={id ? editedTask : task}
-              setTask={id ? setEditedTask : setTask}
-              editable={employeeFunction == "TEAM_LEADER"}
-              title="Aantal Dagen"
-              variable="estimatedTime"
-            />
+    <div className="modal-box w-96">
+      <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
+        <div className="flex flex-col">
+          <button
+            className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+            onClick={() => handleClose()}
+          >
+            ✕
+          </button>
 
-            {assigned && (
-              <>
-                <TaskSelectEmployeeField
-                  editable={employeeFunction == "TEAM_LEADER"}
-                  title="Medewerker"
-                  task={id ? editedTask : task}
-                  setTask={id ? setEditedTask : setTask}
-                  variable="employee"
-                />
-                <TaskDateField
-                  task={id ? editedTask : task}
-                  setTask={id ? setEditedTask : setTask}
-                  editable={
-                    employeeFunction == "TEAM_LEADER" ||
-                    employeeFunction == "SSP"
-                  }
-                  title="Begindatum"
-                  variable="dateStarted"
-                />
-                <TaskDateField
-                  task={id ? editedTask : task}
-                  setTask={id ? setEditedTask : setTask}
-                  editable={
-                    employeeFunction == "TEAM_LEADER" ||
-                    employeeFunction == "SSP"
-                  }
-                  title="Einddatum"
-                  variable="dateCompleted"
-                />
-              </>
-            )}
-
-            {error && (
-              <div className="-mb-2 mt-3 self-center text-red-600">{error}</div>
-            )}
-            <button
-              className="modal-open={open} btn btn-accent mt-5 w-20 self-center"
-              onClick={(e) => handleNewTaskSave(e)}
-            >
-              Opslaan
-            </button>
+          <div className="flex flex-col">
+            <span>Taaknaam</span>
+            <input
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+            />
           </div>
-        </form>
-      </div>
-    </dialog>
+
+          <div className="mt-4 flex flex-col">
+            <span>Aantal dagen</span>
+            <input
+              type="text"
+              className="input input-bordered w-full max-w-xs"
+              value={estimatedTime}
+              onChange={(e) => handleEstimatedTimeValueChange(e.target.value)}
+            />
+          </div>
+
+          {errorMessage && (
+            <div className="-mb-2 mt-3 self-center text-red-600">
+              {errorMessage}
+            </div>
+          )}
+
+          <button
+            className="modal-open={open} btn btn-accent mt-5 w-20 self-center"
+            onClick={(e) => handleNewTaskSave(e)}
+          >
+            Opslaan
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

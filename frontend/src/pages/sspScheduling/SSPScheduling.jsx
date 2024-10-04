@@ -27,20 +27,15 @@ export default function SSPSCheduling() {
   return (
     <div className="flex h-full w-screen flex-grow">
       <div className="m-4 flex w-1/3 flex-col">
-        {/* <div
+        <div
           className="btn btn-accent btn-lg mb-2 rounded-md"
           onClick={() => document.getElementById("new_task_modal").showModal()}
         >
           Nieuwe Taak
-        </div> */}
-        {/* <dialog id="new_task_modal" className="modal">
+        </div>
+        <dialog id="new_task_modal" className="modal">
           <NewTaskModal updateOpenTasks={updateOpenTasks} />
-        </dialog> */}
-        <TaskModalButton updateOpenTasks={updateOpenTasks}>
-          <div className="btn btn-accent btn-lg mb-2 w-full rounded-md">
-            Nieuwe taak
-          </div>
-        </TaskModalButton>
+        </dialog>
         <SystemModalButton updateOpenTasks={updateOpenTasks}>
           <div className="btn btn-accent btn-lg mb-2 w-full rounded-md">
             Nieuw Systeem

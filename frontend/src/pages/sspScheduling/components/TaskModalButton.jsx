@@ -1,5 +1,5 @@
 import React, { useState, cloneElement, useEffect } from "react";
-import NewTaskModal from "./NewTaskModal";
+import EditTaskModal from "./EditTaskModal";
 
 export default function TaskModalButton({ id, children, updateOpenTasks }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -21,7 +21,7 @@ export default function TaskModalButton({ id, children, updateOpenTasks }) {
           cloneElement(children, { onClick: handleOpenModal })}
       </div>
       {modalIsOpen && (
-        <NewTaskModal
+        <EditTaskModal
           id={id}
           modalIsOpen={modalIsOpen}
           setModalIsOpen={setModalIsOpen}
