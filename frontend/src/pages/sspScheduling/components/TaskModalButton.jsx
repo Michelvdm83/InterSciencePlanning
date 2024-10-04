@@ -25,6 +25,7 @@ export default function TaskModalButton({ id, children, updateOpenTasks }) {
           id={id}
           modalIsOpen={modalIsOpen}
           setModalIsOpen={setModalIsOpen}
+          updateOpenTasks={updateOpenTasks}
         />
       )}
     </div>

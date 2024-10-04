@@ -6,7 +6,6 @@ import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
 import com.interscience.planning.ssptask.SSPTask;
 import com.interscience.planning.ssptask.SSPTaskRepository;
-import com.interscience.planning.ssptask.SSPTaskService;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 public class TaskService {
   private final TaskRepository taskRepository;
   private final SSPTaskRepository sspTaskRepository;
-  private final SSPTaskService sspTaskService;
   private final EmployeeRepository employeeRepository;
 
   public Task getTask(UUID id) {
@@ -59,7 +57,15 @@ public class TaskService {
       task.getSspTask().setEstimatedTime(taskDTO.estimatedTime());
     }
 
+    if (taskDTO.employee() != null) {
+      Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
+      task.getSspTask().setEmployee(employee);
+    }
+
     if (taskDTO.dateStarted() != null) {
+      if (task.getSspTask().getEmployee() == null) {
+        throw new BadRequestException("Employee required for setting start date");
+      }
       LocalDate endDate =
           taskDTO.dateCompleted() != null
               ? taskDTO.dateCompleted()
@@ -86,10 +92,6 @@ public class TaskService {
       task.setStatus(TaskStatus.FINISHED);
     }
 
-    if (taskDTO.employee() != null) {
-      Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
-      task.getSspTask().setEmployee(employee);
-    }
     taskRepository.save(task);
   }
 

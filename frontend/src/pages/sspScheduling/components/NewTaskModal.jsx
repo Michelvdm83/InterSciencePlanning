@@ -5,6 +5,7 @@ import TaskTextField from "./TaskTextField.jsx";
 import TaskNumberField from "./TaskNumberField.jsx";
 import TaskDateField from "./TaskDateField.jsx";
 import TaskSelectEmployeeField from "./TaskSelectEmployeeField.jsx";
+import { translateError, validateTaskData } from "./validateTaskData.js";
 
 export default function NewTaskModal({
   updateOpenTasks,
@@ -107,7 +108,7 @@ export default function NewTaskModal({
     <dialog id={`edit-${id}` || "new-task"} className="modal">
       <div className="modal-box w-96">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <button
               type="button"
               className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
@@ -119,7 +120,7 @@ export default function NewTaskModal({
               task={id ? editedTask : task}
               setTask={id ? setEditedTask : setTask}
               editable={employeeFunction == "TEAM_LEADER"}
-              title="Systeem"
+              title="Taaknaam"
               variable="name"
             />
             <TaskNumberField
@@ -146,7 +147,7 @@ export default function NewTaskModal({
                     employeeFunction == "TEAM_LEADER" ||
                     employeeFunction == "SSP"
                   }
-                  title="Startdatum"
+                  title="Begindatum"
                   variable="dateStarted"
                 />
                 <TaskDateField
