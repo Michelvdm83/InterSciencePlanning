@@ -87,7 +87,7 @@ export default function SSPPlanning() {
           {dateArray.map((date, index) => (
             <div
               key={index}
-              className={`bg-base-100 text-secondary ${(index + 1) % 5 === 0 ? "mb-2" : ""} row-start-${index + 2} h-7 w-28 border-b-[1.5px] border-solid border-neutral px-3 font-Effra_Md`}
+              className={`bg-base-100 text-secondary ${(index + 1) % 5 === 0 ? "mb-2" : ""} row-start-${index + 2} sticky left-0 h-7 w-28 border-b-[1.5px] border-solid border-neutral px-3 font-Effra_Md`}
             >
               {date.toLocaleDateString()}
             </div>
