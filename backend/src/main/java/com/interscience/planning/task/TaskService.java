@@ -1,5 +1,7 @@
 package com.interscience.planning.task;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
@@ -19,6 +21,7 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final SSPTaskRepository sspTaskRepository;
   private final EmployeeRepository employeeRepository;
+  private final ObjectMapper objectMapper;
 
   public Task getTask(UUID id) {
     return taskRepository.findById(id).orElseThrow(NotFoundException::new);
@@ -44,7 +47,14 @@ public class TaskService {
     sspTaskRepository.save(newSSPTask);
   }
 
-  public void updateTask(TaskDTO taskDTO, UUID id) {
+  public void updateTask(JsonNode jsonNode, UUID id) {
+    boolean dateStartedExplicitlyNull =
+        jsonNode.has("dateStarted") && jsonNode.get("dateStarted").isNull();
+    boolean dateCompletedExplicitlyNull =
+        jsonNode.has("dateCompleted") && jsonNode.get("dateCompleted").isNull();
+
+    TaskDTO taskDTO = objectMapper.convertValue(jsonNode, TaskDTO.class);
+
     Task task = taskRepository.findById(id).orElseThrow(NotFoundException::new);
     if (taskDTO.name() != null && !taskDTO.name().isBlank()) {
       task.setName(taskDTO.name());
@@ -62,6 +72,11 @@ public class TaskService {
       task.getSspTask().setEmployee(employee);
     }
 
+    if (dateStartedExplicitlyNull) {
+      task.getSspTask().setDateStarted(null);
+      task.setStatus(TaskStatus.TO_BE_PLANNED);
+    }
+
     if (taskDTO.dateStarted() != null) {
       if (task.getSspTask().getEmployee() == null) {
         throw new BadRequestException("Employee required for setting start date");
@@ -75,6 +90,13 @@ public class TaskService {
       }
       task.getSspTask().setDateStarted(taskDTO.dateStarted());
       task.setStatus(TaskStatus.IN_PROGRESS);
+    }
+
+    if (dateCompletedExplicitlyNull) {
+      task.getSspTask().setDateCompleted(null);
+      if (task.getSspTask().getDateStarted() != null) {
+        task.setStatus(TaskStatus.IN_PROGRESS);
+      }
     }
 
     if (taskDTO.dateCompleted() != null) {

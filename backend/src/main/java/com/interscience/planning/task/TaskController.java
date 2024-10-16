@@ -1,5 +1,6 @@
 package com.interscience.planning.task;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +21,13 @@ public class TaskController {
 
   @PostMapping
   public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO createTaskDTO) {
-
     taskService.createTask(createTaskDTO);
     return ResponseEntity.ok().build();
   }
 
   @PatchMapping("{id}")
-  public ResponseEntity<?> updateTask(@PathVariable UUID id, @RequestBody TaskDTO taskDTO) {
-    taskService.updateTask(taskDTO, id);
+  public ResponseEntity<?> updateTask(@PathVariable UUID id, @RequestBody JsonNode jsonNode) {
+    taskService.updateTask(jsonNode, id);
     return ResponseEntity.ok().build();
   }
 
