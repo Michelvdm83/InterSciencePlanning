@@ -18,7 +18,7 @@ export default function TaskDateField({
         type="date"
         value={task[variable] || ""}
         onChange={(event) => {
-          setTask({ ...task, [variable]: event.target.value });
+          setTask({ ...task, [variable]: event.target.value || null });
         }}
         className={classes}
         disabled={!editable}

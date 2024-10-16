@@ -8,30 +8,45 @@ import TaskSelectEmployeeField from "./TaskSelectEmployeeField.jsx";
 import { translateError, validateTaskData } from "./validateTaskData.js";
 
 export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
+  const [task, setTask] = useState({});
   const [editedTask, setEditedTask] = useState({});
   const [error, setError] = useState("");
   const [assigned, setAssigned] = useState(false);
-  const modal = document.getElementById(`edit-${id}` || "new-task");
+  const [loading, setLoading] = useState(true);
 
   const employeeFunction = EmployeeService.getEmployeeFunction();
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await ApiService.get(
-        `http://localhost:8080/api/v1/tasks/${id}`,
-      );
-      const data = response.data;
+      try {
+        const response = await ApiService.get(
+          `http://localhost:8080/api/v1/tasks/${id}`,
+        );
+        const data = response.data;
+        setTask(data);
+        setEditedTask(data);
 
-      setEditedTask(data);
-      setAssigned(!!data.employee);
-    };
-    if (modalIsOpen) {
-      fetchData();
-      if (modal) {
-        modal.showModal();
+        setAssigned(!!data.employee);
+        setLoading(true);
+      } catch (error) {
+        setError(translateError(error.response?.data?.detail));
+      } finally {
+        setLoading(false);
       }
+    };
+    if (modalIsOpen && id) {
+      fetchData();
+    } else {
+      setLoading(true);
     }
-  }, [id, modalIsOpen, editedTask]);
+  }, [id, modalIsOpen]);
+
+  useEffect(() => {
+    const modal = document.getElementById(`edit-${id}`);
+    if (!loading && modalIsOpen && modal) {
+      modal.showModal();
+    }
+  }, [loading, modalIsOpen, id]);
 
   const handleOnKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -72,7 +87,7 @@ export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
 
   return (
     <dialog id={`edit-${id}` || "new-task"} className="modal">
-      <div className="modal-box w-96">
+      <div className="modal-box w-96 text-left">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
           <div className="flex flex-col gap-2">
             <button
