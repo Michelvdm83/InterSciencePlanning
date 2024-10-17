@@ -1,5 +1,6 @@
 package com.interscience.planning.system;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +33,8 @@ public class SystemController {
 
   @PatchMapping("{systemName}")
   public ResponseEntity<?> updateSystem(
-      @RequestBody SystemPostPatchDTO systemPostPatchDTO, @PathVariable String systemName) {
-    systemService.updateSystem(systemPostPatchDTO, systemName);
+          @RequestBody JsonNode jsonNode, @PathVariable String systemName) {
+    systemService.updateSystem(jsonNode, systemName);
     return ResponseEntity.ok().build();
   }
 }

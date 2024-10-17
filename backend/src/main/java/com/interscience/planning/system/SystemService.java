@@ -1,5 +1,7 @@
 package com.interscience.planning.system;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interscience.planning.constructiontask.ConstructionTask;
 import com.interscience.planning.constructiontask.ConstructionTaskRepository;
 import com.interscience.planning.employee.Employee;
@@ -29,6 +31,7 @@ public class SystemService {
   private final ConstructionTaskRepository constructionTaskRepository;
   private final TestTaskRepository testTaskRepository;
   private final SSPTaskService sspTaskService;
+  private final ObjectMapper objectMapper;
 
   public System getSystem(String name) {
     return systemRepository.findByName(name).orElseThrow(NotFoundException::new);
@@ -71,7 +74,19 @@ public class SystemService {
     systemRepository.save(system);
   }
 
-  public void updateSystem(SystemPostPatchDTO systemPostPatchDTO, String name) {
+  public void updateSystem(JsonNode jsonNode, String name) {
+    boolean startOfConstructionExplicitlyNull =
+        jsonNode.has("startOfConstruction") && jsonNode.get("startOfConstruction").isNull();
+    boolean endOfConstructionExplicitlyNull =
+        jsonNode.has("endOfConstruction") && jsonNode.get("endOfConstruction").isNull();
+    boolean startOfTestExplicitlyNull =
+        jsonNode.has("startOfTest") && jsonNode.get("startOfTest").isNull();
+    boolean endOfTestExplicitlyNull =
+        jsonNode.has("endOfTest") && jsonNode.get("endOfTest").isNull();
+
+    SystemPostPatchDTO systemPostPatchDTO =
+        objectMapper.convertValue(jsonNode, SystemPostPatchDTO.class);
+
     System system = systemRepository.findByName(name).orElseThrow(NotFoundException::new);
 
     if (systemPostPatchDTO.name() != null) {
@@ -108,8 +123,20 @@ public class SystemService {
     if (systemPostPatchDTO.employeeSSP() != null) {
       setSSPEmployee(systemPostPatchDTO, system.getConstructionTask().getSspTask());
     }
+
+    if (startOfConstructionExplicitlyNull) {
+      if (!endOfConstructionExplicitlyNull
+          && system.getConstructionTask().getSspTask().getDateCompleted() != null) {
+        throw new BadRequestException(
+            "Construction start date required for setting construction end date");
+      }
+      system.getConstructionTask().getSspTask().setDateStarted(null);
+    }
     if (systemPostPatchDTO.startOfConstruction() != null) {
       setConstructionStartDate(systemPostPatchDTO, system.getConstructionTask());
+    }
+    if (endOfConstructionExplicitlyNull) {
+      system.getConstructionTask().getSspTask().setDateCompleted(null);
     }
     if (systemPostPatchDTO.endOfConstruction() != null) {
       setConstructionEndDate(systemPostPatchDTO, system);
@@ -120,8 +147,17 @@ public class SystemService {
     if (systemPostPatchDTO.employeeFT() != null) {
       setFTEmployee(systemPostPatchDTO, system.getTestTask());
     }
+    if (startOfTestExplicitlyNull) {
+      if (!endOfTestExplicitlyNull && system.getTestTask().getDateCompleted() != null) {
+        throw new BadRequestException("Test start date required for setting test end date");
+      }
+      system.getConstructionTask().getSspTask().setDateStarted(null);
+    }
     if (systemPostPatchDTO.startOfTest() != null) {
       setTestStartDate(systemPostPatchDTO, system);
+    }
+    if (endOfTestExplicitlyNull) {
+      system.getTestTask().setDateCompleted(null);
     }
     if (systemPostPatchDTO.endOfTest() != null) {
       setTestEndDate(systemPostPatchDTO, system.getTestTask());
