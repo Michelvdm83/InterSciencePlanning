@@ -17,7 +17,9 @@ import com.interscience.planning.testtask.TestTask;
 import com.interscience.planning.testtask.TestTaskRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -59,12 +61,13 @@ public class SystemService {
     system.setNotes(systemPostPatchDTO.notes());
     system.setCustomerContactInformation(systemPostPatchDTO.customerContactInformation());
     system.setProjectInformation(systemPostPatchDTO.projectInformation());
-    system.setSchemeApproved(
-        systemPostPatchDTO.schemeApproved() != null ? systemPostPatchDTO.schemeApproved() : false);
-    system.setSpecsheetApproved(
-        systemPostPatchDTO.specsheetApproved() != null
-            ? systemPostPatchDTO.specsheetApproved()
-            : false);
+    //    system.setSchemeApproved(
+    //        systemPostPatchDTO.schemeApproved() != null ? systemPostPatchDTO.schemeApproved() :
+    // false);
+    //    system.setSpecsheetApproved(
+    //        systemPostPatchDTO.specsheetApproved() != null
+    //            ? systemPostPatchDTO.specsheetApproved()
+    //            : false);
     system.setStatus(SystemStatus.TO_BE_PLANNED);
     system.setSeller(systemPostPatchDTO.seller());
 
@@ -75,143 +78,153 @@ public class SystemService {
   }
 
   public void updateSystem(JsonNode jsonNode, String name) {
-    boolean startOfConstructionExplicitlyNull =
-        jsonNode.has("startOfConstruction") && jsonNode.get("startOfConstruction").isNull();
-    boolean endOfConstructionExplicitlyNull =
-        jsonNode.has("endOfConstruction") && jsonNode.get("endOfConstruction").isNull();
-    boolean startOfTestExplicitlyNull =
-        jsonNode.has("startOfTest") && jsonNode.get("startOfTest").isNull();
-    boolean endOfTestExplicitlyNull =
-        jsonNode.has("endOfTest") && jsonNode.get("endOfTest").isNull();
+    Map<String, Boolean> nullValues = checkForExplicitNullValues(jsonNode);
 
-    SystemPostPatchDTO systemPostPatchDTO =
-        objectMapper.convertValue(jsonNode, SystemPostPatchDTO.class);
+    SystemPostPatchDTO dto = objectMapper.convertValue(jsonNode, SystemPostPatchDTO.class);
 
     System system = systemRepository.findByName(name).orElseThrow(NotFoundException::new);
 
-    if (systemPostPatchDTO.name() != null) {
-      validateName(systemPostPatchDTO);
-      system.setName(systemPostPatchDTO.name());
+    if (dto.name() != null) {
+      validateName(dto);
+      system.setName(dto.name());
     }
-    if (systemPostPatchDTO.poNumber() != null) {
-      system.setPoNumber(systemPostPatchDTO.poNumber());
+    if (dto.poNumber() != null) {
+      system.setPoNumber(dto.poNumber());
     }
-    if (systemPostPatchDTO.systemType() != null) {
-      system.setSystemType(systemPostPatchDTO.systemType());
+    if (dto.systemType() != null) {
+      system.setSystemType(dto.systemType());
     }
-    if (systemPostPatchDTO.employeeResponsible() != null) {
-      setEmployeeResponsible(systemPostPatchDTO, system);
+    if (dto.employeeResponsible() != null) {
+      setEmployeeResponsible(dto, system);
     }
-    if (systemPostPatchDTO.agreedDate() != null) {
-      system.setAgreedDate(systemPostPatchDTO.agreedDate());
+    if (dto.agreedDate() != null) {
+      system.setAgreedDate(dto.agreedDate());
     }
-    if (systemPostPatchDTO.actualDeliveryDate() != null) {
-      system.setActualDeliveryDate(systemPostPatchDTO.actualDeliveryDate());
+    if (dto.actualDeliveryDate() != null) {
+      system.setActualDeliveryDate(dto.actualDeliveryDate());
     }
-    if (systemPostPatchDTO.customerContactInformation() != null) {
-      system.setCustomerContactInformation(systemPostPatchDTO.customerContactInformation());
+    if (dto.customerContactInformation() != null) {
+      system.setCustomerContactInformation(dto.customerContactInformation());
     }
-    if (systemPostPatchDTO.status() != null) {
-      system.setStatus(systemPostPatchDTO.status());
+    if (dto.status() != null) {
+      system.setStatus(dto.status());
     }
-    if (systemPostPatchDTO.estimatedConstructionDays() != null) {
-      system
-          .getConstructionTask()
-          .getSspTask()
-          .setEstimatedTime(systemPostPatchDTO.estimatedConstructionDays());
+    if (dto.estimatedConstructionDays() != null) {
+      system.getConstructionTask().getSspTask().setEstimatedTime(dto.estimatedConstructionDays());
     }
-    if (systemPostPatchDTO.employeeSSP() != null) {
-      setSSPEmployee(systemPostPatchDTO, system.getConstructionTask().getSspTask());
+    if (dto.employeeSSP() != null) {
+      setSSPEmployee(dto, system.getConstructionTask().getSspTask());
     }
 
-    if (startOfConstructionExplicitlyNull) {
-      if (!endOfConstructionExplicitlyNull
+    handleConstructionDates(system, dto, nullValues);
+
+    if (dto.estimatedTestDays() != null) {
+      system.getTestTask().setEstimatedTime(dto.estimatedTestDays());
+    }
+    if (dto.employeeFT() != null) {
+      setFTEmployee(dto, system.getTestTask());
+    }
+
+    handleTestDates(system, dto, nullValues);
+
+    if (dto.seller() != null) {
+      system.setSeller(dto.seller());
+    }
+    if (dto.projectInformation() != null) {
+      system.setProjectInformation(dto.projectInformation());
+    }
+    if (dto.notes() != null) {
+      system.setNotes(dto.notes());
+    }
+
+    //    system.setSchemeApproved(dto.schemeApproved() != null ? dto.schemeApproved() : false);
+    //    system.setSpecsheetApproved(dto.specsheetApproved() != null ? dto.specsheetApproved() :
+    // false);
+
+    systemRepository.save(system);
+  }
+
+  private Map<String, Boolean> checkForExplicitNullValues(JsonNode jsonNode) {
+    Map<String, Boolean> nullValues = new HashMap<>();
+    nullValues.put("startOfConstruction", isExplicitlyNull(jsonNode, "startOfConstruction"));
+    nullValues.put("endOfConstruction", isExplicitlyNull(jsonNode, "endOfConstruction"));
+    nullValues.put("startOfTest", isExplicitlyNull(jsonNode, "startOfTest"));
+    nullValues.put("endOfTest", isExplicitlyNull(jsonNode, "endOfTest"));
+    return nullValues;
+  }
+
+  private boolean isExplicitlyNull(JsonNode jsonNode, String field) {
+    return jsonNode.has(field) && jsonNode.get(field).isNull();
+  }
+
+  private void validateName(SystemPostPatchDTO dto) {
+    if (systemRepository.findByName(dto.name()).isPresent()) {
+      throw new BadRequestException("System name already exists");
+    }
+    if (dto.name() == null || dto.name().isBlank()) {
+      throw new BadRequestException("System name is required");
+    }
+  }
+
+  private void handleConstructionDates(
+      System system, SystemPostPatchDTO dto, Map<String, Boolean> nullValues) {
+    if (nullValues.get("startOfConstruction")) {
+      if (!nullValues.get("endOfConstruction")
           && system.getConstructionTask().getSspTask().getDateCompleted() != null) {
         throw new BadRequestException(
             "Construction start date required for setting construction end date");
       }
       system.getConstructionTask().getSspTask().setDateStarted(null);
     }
-    if (systemPostPatchDTO.startOfConstruction() != null) {
-      setConstructionStartDate(systemPostPatchDTO, system.getConstructionTask());
+    if (dto.startOfConstruction() != null) {
+      setConstructionStartDate(dto, system.getConstructionTask());
     }
-    if (endOfConstructionExplicitlyNull) {
+    if (nullValues.get("endOfConstruction")) {
+      if (!nullValues.get("startOfTest") && system.getTestTask().getDateStarted() != null) {
+        throw new BadRequestException("Construction end date required for setting test start date");
+      }
       system.getConstructionTask().getSspTask().setDateCompleted(null);
     }
-    if (systemPostPatchDTO.endOfConstruction() != null) {
-      setConstructionEndDate(systemPostPatchDTO, system);
+    if (dto.endOfConstruction() != null) {
+      setConstructionEndDate(dto, system);
     }
-    if (systemPostPatchDTO.estimatedTestDays() != null) {
-      system.getTestTask().setEstimatedTime(systemPostPatchDTO.estimatedTestDays());
-    }
-    if (systemPostPatchDTO.employeeFT() != null) {
-      setFTEmployee(systemPostPatchDTO, system.getTestTask());
-    }
-    if (startOfTestExplicitlyNull) {
-      if (!endOfTestExplicitlyNull && system.getTestTask().getDateCompleted() != null) {
+  }
+
+  private void handleTestDates(
+      System system, SystemPostPatchDTO dto, Map<String, Boolean> nullValues) {
+    if (nullValues.get("startOfTest")) {
+      if (!nullValues.get("endOfTest") && system.getTestTask().getDateCompleted() != null) {
         throw new BadRequestException("Test start date required for setting test end date");
       }
-      system.getConstructionTask().getSspTask().setDateStarted(null);
+      system.getTestTask().setDateStarted(null);
     }
-    if (systemPostPatchDTO.startOfTest() != null) {
-      setTestStartDate(systemPostPatchDTO, system);
+    if (dto.startOfTest() != null) {
+      setTestStartDate(dto, system);
     }
-    if (endOfTestExplicitlyNull) {
+    if (nullValues.get("endOfTest")) {
       system.getTestTask().setDateCompleted(null);
     }
-    if (systemPostPatchDTO.endOfTest() != null) {
-      setTestEndDate(systemPostPatchDTO, system.getTestTask());
-    }
-    if (systemPostPatchDTO.seller() != null) {
-      system.setSeller(systemPostPatchDTO.seller());
-    }
-    if (systemPostPatchDTO.projectInformation() != null) {
-      system.setProjectInformation(systemPostPatchDTO.projectInformation());
-    }
-    if (systemPostPatchDTO.notes() != null) {
-      system.setNotes(systemPostPatchDTO.notes());
-    }
-
-    system.setSchemeApproved(
-        systemPostPatchDTO.schemeApproved() != null ? systemPostPatchDTO.schemeApproved() : false);
-    system.setSpecsheetApproved(
-        systemPostPatchDTO.specsheetApproved() != null
-            ? systemPostPatchDTO.specsheetApproved()
-            : false);
-
-    systemRepository.save(system);
-  }
-
-  private void validateName(SystemPostPatchDTO systemPostPatchDTO) {
-    if (systemRepository.findByName(systemPostPatchDTO.name()).isPresent()) {
-      throw new BadRequestException("System name already exists");
-    }
-    if (systemPostPatchDTO.name() == null || systemPostPatchDTO.name().isBlank()) {
-      throw new BadRequestException("System name is required");
+    if (dto.endOfTest() != null) {
+      setTestEndDate(dto, system.getTestTask());
     }
   }
 
-  private void setEmployeeResponsible(SystemPostPatchDTO systemPostPatchDTO, System system) {
+  private void setEmployeeResponsible(SystemPostPatchDTO dto, System system) {
     Employee employeeResponsible =
-        employeeRepository
-            .findById(systemPostPatchDTO.employeeResponsible())
-            .orElseThrow(NotFoundException::new);
+        employeeRepository.findById(dto.employeeResponsible()).orElseThrow(NotFoundException::new);
     if (employeeResponsible.getFunction() == Function.SSP) {
       throw new BadRequestException("Employee responsible can't be an SSP employee");
     }
     system.setEmployeeResponsible(employeeResponsible);
   }
 
-  private void setSSPEmployee(SystemPostPatchDTO systemPostPatchDTO, SSPTask sspTask) {
-    if (systemPostPatchDTO.estimatedConstructionDays() == null
-        && sspTask.getEstimatedTime() == null) {
+  private void setSSPEmployee(SystemPostPatchDTO dto, SSPTask sspTask) {
+    if (dto.estimatedConstructionDays() == null && sspTask.getEstimatedTime() == null) {
       throw new BadRequestException(
           "Estimated construction days required for assigning an SSP employee");
     }
     Employee sspEmployee =
-        employeeRepository
-            .findById(systemPostPatchDTO.employeeSSP())
-            .orElseThrow(NotFoundException::new);
+        employeeRepository.findById(dto.employeeSSP()).orElseThrow(NotFoundException::new);
     if (sspEmployee.getFunction() != Function.SSP
         && sspEmployee.getFunction() != Function.SSP_TEAM_LEADER) {
       throw new BadRequestException("SSP employee needs to have function SSP or SSP team leader");
@@ -219,65 +232,61 @@ public class SystemService {
     sspTaskService.assignEmployee(new SSPTaskAssignDTO(sspTask.getId(), sspEmployee.getId()));
   }
 
-  private void setConstructionStartDate(
-      SystemPostPatchDTO systemPostPatchDTO, ConstructionTask constructionTask) {
-    if (systemPostPatchDTO.estimatedConstructionDays() == null
+  private void setConstructionStartDate(SystemPostPatchDTO dto, ConstructionTask constructionTask) {
+    if (dto.estimatedConstructionDays() == null
         && constructionTask.getSspTask().getEstimatedTime() == null) {
       throw new BadRequestException(
           "Estimated construction days required for setting construction start date");
     }
-    if (systemPostPatchDTO.employeeSSP() == null
-        && constructionTask.getSspTask().getEmployee() == null) {
+    if (dto.employeeSSP() == null && constructionTask.getSspTask().getEmployee() == null) {
       throw new BadRequestException("SSP employee required for setting construction start date");
     }
 
     LocalDate endDate =
-        systemPostPatchDTO.endOfConstruction() != null
-            ? systemPostPatchDTO.endOfConstruction()
+        dto.endOfConstruction() != null
+            ? dto.endOfConstruction()
             : constructionTask.getSspTask().getDateCompleted();
-    if (endDate != null && systemPostPatchDTO.startOfConstruction().isAfter(endDate)) {
+    if (endDate != null && dto.startOfConstruction().isAfter(endDate)) {
       throw new BadRequestException("Construction end date must be after construction start date");
     }
 
-    constructionTask.getSspTask().setDateStarted(systemPostPatchDTO.startOfConstruction());
+    constructionTask.getSspTask().setDateStarted(dto.startOfConstruction());
   }
 
-  private void setConstructionEndDate(SystemPostPatchDTO systemPostPatchDTO, System system) {
+  private void setConstructionEndDate(SystemPostPatchDTO dto, System system) {
     ConstructionTask constructionTask = system.getConstructionTask();
     LocalDate startDate =
-        systemPostPatchDTO.startOfConstruction() != null
-            ? systemPostPatchDTO.startOfConstruction()
+        dto.startOfConstruction() != null
+            ? dto.startOfConstruction()
             : constructionTask.getSspTask().getDateStarted();
 
     if (startDate == null) {
       throw new BadRequestException(
           "Construction start date required for setting construction end date");
     }
-    if (systemPostPatchDTO.endOfConstruction().isBefore(startDate)) {
+    if (dto.endOfConstruction().isBefore(startDate)) {
       throw new BadRequestException("Construction end date must be after construction start date");
     }
 
     LocalDate testStartDate =
-        systemPostPatchDTO.startOfTest() != null
-            ? systemPostPatchDTO.startOfTest()
-            : system.getTestTask().getDateStarted();
-    if (testStartDate != null && systemPostPatchDTO.endOfConstruction().isAfter(testStartDate)) {
+        dto.startOfTest() != null ? dto.startOfTest() : system.getTestTask().getDateStarted();
+    if (testStartDate != null && dto.endOfConstruction().isAfter(testStartDate)) {
       throw new BadRequestException("Construction end date must be before test start date");
     }
 
-    constructionTask.getSspTask().setDateCompleted(systemPostPatchDTO.endOfConstruction());
+    constructionTask.getSspTask().setDateCompleted(dto.endOfConstruction());
   }
 
-  private void createConstructionTask(SystemPostPatchDTO systemPostPatchDTO, System system) {
+  private void createConstructionTask(SystemPostPatchDTO dto, System system) {
     ConstructionTask newConstructionTask = new ConstructionTask();
     SSPTask newSSPTask = new SSPTask();
     sspTaskRepository.save(newSSPTask);
 
-    if (systemPostPatchDTO.employeeSSP() != null) {
-      setSSPEmployee(systemPostPatchDTO, newSSPTask);
+    if (dto.employeeSSP() != null) {
+      setSSPEmployee(dto, newSSPTask);
     }
 
-    newSSPTask.setEstimatedTime(systemPostPatchDTO.estimatedConstructionDays());
+    newSSPTask.setEstimatedTime(dto.estimatedConstructionDays());
 
     newSSPTask.setConstructionTask(newConstructionTask);
     newConstructionTask.setSspTask(newSSPTask);
@@ -287,74 +296,65 @@ public class SystemService {
     system.setConstructionTask(newConstructionTask);
   }
 
-  private void setFTEmployee(SystemPostPatchDTO systemPostPatchDTO, TestTask testTask) {
-    if (systemPostPatchDTO.estimatedTestDays() == null && testTask.getEstimatedTime() == null) {
+  private void setFTEmployee(SystemPostPatchDTO dto, TestTask testTask) {
+    if (dto.estimatedTestDays() == null && testTask.getEstimatedTime() == null) {
       throw new BadRequestException("Estimated test days required for assigning an FT employee");
     }
     Employee ftEmployee =
-        employeeRepository
-            .findById(systemPostPatchDTO.employeeFT())
-            .orElseThrow(NotFoundException::new);
+        employeeRepository.findById(dto.employeeFT()).orElseThrow(NotFoundException::new);
     if (ftEmployee.getFunction() != Function.FT) {
       throw new BadRequestException("FT employee needs to have function FT");
     }
     testTask.setEmployee(ftEmployee);
   }
 
-  private void setTestStartDate(SystemPostPatchDTO systemPostPatchDTO, System system) {
+  private void setTestStartDate(SystemPostPatchDTO dto, System system) {
     TestTask testTask = system.getTestTask();
 
     LocalDate constructionEndDate =
-        systemPostPatchDTO.endOfConstruction() != null
-            ? systemPostPatchDTO.endOfConstruction()
+        dto.endOfConstruction() != null
+            ? dto.endOfConstruction()
             : system.getConstructionTask().getSspTask().getDateCompleted();
     if (constructionEndDate == null) {
       throw new BadRequestException("Construction end date required for setting test start date");
     }
-    if (!systemPostPatchDTO.startOfTest().isAfter(constructionEndDate)) {
+    if (dto.startOfTest().isAfter(constructionEndDate)) {
       throw new BadRequestException("Test start date must be after construction end date");
     }
 
-    if (systemPostPatchDTO.estimatedTestDays() == null
-        && system.getTestTask().getEstimatedTime() == null) {
+    if (dto.estimatedTestDays() == null && system.getTestTask().getEstimatedTime() == null) {
       throw new BadRequestException("Estimated test days required for setting test start date");
     }
-    if (systemPostPatchDTO.employeeFT() == null && system.getTestTask().getEmployee() == null) {
+    if (dto.employeeFT() == null && system.getTestTask().getEmployee() == null) {
       throw new BadRequestException("FT employee required for setting test start date");
     }
-    LocalDate endDate =
-        systemPostPatchDTO.endOfTest() != null
-            ? systemPostPatchDTO.endOfTest()
-            : testTask.getDateCompleted();
-    if (endDate != null && systemPostPatchDTO.startOfTest().isAfter(endDate)) {
+    LocalDate endDate = dto.endOfTest() != null ? dto.endOfTest() : testTask.getDateCompleted();
+    if (endDate != null && dto.startOfTest().isAfter(endDate)) {
       throw new BadRequestException("Test end date must be after test start date");
     }
-    testTask.setDateStarted(systemPostPatchDTO.startOfTest());
+    testTask.setDateStarted(dto.startOfTest());
   }
 
-  private void setTestEndDate(SystemPostPatchDTO systemPostPatchDTO, TestTask testTask) {
-    LocalDate startDate =
-        systemPostPatchDTO.startOfTest() != null
-            ? systemPostPatchDTO.startOfTest()
-            : testTask.getDateStarted();
+  private void setTestEndDate(SystemPostPatchDTO dto, TestTask testTask) {
+    LocalDate startDate = dto.startOfTest() != null ? dto.startOfTest() : testTask.getDateStarted();
 
     if (startDate == null) {
       throw new BadRequestException("Test start date required for setting test end date");
     }
-    if (systemPostPatchDTO.endOfTest().isBefore(startDate)) {
+    if (dto.endOfTest().isBefore(startDate)) {
       throw new BadRequestException("Test end date must be after test start date");
     }
-    testTask.setDateCompleted(systemPostPatchDTO.endOfTest());
+    testTask.setDateCompleted(dto.endOfTest());
   }
 
-  private void createTestTask(SystemPostPatchDTO systemPostPatchDTO, System system) {
+  private void createTestTask(SystemPostPatchDTO dto, System system) {
     TestTask newTestTask = new TestTask();
 
-    if (systemPostPatchDTO.employeeFT() != null) {
-      setFTEmployee(systemPostPatchDTO, newTestTask);
+    if (dto.employeeFT() != null) {
+      setFTEmployee(dto, newTestTask);
     }
 
-    newTestTask.setEstimatedTime(systemPostPatchDTO.estimatedTestDays());
+    newTestTask.setEstimatedTime(dto.estimatedTestDays());
 
     newTestTask.setSystem(system);
     testTaskRepository.save(newTestTask);
