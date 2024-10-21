@@ -72,6 +72,13 @@ public class TaskService {
       task.getSspTask().setEmployee(employee);
     }
 
+    updateDateStarted(taskDTO, task, dateStartedExplicitlyNull);
+    updateDateCompleted(taskDTO, task, dateCompletedExplicitlyNull);
+
+    taskRepository.save(task);
+  }
+
+  private void updateDateStarted(TaskDTO taskDTO, Task task, boolean dateStartedExplicitlyNull) {
     if (dateStartedExplicitlyNull) {
       task.getSspTask().setDateStarted(null);
       task.setStatus(TaskStatus.TO_BE_PLANNED);
@@ -91,7 +98,10 @@ public class TaskService {
       task.getSspTask().setDateStarted(taskDTO.dateStarted());
       task.setStatus(TaskStatus.IN_PROGRESS);
     }
+  }
 
+  private void updateDateCompleted(
+      TaskDTO taskDTO, Task task, boolean dateCompletedExplicitlyNull) {
     if (dateCompletedExplicitlyNull) {
       task.getSspTask().setDateCompleted(null);
       if (task.getSspTask().getDateStarted() != null) {
@@ -113,8 +123,6 @@ public class TaskService {
       task.getSspTask().setDateCompleted(taskDTO.dateCompleted());
       task.setStatus(TaskStatus.FINISHED);
     }
-
-    taskRepository.save(task);
   }
 
   public void deleteTask(UUID id) {
