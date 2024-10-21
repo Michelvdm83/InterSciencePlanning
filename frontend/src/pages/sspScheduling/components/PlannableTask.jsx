@@ -1,5 +1,6 @@
 import SystemModalButton from "../../../components/SystemModalButton";
 import DeleteTaskButton from "./DeleteTaskButton";
+import TaskModalButton from "./TaskModalButton";
 
 export default function PlannableTask({
   task,
@@ -10,9 +11,9 @@ export default function PlannableTask({
   const taskName = task.taskName;
   const systemName = task.systemName;
   const estimatedTime = task.estimatedTime;
-  let labelClasses = "label rounded-md bg-white p-3 text-nowrap";
+  let labelClasses = "label rounded-md bg-white p-3 text-nowrap cursor-pointer";
   if (systemName) {
-    labelClasses += " cursor-pointer text-primary";
+    labelClasses += " text-primary";
   }
 
   function getStandardField(label) {
@@ -67,6 +68,10 @@ export default function PlannableTask({
       </SystemModalButton>
     );
   } else {
-    return getStandardField(taskName);
+    return (
+      <TaskModalButton id={task.taskId} updateOpenTasks={updateOpenTasks}>
+        {getStandardField(taskName)}
+      </TaskModalButton>
+    );
   }
 }
