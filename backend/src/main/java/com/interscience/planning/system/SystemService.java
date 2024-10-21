@@ -100,9 +100,14 @@ public class SystemService {
     if (dto.agreedDate() != null) {
       system.setAgreedDate(dto.agreedDate());
     }
+
+    if (nullValues.get("actualDeliveryDate")) {
+      system.setActualDeliveryDate(null);
+    }
     if (dto.actualDeliveryDate() != null) {
       system.setActualDeliveryDate(dto.actualDeliveryDate());
     }
+
     if (dto.customerContactInformation() != null) {
       system.setCustomerContactInformation(dto.customerContactInformation());
     }
@@ -150,6 +155,7 @@ public class SystemService {
     nullValues.put("endOfConstruction", isExplicitlyNull(jsonNode, "endOfConstruction"));
     nullValues.put("startOfTest", isExplicitlyNull(jsonNode, "startOfTest"));
     nullValues.put("endOfTest", isExplicitlyNull(jsonNode, "endOfTest"));
+    nullValues.put("actualDeliveryDate", isExplicitlyNull(jsonNode, "actualDeliveryDate"));
     return nullValues;
   }
 
