@@ -87,16 +87,9 @@ export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
 
   return (
     <dialog id={`edit-${id}` || "new-task"} className="modal">
-      <div className="modal-box w-96 text-left">
+      <div className="modal-box w-[400px] text-left">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
           <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-              onClick={() => handleClose()}
-            >
-              ✕
-            </button>
             <TaskTextField
               task={editedTask}
               setTask={setEditedTask}
@@ -147,12 +140,20 @@ export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
             {error && (
               <div className="-mb-2 mt-3 self-center text-red-600">{error}</div>
             )}
-            <button
-              className="modal-open={open} btn btn-accent mt-5 w-20 self-center"
-              onClick={(e) => handleNewTaskSave(e)}
-            >
-              Opslaan
-            </button>
+            <div className="flex flex-row justify-center gap-4">
+              <button
+                className="btn btn-primary mt-5 w-1/3 self-center"
+                onClick={() => handleClose()}
+              >
+                Annuleren
+              </button>
+              <button
+                className="modal-open={open} btn btn-accent mt-5 w-1/3 self-center"
+                onClick={(e) => handleNewTaskSave(e)}
+              >
+                Opslaan
+              </button>
+            </div>
           </div>
         </form>
       </div>
