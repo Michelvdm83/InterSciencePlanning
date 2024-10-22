@@ -106,19 +106,25 @@ export default function TestsPerEmployee({ employees }) {
           })}
         </select>
       )}
+      {tests && (
+        <div className="flex w-3/4 justify-between border-b-2 border-black">
+          <div className="w-1/2">Systeem</div>
+          <div className="w-1/2">Status</div>
+        </div>
+      )}
       {tests &&
         tests.map((test) => (
           <div
-            className="w-1/2 whitespace-nowrap rounded-md bg-white"
+            className="bg-transparant w-3/4 whitespace-nowrap rounded-md"
             key={test.systemName}
           >
             <SystemModalButton
               systemName={test.systemName}
               updateOpenTasks={getCurrentEmployeeTasks}
             >
-              <div className="flex w-full justify-between overflow-auto bg-transparent p-2">
-                <div>{test.systemName}</div>
-                <div>{test.status}</div>
+              <div className="bg-transparant flex w-full justify-between overflow-auto">
+                <div className="w-1/2 text-left">{test.systemName}</div>
+                <div className="w-1/2 text-left">{test.status}</div>
               </div>
             </SystemModalButton>
           </div>
