@@ -15,6 +15,11 @@ export default function EditHoliday({ holiday, setHolidays }) {
 
   function handleClose() {
     setError("");
+    setEditedHoliday({
+      employeeId: holiday.employeeId,
+      startDate: holiday.startDate,
+      endDate: holiday.endDate,
+    });
     document.getElementById(`edit-holiday-${holiday.id}`).close();
   }
 
@@ -37,7 +42,7 @@ export default function EditHoliday({ holiday, setHolidays }) {
       }
 
       if (Object.keys(updatedFields).length > 0) {
-        ApiService.patch(`holidays/${holiday.id}`, editedHoliday)
+        ApiService.patch(`holidays/${holiday.id}`, updatedFields)
           .then(() => {
             return ApiService.get("holidays");
           })
