@@ -73,18 +73,22 @@ export default function SSPPlanning() {
         <div
           className={`grid p-0 grid-cols-[repeat(${employees.length + 1},150px)] max-w-full grid-flow-col grid-rows-[repeat(21,auto)] overflow-scroll bg-base-100 text-center font-Effra_Md`}
         >
+          {/* white cell al the coll 1 and row 1 to prevent the names being visible above the dates when you scroll left to show more employees */}
           <div className="sticky left-0 z-50 col-start-1 row-span-1 row-start-1 bg-white"></div>
+
+          {/* employee names on the top row */}
           {employees.map((employee, index) => {
             return (
               <div
                 key={index}
-                className={`row-start-1 col-start-${index + 2} h-auto w-48 font-Effra_Bd text-2xl text-secondary`}
+                className={`row-start-1 col-start-${index + 2} h-auto w-48 self-end font-Effra_Bd text-2xl text-secondary`}
               >
                 {employee.name}
               </div>
             );
           })}
 
+          {/* dates column at the left side */}
           {dateArray.map((date, index) => (
             <div
               key={index}
@@ -93,7 +97,6 @@ export default function SSPPlanning() {
               {date.toLocaleDateString()}
             </div>
           ))}
-
           {employeeTasks.map((currentEmployeeTasks, employeeIndex) => {
             return currentEmployeeTasks.map((task, taskIndex) => {
               return Array.from({ length: task.numberOfDays }).map((_, i) => {
