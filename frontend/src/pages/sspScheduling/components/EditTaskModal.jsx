@@ -29,7 +29,7 @@ export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
         setAssigned(!!data.employee);
         setLoading(true);
       } catch (error) {
-        setError(translateError(error.response?.data?.detail));
+        setError(translateError(error.response?.data?.detail || ""));
       } finally {
         setLoading(false);
       }
@@ -77,7 +77,7 @@ export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
         ApiService.patch(`tasks/${id}`, editedFields)
           .then(() => handleClose())
           .catch((error) => {
-            setError(translateError(error.response?.data?.detail));
+            setError(translateError(error.response?.data?.detail || ""));
           });
       }
     } else {
@@ -142,12 +142,14 @@ export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
             )}
             <div className="flex flex-row justify-center gap-4">
               <button
+                type="button"
                 className="btn btn-primary mt-5 w-1/3 self-center"
                 onClick={() => handleClose()}
               >
                 Annuleren
               </button>
               <button
+                type="button"
                 className="modal-open={open} btn btn-accent mt-5 w-1/3 self-center"
                 onClick={(e) => handleNewTaskSave(e)}
               >

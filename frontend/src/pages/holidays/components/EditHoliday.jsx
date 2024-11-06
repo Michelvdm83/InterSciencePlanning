@@ -47,7 +47,7 @@ export default function EditHoliday({ holiday, setHolidays }) {
             handleClose();
           })
           .catch((error) =>
-            setError(translateError(error.response?.data?.detail)),
+            setError(translateError(error.response?.data?.detail || "")),
           );
       } else {
         handleClose();

@@ -50,7 +50,7 @@ export default function EditEmployee({ employee, setEmployees }) {
             handleClose();
           })
           .catch((error) =>
-            setError(translateError(error.response?.data?.detail)),
+            setError(translateError(error.response?.data?.detail || "")),
           );
       } else {
         handleClose();
