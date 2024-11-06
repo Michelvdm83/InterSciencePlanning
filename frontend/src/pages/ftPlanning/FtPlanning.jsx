@@ -12,7 +12,7 @@ export default function FtPlanning() {
   }, []);
 
   return (
-    <div className="flex h-full w-screen flex-grow justify-evenly">
+    <div className="flex h-full w-screen flex-grow justify-center gap-3">
       <TestsPerEmployee employees={employees} />
       <div className="m-4 flex w-1/3 flex-col bg-neutral">
         nog in te plannen

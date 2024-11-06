@@ -32,19 +32,19 @@ export default function TestsPerEmployee({ employees }) {
 
   function getStatusNumber(updatedStatus) {
     switch (updatedStatus) {
-      case "SSP":
-        return 7;
-      case "Overgedragen":
-        return 6;
-      case "In test":
-        return 5;
-      case "Problemen":
-        return 4;
-      case "Testen gereed":
-        return 3;
-      case "In afwachting klant":
-        return 2;
       case "Geïnstalleerd":
+        return 7;
+      case "In afwachting klant":
+        return 6;
+      case "Testen gereed":
+        return 5;
+      case "SSP":
+        return 4;
+      case "Overgedragen":
+        return 3;
+      case "Problemen":
+        return 2;
+      case "In test":
         return 1;
       default:
         return 0;
@@ -86,6 +86,27 @@ export default function TestsPerEmployee({ employees }) {
     return updatedTests;
   }
 
+  function getColorClass(testStatus) {
+    switch (testStatus) {
+      case "SSP":
+        return "text-orange-500";
+      case "Overgedragen":
+        return "text-indigo-500";
+      case "In test":
+        return "text-green-500";
+      case "Problemen":
+        return "text-red-500";
+      case "Testen gereed":
+        return "text-green-500";
+      case "In afwachting klant":
+        return "text-blue-500";
+      case "Geïnstalleerd":
+        return "text-teal-500";
+      default:
+        return "";
+    }
+  }
+
   return (
     <div className="m-4 flex w-1/3 flex-col items-center gap-2 overflow-auto rounded-md bg-neutral p-5">
       {employees && (
@@ -113,22 +134,27 @@ export default function TestsPerEmployee({ employees }) {
         </div>
       )}
       {tests &&
-        tests.map((test) => (
-          <div
-            className="bg-transparant w-3/4 whitespace-nowrap rounded-md"
-            key={test.systemName}
-          >
-            <SystemModalButton
-              systemName={test.systemName}
-              updateOpenTasks={getCurrentEmployeeTasks}
+        tests.map((test) => {
+          const colorClass = getColorClass(test.status);
+          return (
+            <div
+              className="bg-transparant w-3/4 whitespace-nowrap rounded-md"
+              key={test.systemName}
             >
-              <div className="bg-transparant flex w-full justify-between overflow-auto">
-                <div className="w-1/2 text-left">{test.systemName}</div>
-                <div className="w-1/2 text-left">{test.status}</div>
-              </div>
-            </SystemModalButton>
-          </div>
-        ))}
+              <SystemModalButton
+                systemName={test.systemName}
+                updateOpenTasks={getCurrentEmployeeTasks}
+              >
+                <div className="bg-transparant flex w-full justify-between overflow-auto">
+                  <div className="w-1/2 text-left">{test.systemName}</div>
+                  <div className={`w-1/2 text-left ${colorClass}`}>
+                    {test.status}
+                  </div>
+                </div>
+              </SystemModalButton>
+            </div>
+          );
+        })}
     </div>
   );
 }
