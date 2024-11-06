@@ -1,13 +1,13 @@
 package com.interscience.planning.task;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
 import com.interscience.planning.ssptask.SSPTask;
+import com.interscience.planning.ssptask.SSPTaskAssignDTO;
 import com.interscience.planning.ssptask.SSPTaskRepository;
+import com.interscience.planning.ssptask.SSPTaskService;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final SSPTaskRepository sspTaskRepository;
   private final EmployeeRepository employeeRepository;
-  private final ObjectMapper objectMapper;
+  private final SSPTaskService sspTaskService;
 
   public Task getTask(UUID id) {
     return taskRepository.findById(id).orElseThrow(NotFoundException::new);
@@ -47,14 +47,11 @@ public class TaskService {
     sspTaskRepository.save(newSSPTask);
   }
 
-  public void updateTask(JsonNode jsonNode, UUID id) {
-    boolean dateStartedExplicitlyNull =
-        jsonNode.has("dateStarted") && jsonNode.get("dateStarted").isNull();
-    boolean dateCompletedExplicitlyNull =
-        jsonNode.has("dateCompleted") && jsonNode.get("dateCompleted").isNull();
-
-    TaskDTO taskDTO = objectMapper.convertValue(jsonNode, TaskDTO.class);
-
+  public void updateTask(
+      TaskDTO taskDTO,
+      UUID id,
+      boolean dateStartedExplicitlyNull,
+      boolean dateCompletedExplicitlyNull) {
     Task task = taskRepository.findById(id).orElseThrow(NotFoundException::new);
     if (taskDTO.name() != null && !taskDTO.name().isBlank()) {
       task.setName(taskDTO.name());
@@ -64,12 +61,18 @@ public class TaskService {
       if (taskDTO.estimatedTime() <= 0) {
         throw new BadRequestException("Estimated time must be higher than 0");
       }
+      if (task.getSspTask() == null) {
+        throw new BadRequestException("SSP Task can't be null");
+      }
       task.getSspTask().setEstimatedTime(taskDTO.estimatedTime());
     }
 
     if (taskDTO.employee() != null) {
-      Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
-      task.getSspTask().setEmployee(employee);
+      Employee employee =
+          employeeRepository.findById(taskDTO.employee()).orElseThrow(NotFoundException::new);
+      sspTaskService.assignEmployee(
+          new SSPTaskAssignDTO(task.getSspTask().getId(), employee.getId()));
+      task.setStatus(TaskStatus.PLANNED);
     }
 
     updateDateStarted(taskDTO, task, dateStartedExplicitlyNull);
@@ -93,7 +96,7 @@ public class TaskService {
               ? taskDTO.dateCompleted()
               : task.getSspTask().getDateCompleted();
       if (endDate != null && taskDTO.dateStarted().isAfter(endDate)) {
-        throw new BadRequestException("Start date must be before end date");
+        throw new BadRequestException("Start date must be on or before end date");
       }
       task.getSspTask().setDateStarted(taskDTO.dateStarted());
       task.setStatus(TaskStatus.IN_PROGRESS);
@@ -118,7 +121,7 @@ public class TaskService {
         throw new BadRequestException("Start date required for setting end date");
       }
       if (taskDTO.dateCompleted().isBefore(startDate)) {
-        throw new BadRequestException("End date must be after start date");
+        throw new BadRequestException("End date must be on or after start date");
       }
       task.getSspTask().setDateCompleted(taskDTO.dateCompleted());
       task.setStatus(TaskStatus.FINISHED);

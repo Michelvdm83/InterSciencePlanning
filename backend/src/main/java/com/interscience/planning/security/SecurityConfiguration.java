@@ -59,7 +59,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PATCH, "/api/v1/tasks/**")
                     .hasRole("TEAM_LEADER")
                     .requestMatchers(HttpMethod.GET, "/api/v1/tasks/**")
-                    .hasAnyRole("TEAM_LEADER", "SSP", "FT")
+                    .hasAnyRole("TEAM_LEADER", "SSP")
                     .anyRequest()
                     .permitAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -42,12 +42,12 @@ export function translateError(error) {
       return "Aantal dagen moet hoger dan 0 zijn";
     case "Employee required for setting start date":
       return "Medewerker vereist om de startdatum in te vullen";
-    case "Start date must be before end date":
-      return "Begindatum moet voor de einddatum zijn";
+    case "Start date must be on or before end date":
+      return "Begindatum moet op of voor de einddatum zijn";
     case "Start date required for setting end date":
       return "Begindatum vereist om de einddatum in te vullen";
-    case "End date must be after start date":
-      return "Einddatum moet na de begindatum zijn";
+    case "End date must be on or after start date":
+      return "Einddatum moet op of voor na de begindatum zijn";
     default:
       return "Er is een onbekende fout opgetreden. Probeer het later opnieuw.";
   }

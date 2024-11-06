@@ -7,16 +7,12 @@ export default function TaskSelectEmployeeField({
   setTask,
   variable,
 }) {
-  const [employees] = useGetEmployees();
+  const [employees] = useGetEmployees("/employees/ssp-planning");
 
   const classes = `
   select select-bordered select-sm w-full text-accent
   ${!editable ? "disabled:bg-white disabled:text-accent" : ""}
 `;
-
-  const filteredEmployees = employees.filter(
-    (employee) => employee.function !== "FT",
-  );
 
   return (
     <div>
@@ -33,7 +29,7 @@ export default function TaskSelectEmployeeField({
         disabled={!editable}
       >
         <option value=""></option>
-        {filteredEmployees.map((employee) => {
+        {employees.map((employee) => {
           return (
             <option value={employee.id} key={employee.id}>
               {employee.name}
