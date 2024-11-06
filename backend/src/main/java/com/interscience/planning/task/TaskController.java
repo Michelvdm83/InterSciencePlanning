@@ -14,7 +14,6 @@ public class TaskController {
 
   @PostMapping
   public ResponseEntity<?> createTask(@RequestBody CreateTaskDTO createTaskDTO) {
-
     taskService.createTask(createTaskDTO);
     return ResponseEntity.ok().build();
   }

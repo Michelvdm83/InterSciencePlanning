@@ -1,7 +1,6 @@
 package com.interscience.planning.system;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interscience.planning.constructiontask.ConstructionTask;
 import com.interscience.planning.constructiontask.ConstructionTaskRepository;
 import com.interscience.planning.employee.Employee;
@@ -33,7 +32,6 @@ public class SystemService {
   private final ConstructionTaskRepository constructionTaskRepository;
   private final TestTaskRepository testTaskRepository;
   private final SSPTaskService sspTaskService;
-  private final ObjectMapper objectMapper;
 
   public System getSystem(String name) {
     return systemRepository.findByName(name).orElseThrow(NotFoundException::new);
@@ -77,11 +75,7 @@ public class SystemService {
     systemRepository.save(system);
   }
 
-  public void updateSystem(JsonNode jsonNode, String name) {
-    Map<String, Boolean> nullValues = checkForExplicitNullValues(jsonNode);
-
-    SystemPostPatchDTO dto = objectMapper.convertValue(jsonNode, SystemPostPatchDTO.class);
-
+  public void updateSystem(SystemPostPatchDTO dto, String name, Map<String, Boolean> nullValues) {
     System system = systemRepository.findByName(name).orElseThrow(NotFoundException::new);
 
     if (dto.name() != null) {
@@ -149,7 +143,7 @@ public class SystemService {
     systemRepository.save(system);
   }
 
-  private Map<String, Boolean> checkForExplicitNullValues(JsonNode jsonNode) {
+  public Map<String, Boolean> checkForExplicitNullValues(JsonNode jsonNode) {
     Map<String, Boolean> nullValues = new HashMap<>();
     nullValues.put("startOfConstruction", isExplicitlyNull(jsonNode, "startOfConstruction"));
     nullValues.put("endOfConstruction", isExplicitlyNull(jsonNode, "endOfConstruction"));
