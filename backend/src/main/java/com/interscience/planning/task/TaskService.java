@@ -84,7 +84,7 @@ public class TaskService {
   private void updateDateStarted(TaskDTO taskDTO, Task task, boolean dateStartedExplicitlyNull) {
     if (dateStartedExplicitlyNull) {
       task.getSspTask().setDateStarted(null);
-      task.setStatus(TaskStatus.TO_BE_PLANNED);
+      task.setStatus(TaskStatus.PLANNED);
     }
 
     if (taskDTO.dateStarted() != null) {
