@@ -2,7 +2,6 @@ package com.interscience.planning.employee;
 
 import com.interscience.planning.holiday.HolidayDTO;
 import com.interscience.planning.ssptask.SSPTaskDTO;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +25,11 @@ public class EmployeeController {
   @GetMapping("/ssp-planning")
   public List<EmployeeResponseDTO> getEmployeesForSSPPlanning() {
     return employeeService.findAllByFunctionIn(List.of(Function.SSP, Function.SSP_TEAM_LEADER));
+  }
+
+  @GetMapping("/ft-planning")
+  public List<EmployeeResponseDTO> getEmployeesForFTPlanning() {
+    return employeeService.findAllByFunctionIn(List.of(Function.FT, Function.FT_TEAM_LEADER));
   }
 
   @PostMapping
