@@ -108,7 +108,7 @@ export default function TestsPerEmployee({ employees }) {
   }
 
   return (
-    <div className="m-4 flex w-1/3 flex-col items-center gap-2 overflow-auto rounded-md bg-neutral p-5">
+    <div className="m-4 flex w-1/3 flex-col items-center gap-6 overflow-auto rounded-md bg-neutral p-5">
       {employees && (
         <select
           defaultValue={""}
