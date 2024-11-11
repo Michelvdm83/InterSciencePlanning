@@ -4,6 +4,7 @@ import ApiService from "../../../services/ApiService";
 import SystemModalButton from "../../../components/SystemModalButton";
 import { MdDragHandle } from "react-icons/md";
 import DeleteTaskButton from "./DeleteTaskButton";
+import TaskModalButton from "./TaskModalButton";
 
 export default function TasksPerEmployee({
   employees,
@@ -60,9 +61,16 @@ export default function TasksPerEmployee({
         </div>
       );
     } else {
-      return getStandardField(
-        "Taak: " + currentTask.taskName,
-        "text-secondary",
+      return (
+        <TaskModalButton
+          id={currentTask.taskId}
+          updateOpenTasks={updateOpenTasks}
+        >
+          {getStandardField(
+            "Taak: " + currentTask.taskName,
+            "text-secondary cursor-pointer",
+          )}
+        </TaskModalButton>
       );
     }
   }

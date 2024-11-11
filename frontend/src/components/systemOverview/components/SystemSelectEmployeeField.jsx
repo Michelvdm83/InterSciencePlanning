@@ -7,7 +7,7 @@ export default function SystemSelectEmployeeField({
   setSystem,
   variable,
 }) {
-  const [employees] = useGetEmployees();
+  const [employees] = useGetEmployees("employees");
   let filteredEmployees = [];
 
   const classes = `

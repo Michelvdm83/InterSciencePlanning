@@ -4,7 +4,7 @@ import EmployeeList from "./components/EmployeeList.jsx";
 import { useGetEmployees } from "../../hooks/useGetEmployees.js";
 
 export default function EmployeeManagement() {
-  const [employees, setEmployees] = useGetEmployees();
+  const [employees, setEmployees] = useGetEmployees("employees");
 
   return (
     <div className="flex h-full w-screen items-start gap-8 p-8">

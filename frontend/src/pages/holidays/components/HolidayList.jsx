@@ -3,7 +3,7 @@ import { useGetEmployees } from "../../../hooks/useGetEmployees";
 import Holiday from "./Holiday";
 
 export default function HolidayList({ holidays, setHolidays }) {
-  const [employees] = useGetEmployees();
+  const [employees] = useGetEmployees("employees");
   const [selectedEmployee, setSelectedEmployee] = useState({
     name: "",
     id: "",

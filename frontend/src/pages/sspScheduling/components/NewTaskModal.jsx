@@ -56,7 +56,7 @@ export default function NewTaskModal({ updateOpenTasks }) {
           </button>
 
           <div className="flex flex-col">
-            <span>Taaknaam:</span>
+            <span>Taaknaam</span>
             <input
               type="text"
               className="input input-bordered w-full max-w-xs"
@@ -66,7 +66,7 @@ export default function NewTaskModal({ updateOpenTasks }) {
           </div>
 
           <div className="mt-4 flex flex-col">
-            <span>Aantal dagen:</span>
+            <span>Aantal dagen</span>
             <input
               type="text"
               className="input input-bordered w-full max-w-xs"
