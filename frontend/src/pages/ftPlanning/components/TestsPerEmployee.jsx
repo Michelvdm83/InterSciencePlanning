@@ -2,13 +2,17 @@ import { useState, useEffect } from "react";
 import ApiService from "../../../services/ApiService";
 import SystemModalButton from "../../../components/SystemModalButton";
 
-export default function TestsPerEmployee({ employees }) {
+export default function TestsPerEmployee({
+  employees,
+  openTests,
+  updateOpenTests,
+}) {
   const [currentEmployeeId, setCurrentEmployeeId] = useState("");
   const [tests, setTests] = useState([]);
 
   useEffect(() => {
     getCurrentEmployeeTasks();
-  }, [currentEmployeeId]);
+  }, [currentEmployeeId, openTests]);
 
   function getCurrentEmployeeTasks() {
     if (currentEmployeeId.length > 1) {
@@ -143,7 +147,10 @@ export default function TestsPerEmployee({ employees }) {
             >
               <SystemModalButton
                 systemName={test.systemName}
-                updateOpenTasks={getCurrentEmployeeTasks}
+                updateOpenTasks={() => {
+                  getCurrentEmployeeTasks();
+                  updateOpenTests();
+                }}
               >
                 <div className="bg-transparant flex w-full justify-between overflow-auto">
                   <div className="w-1/2 text-left">{test.systemName}</div>
