@@ -38,7 +38,7 @@ export default function AddHoliday({ employees, setHolidays }) {
           setError("");
         })
         .catch((error) =>
-          setError(translateError(error.response?.data?.detail)),
+          setError(translateError(error.response?.data?.detail || "")),
         );
     }
   }

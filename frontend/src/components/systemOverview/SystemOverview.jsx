@@ -98,7 +98,7 @@ export default function SystemOverview({
             if (error.response && error.response.status === 404) {
               setError("Medewerker niet gevonden");
             } else {
-              setError(translateError(error.response?.data?.detail));
+              setError(translateError(error.response?.data?.detail || ""));
             }
           });
       }
@@ -115,7 +115,7 @@ export default function SystemOverview({
           ApiService.patch(`systems/${systemName}`, editedFields)
             .then(() => handleClose())
             .catch((error) => {
-              setError(translateError(error.response?.data?.detail));
+              setError(translateError(error.response?.data?.detail || ""));
             });
         }
       } else {
