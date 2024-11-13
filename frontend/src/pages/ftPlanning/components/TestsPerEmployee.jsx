@@ -112,7 +112,7 @@ export default function TestsPerEmployee({
   }
 
   return (
-    <div className="m-4 flex w-1/3 flex-col items-center gap-6 overflow-auto rounded-md bg-neutral p-5">
+    <div className="m-4 flex w-1/3 flex-col items-center gap-3 overflow-auto rounded-md bg-neutral p-5">
       {employees && (
         <select
           defaultValue={""}
@@ -142,7 +142,7 @@ export default function TestsPerEmployee({
           const colorClass = getColorClass(test.status);
           return (
             <div
-              className="bg-transparant w-3/4 whitespace-nowrap rounded-md"
+              className="w-3/4 whitespace-nowrap rounded-md bg-white p-3"
               key={test.systemName}
             >
               <SystemModalButton
