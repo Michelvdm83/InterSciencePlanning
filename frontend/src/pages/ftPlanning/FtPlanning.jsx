@@ -23,12 +23,12 @@ export default function FtPlanning() {
 
   return (
     <div className="flex h-full w-screen flex-grow justify-center gap-3">
-      <TestsPerEmployee
+      <UnplannedTests
         employees={employees}
         openTests={openTests}
         updateOpenTests={updateOpenTests}
       />
-      <UnplannedTests
+      <TestsPerEmployee
         employees={employees}
         openTests={openTests}
         updateOpenTests={updateOpenTests}
