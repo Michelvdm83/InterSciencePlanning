@@ -50,11 +50,13 @@ export default function PlannableTask({
           )}
           <div className="mr-2 w-1/12">
             {taskName && (
-              <DeleteTaskButton
-                question={`Weet je zeker dat je de taak '${taskName}' wilt verwijderen?`}
-                taskId={task.taskId}
-                afterDelete={updateOpenTasks}
-              />
+              <div onClick={(event) => event.stopPropagation()}>
+                <DeleteTaskButton
+                  question={`Weet je zeker dat je de taak '${taskName}' wilt verwijderen?`}
+                  taskId={task.taskId}
+                  afterDelete={updateOpenTasks}
+                />
+              </div>
             )}
           </div>
         </div>

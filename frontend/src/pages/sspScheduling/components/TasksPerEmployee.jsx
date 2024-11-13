@@ -111,7 +111,7 @@ export default function TasksPerEmployee({
             className="m-2 flex cursor-ns-resize items-center justify-between rounded-md bg-white p-3"
           >
             <div className="truncate">{getField(sortedTask)}</div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               {sortedTask.taskId && (
                 <DeleteTaskButton
                   question={`Weet je zeker dat je de taak '${sortedTask.taskName}' wilt verwijderen?`}
