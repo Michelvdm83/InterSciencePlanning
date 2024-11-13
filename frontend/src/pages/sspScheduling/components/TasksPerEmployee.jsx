@@ -42,7 +42,11 @@ export default function TasksPerEmployee({
   }
 
   function getStandardField(name, textClass) {
-    return <div className={textClass + " w-1/3 text-nowrap"}>{name}</div>;
+    return (
+      <div className={`${textClass} max-w-80 overflow-hidden truncate`}>
+        {name}
+      </div>
+    );
   }
 
   function getField(currentTask) {
@@ -104,10 +108,10 @@ export default function TasksPerEmployee({
           <Reorder.Item
             key={sortedTask.id}
             value={sortedTask}
-            className="m-2 flex cursor-ns-resize justify-between rounded-md bg-white p-3"
+            className="m-2 flex cursor-ns-resize items-center justify-between rounded-md bg-white p-3"
           >
-            {getField(sortedTask)}
-            <div className="flex justify-end gap-3">
+            <div className="truncate">{getField(sortedTask)}</div>
+            <div className="flex items-center">
               {sortedTask.taskId && (
                 <DeleteTaskButton
                   question={`Weet je zeker dat je de taak '${sortedTask.taskName}' wilt verwijderen?`}
@@ -115,7 +119,7 @@ export default function TasksPerEmployee({
                   afterDelete={getCurrentEmployeeTasks}
                 />
               )}
-              <MdDragHandle className="self-center text-2xl text-neutral" />
+              <MdDragHandle className="text-2xl text-neutral" />
             </div>
           </Reorder.Item>
         ))}

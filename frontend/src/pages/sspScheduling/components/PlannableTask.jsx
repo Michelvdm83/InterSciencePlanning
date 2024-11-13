@@ -11,21 +11,24 @@ export default function PlannableTask({
   const taskName = task.taskName;
   const systemName = task.systemName;
   const estimatedTime = task.estimatedTime;
-  let labelClasses = "label rounded-md bg-white p-3 text-nowrap cursor-pointer";
+  let labelClasses = "label p-3 cursor-pointer w-3/4 overflow-hidden";
   if (systemName) {
     labelClasses += " text-primary";
   }
 
   function getStandardField(label) {
     return (
-      <label className={labelClasses}>
-        {label}
+      <div className="flex flex-row items-center justify-between rounded-md bg-white p-2">
+        <label className={labelClasses}>
+          <span className="truncate whitespace-nowrap">{label}</span>
+        </label>
+
         <div className="flex w-3/4 items-center justify-end gap-2">
           {estimatedTime && (
             <select
               defaultValue={""}
               onChange={onChange}
-              className="select select-bordered select-accent select-sm flex w-1/2 cursor-pointer text-black"
+              className="select select-bordered select-accent select-sm w-3/4 cursor-pointer text-black"
               onClick={(event) => event.stopPropagation()}
             >
               <option value="" disabled>
@@ -45,7 +48,7 @@ export default function PlannableTask({
               Productiedagen moet nog ingevuld worden
             </p>
           )}
-          <div className="w-1/12">
+          <div className="mr-2 w-1/12">
             {taskName && (
               <DeleteTaskButton
                 question={`Weet je zeker dat je de taak '${taskName}' wilt verwijderen?`}
@@ -55,9 +58,10 @@ export default function PlannableTask({
             )}
           </div>
         </div>
-      </label>
+      </div>
     );
   }
+
   if (systemName) {
     return (
       <SystemModalButton
