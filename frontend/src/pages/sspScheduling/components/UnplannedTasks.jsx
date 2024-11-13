@@ -33,7 +33,7 @@ export default function UnplannedTasks({
           setOpenTasks(updatedOpenTasks);
         })
         .catch((error) => {
-          setError(translateError(error.response?.data?.detail));
+          setError(translateError(error.response?.data?.detail || ""));
         });
     }
   }

@@ -38,6 +38,12 @@ public class Seeder implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     if (employeeRepository.count() == 0) {
+      Employee employee0 =
+          new Employee(
+              "Final Test Teamleider",
+              "ftleider@interscience.nl",
+              passwordEncoder.encode("Wachtwoord123!"),
+              Function.FT_TEAM_LEADER);
       Employee employee1 =
           new Employee(
               "Teamleider",
@@ -56,13 +62,69 @@ public class Seeder implements CommandLineRunner {
               "ft@interscience.nl",
               passwordEncoder.encode("Wachtwoord123!"),
               Function.FT);
-      employeeRepository.saveAll(List.of(employee1, employee2, employee3));
+      Employee employee4 =
+          new Employee(
+              "Final Test Medewerker2",
+              "ft2@interscience.nl",
+              passwordEncoder.encode("Wachtwoord123!"),
+              Function.FT);
+      Employee employee5 =
+          new Employee(
+              "SSP Medewerker2",
+              "ssp2@interscience.nl",
+              passwordEncoder.encode("Wachtwoord123!"),
+              Function.SSP);
+      Employee employee6 =
+          new Employee(
+              "SSP Medewerker3",
+              "ssp3@interscience.nl",
+              passwordEncoder.encode("Wachtwoord123!"),
+              Function.SSP);
+      Employee employee7 =
+          new Employee(
+              "SSP Medewerker4",
+              "ssp4@interscience.nl",
+              passwordEncoder.encode("Wachtwoord123!"),
+              Function.SSP);
+      Employee employee8 =
+          new Employee(
+              "SSP Medewerker5",
+              "ssp5@interscience.nl",
+              passwordEncoder.encode("Wachtwoord123!"),
+              Function.SSP);
+      Employee employee9 =
+          new Employee(
+              "SSP Medewerker6",
+              "ss6p@interscience.nl",
+              passwordEncoder.encode("Wachtwoord123!"),
+              Function.SSP);
+      Employee employee10 =
+          new Employee(
+              "SSP Medewerker7",
+              "ssp7@interscience.nl",
+              passwordEncoder.encode("Wachtwoord123!"),
+              Function.SSP);
+      employeeRepository.saveAll(
+          List.of(
+              employee0,
+              employee1,
+              employee2,
+              employee3,
+              employee4,
+              employee5,
+              employee6,
+              employee7,
+              employee8,
+              employee9,
+              employee10));
     }
     if (sspTaskRepository.findAll().isEmpty()) {
       createSSPTasks();
     }
     if (systemRepository.findAll().isEmpty()) {
-      createSystem();
+      for (int i = 1; i <= 5; i++) {
+        createSystem(i);
+      }
     }
   }
 
@@ -88,9 +150,9 @@ public class Seeder implements CommandLineRunner {
     sspTaskRepository.saveAll(List.of(ssp1, ssp2, ssp3));
   }
 
-  private void createSystem() {
+  private void createSystem(int count) {
     System system = new System();
-    system.setName("brt-001");
+    system.setName("brt-00" + count);
     system.setSystemType("big");
 
     LocalDate today = LocalDate.now();

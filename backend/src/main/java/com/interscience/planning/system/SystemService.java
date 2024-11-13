@@ -247,7 +247,8 @@ public class SystemService {
             ? dto.endOfConstruction()
             : constructionTask.getSspTask().getDateCompleted();
     if (endDate != null && dto.startOfConstruction().isAfter(endDate)) {
-      throw new BadRequestException("Construction end date must be after construction start date");
+      throw new BadRequestException(
+          "Construction end date must be on or after construction start date");
     }
 
     constructionTask.getSspTask().setDateStarted(dto.startOfConstruction());
@@ -265,13 +266,16 @@ public class SystemService {
           "Construction start date required for setting construction end date");
     }
     if (dto.endOfConstruction().isBefore(startDate)) {
-      throw new BadRequestException("Construction end date must be after construction start date");
+      throw new BadRequestException(
+          "Construction end date must be on or after construction start date");
     }
 
     LocalDate testStartDate =
-        dto.startOfTest() != null ? dto.startOfTest() : system.getTestTask().getDateStarted();
+        dto.startOfTest() != null
+            ? dto.startOfTest()
+            : system.getTestTask().getDateStarted();
     if (testStartDate != null && dto.endOfConstruction().isAfter(testStartDate)) {
-      throw new BadRequestException("Construction end date must be before test start date");
+      throw new BadRequestException("Construction end date must be on or before test start date");
     }
 
     constructionTask.getSspTask().setDateCompleted(dto.endOfConstruction());
@@ -318,8 +322,8 @@ public class SystemService {
     if (constructionEndDate == null) {
       throw new BadRequestException("Construction end date required for setting test start date");
     }
-    if (dto.startOfTest().isAfter(constructionEndDate)) {
-      throw new BadRequestException("Test start date must be after construction end date");
+    if (!dto.startOfTest().isAfter(constructionEndDate)) {
+      throw new BadRequestException("Test start date must be on or after construction end date");
     }
 
     if (dto.estimatedTestDays() == null && system.getTestTask().getEstimatedTime() == null) {
@@ -328,9 +332,12 @@ public class SystemService {
     if (dto.employeeFT() == null && system.getTestTask().getEmployee() == null) {
       throw new BadRequestException("FT employee required for setting test start date");
     }
-    LocalDate endDate = dto.endOfTest() != null ? dto.endOfTest() : testTask.getDateCompleted();
+    LocalDate endDate =
+        dto.endOfTest() != null
+            ? dto.endOfTest()
+            : testTask.getDateCompleted();
     if (endDate != null && dto.startOfTest().isAfter(endDate)) {
-      throw new BadRequestException("Test end date must be after test start date");
+      throw new BadRequestException("Test end date must be on or after test start date");
     }
     testTask.setDateStarted(dto.startOfTest());
   }
@@ -342,7 +349,7 @@ public class SystemService {
       throw new BadRequestException("Test start date required for setting test end date");
     }
     if (dto.endOfTest().isBefore(startDate)) {
-      throw new BadRequestException("Test end date must be after test start date");
+      throw new BadRequestException("Test end date must be on or after test start date");
     }
     testTask.setDateCompleted(dto.endOfTest());
   }

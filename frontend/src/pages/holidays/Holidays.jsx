@@ -5,7 +5,7 @@ import HolidayList from "./components/HolidayList.jsx";
 import ApiService from "../../services/ApiService.js";
 
 export default function Holidays() {
-  const [employees] = useGetEmployees();
+  const [employees] = useGetEmployees("employees");
   const [holidays, setHolidays] = useState([]);
 
   useEffect(() => {

@@ -180,7 +180,7 @@ export default class ScheduleService {
         currentNumberOfDays++;
       }
       const taskBlock = {
-        taskName: currentType === "holiday" ? "holiday" : taskName,
+        taskName: currentType === "holiday" ? "Vakantie" : taskName,
         numberOfDays: currentNumberOfDays,
         status:
           currentType === "holiday"

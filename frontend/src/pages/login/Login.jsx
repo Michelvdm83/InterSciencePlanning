@@ -39,7 +39,7 @@ export default function Login() {
           if (error.response && error.response.status === 404) {
             setError("Account niet gevonden");
           } else {
-            setError(translateError(error.response?.data?.detail));
+            setError(translateError(error.response?.data?.detail || ""));
           }
         });
     }

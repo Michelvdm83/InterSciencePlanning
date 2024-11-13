@@ -22,7 +22,7 @@ export default function AddEmployee({ employees, setEmployees }) {
         setError("");
         await ApiService.post(`password-links/${response.data.id}`);
       } catch (error) {
-        setError(translateError(error.response?.data?.detail));
+        setError(translateError(error.response?.data?.detail || ""));
       }
     }
   }

@@ -15,6 +15,11 @@ export default function EditEmployee({ employee, setEmployees }) {
 
   function handleClose() {
     setError("");
+    setEditedEmployee({
+      name: employee.name,
+      email: employee.email,
+      function: employee.function,
+    });
     document.getElementById(`edit-employee-${employee.id}`).close();
   }
 
@@ -40,7 +45,7 @@ export default function EditEmployee({ employee, setEmployees }) {
       }
 
       if (Object.keys(updatedFields).length > 0) {
-        ApiService.patch(`employees/${employee.id}`, editedEmployee)
+        ApiService.patch(`employees/${employee.id}`, updatedFields)
           .then((response) => {
             setEmployees((prevEmployees) =>
               prevEmployees.map((emp) =>
@@ -50,7 +55,7 @@ export default function EditEmployee({ employee, setEmployees }) {
             handleClose();
           })
           .catch((error) =>
-            setError(translateError(error.response?.data?.detail)),
+            setError(translateError(error.response?.data?.detail || "")),
           );
       } else {
         handleClose();
