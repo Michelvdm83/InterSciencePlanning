@@ -22,7 +22,8 @@ export default function SystemSelectEmployeeField({
     );
   } else if (variable === "employeeFT") {
     filteredEmployees = employees.filter(
-      (employee) => employee.function === "FT",
+      (employee) =>
+        employee.function === "FT" || employee.function === "FT_TEAM_LEADER",
     );
   } else if (variable === "employeeResponsible") {
     filteredEmployees = employees.filter(
