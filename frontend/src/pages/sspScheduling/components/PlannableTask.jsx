@@ -41,7 +41,7 @@ export default function PlannableTask({
             </select>
           )}
           {!estimatedTime && systemName && (
-            <p className="text-red-600">
+            <p className="text-wrap text-right text-sm text-red-600">
               Productiedagen moet nog ingevuld worden
             </p>
           )}
