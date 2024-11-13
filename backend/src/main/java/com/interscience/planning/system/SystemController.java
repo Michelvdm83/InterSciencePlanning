@@ -1,6 +1,9 @@
 package com.interscience.planning.system;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class SystemController {
 
   private final SystemService systemService;
+  private final ObjectMapper objectMapper;
 
   @GetMapping("/{systemName}")
   public ResponseEntity<SystemDTO> getSystem(@PathVariable String systemName) {
@@ -32,8 +36,12 @@ public class SystemController {
 
   @PatchMapping("{systemName}")
   public ResponseEntity<?> updateSystem(
-      @RequestBody SystemPostPatchDTO systemPostPatchDTO, @PathVariable String systemName) {
-    systemService.updateSystem(systemPostPatchDTO, systemName);
+      @RequestBody JsonNode jsonNode, @PathVariable String systemName) {
+    Map<String, Boolean> nullValues = systemService.checkForExplicitNullValues(jsonNode);
+
+    SystemPostPatchDTO dto = objectMapper.convertValue(jsonNode, SystemPostPatchDTO.class);
+
+    systemService.updateSystem(dto, systemName, nullValues);
     return ResponseEntity.ok().build();
   }
 }
