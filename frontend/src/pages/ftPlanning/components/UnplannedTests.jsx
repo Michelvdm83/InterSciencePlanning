@@ -30,19 +30,23 @@ export default function UnplannedTasks({
       {openTests.length > 0 &&
         openTests.map((test) => {
           return (
-            <SystemModalButton
-              updateOpenTasks={updateOpenTests}
-              systemName={test.systemName}
+            <div
+              className="flex w-3/4 cursor-pointer justify-between gap-2 overflow-clip rounded-md bg-white p-3"
+              key={test.id}
             >
-              <label
-                className="label w-3/4 cursor-pointer text-nowrap rounded-md bg-white p-3 text-primary"
-                key={test.id}
+              <SystemModalButton
+                updateOpenTasks={updateOpenTests}
+                systemName={test.systemName}
               >
-                {test.systemName}
+                <div className="w-1/2 truncate text-primary">
+                  {test.systemName}
+                </div>
+              </SystemModalButton>
+              {test.estimatedDays && (
                 <select
                   defaultValue={""}
                   onChange={(event) => assignEmployee(event, test.id)}
-                  className="select select-bordered select-accent select-sm flex w-1/2 cursor-pointer text-black"
+                  className="select select-bordered select-accent select-sm w-1/2 cursor-pointer text-black"
                   onClick={(event) => event.stopPropagation()}
                 >
                   <option value="" disabled>
@@ -56,8 +60,13 @@ export default function UnplannedTasks({
                     );
                   })}
                 </select>
-              </label>
-            </SystemModalButton>
+              )}
+              {!test.estimatedDays && (
+                <p className="w-1/2 text-wrap text-red-600">
+                  Productiedagen moet nog ingevuld worden
+                </p>
+              )}
+            </div>
           );
         })}
     </div>
