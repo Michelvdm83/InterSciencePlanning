@@ -49,7 +49,7 @@ export default function UnplannedTasks({
                   <select
                     defaultValue={""}
                     onChange={(event) => assignEmployee(event, test.id)}
-                    className="select select-bordered select-accent select-sm cursor-pointer text-black"
+                    className="select select-bordered select-accent select-sm w-full cursor-pointer text-black"
                     onClick={(event) => event.stopPropagation()}
                   >
                     <option value="" disabled>
