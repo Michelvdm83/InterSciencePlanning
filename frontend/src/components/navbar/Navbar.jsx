@@ -38,16 +38,16 @@ export default function Navbar() {
             onClick={() => navigate("/ssp-planning")}
           ></NavbarButton>
         )}
-        {showFTPages && (
-          <NavbarButton
-            title="FT Planning"
-            onClick={() => navigate("/ft-planning")}
-          ></NavbarButton>
-        )}
         {showTeamleaderPages && (
           <NavbarButton
             title="SSP Inplannen"
             onClick={() => navigate("/ssp-inplannen")}
+          ></NavbarButton>
+        )}
+        {showFTPages && (
+          <NavbarButton
+            title="FT Planning"
+            onClick={() => navigate("/ft-planning")}
           ></NavbarButton>
         )}
         {showTeamleaderPages && (
