@@ -133,7 +133,9 @@ export default function SystemOverview({
               <SystemTextField
                 title="Systeem"
                 variable="name"
-                editable={employeeFunction == "TEAM_LEADER"}
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
               />
@@ -155,7 +157,9 @@ export default function SystemOverview({
               <SystemSelectEmployeeField
                 title="Eindverantwoordelijke"
                 variable="employeeResponsible"
-                editable={employeeFunction == "TEAM_LEADER"}
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
               />
@@ -265,7 +269,9 @@ export default function SystemOverview({
               <SystemNumberField
                 title="Testdagen"
                 variable="estimatedTestDays"
-                editable={employeeFunction == "TEAM_LEADER"}
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
               />
@@ -305,7 +311,9 @@ export default function SystemOverview({
               <SystemTextField
                 title="Verkoper"
                 variable="seller"
-                editable={employeeFunction == "TEAM_LEADER"}
+                editable={
+                  employeeFunction == "TEAM_LEADER" || employeeFunction == "FT"
+                }
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
               />

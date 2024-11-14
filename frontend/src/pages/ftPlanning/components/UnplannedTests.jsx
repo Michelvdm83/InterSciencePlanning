@@ -30,15 +30,12 @@ export default function UnplannedTasks({
       {openTests.length > 0 &&
         openTests.map((test) => {
           return (
-            <div className="w-3/4">
+            <div className="w-3/4" key={test.id}>
               <SystemModalButton
                 updateOpenTasks={updateOpenTests}
                 systemName={test.systemName}
               >
-                <div
-                  className="flex max-h-16 w-full cursor-pointer items-center gap-2 rounded-md bg-white p-3"
-                  key={test.id}
-                >
+                <div className="flex max-h-16 w-full cursor-pointer items-center gap-2 rounded-md bg-white p-3">
                   <div className="w-1/2">
                     <div className="w-full overflow-hidden text-ellipsis text-primary">
                       {test.systemName}
