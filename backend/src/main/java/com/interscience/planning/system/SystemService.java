@@ -261,8 +261,9 @@ public class SystemService {
         employeeRepository
             .findById(systemPostPatchDTO.employeeFT())
             .orElseThrow(NotFoundException::new);
-    if (ftEmployee.getFunction() != Function.FT) {
-      throw new BadRequestException("FT employee needs to have function FT");
+    if (ftEmployee.getFunction() != Function.FT
+        && ftEmployee.getFunction() != Function.FT_TEAM_LEADER) {
+      throw new BadRequestException("FT employee needs to have function FT or FT team leader");
     }
     testTask.setEmployee(ftEmployee);
   }
