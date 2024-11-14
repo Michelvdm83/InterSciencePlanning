@@ -30,46 +30,48 @@ export default function UnplannedTasks({
       {openTests.length > 0 &&
         openTests.map((test) => {
           return (
-            <div
-              className="flex max-h-16 w-3/4 cursor-pointer items-center gap-2 rounded-md bg-white p-3"
-              key={test.id}
-            >
-              <div className="w-1/2">
-                <SystemModalButton
-                  updateOpenTasks={updateOpenTests}
-                  systemName={test.systemName}
+            <div className="w-3/4">
+              <SystemModalButton
+                updateOpenTasks={updateOpenTests}
+                systemName={test.systemName}
+              >
+                <div
+                  className="flex max-h-16 w-full cursor-pointer items-center gap-2 rounded-md bg-white p-3"
+                  key={test.id}
                 >
-                  <div className="w-full overflow-hidden text-ellipsis text-primary">
-                    {test.systemName}
+                  <div className="w-1/2">
+                    <div className="w-full overflow-hidden text-ellipsis text-primary">
+                      {test.systemName}
+                    </div>
                   </div>
-                </SystemModalButton>
-              </div>
-              <div className="w-1/2">
-                {test.estimatedDays && (
-                  <select
-                    defaultValue={""}
-                    onChange={(event) => assignEmployee(event, test.id)}
-                    className="select select-bordered select-accent select-sm w-full cursor-pointer text-black"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <option value="" disabled>
-                      Naam
-                    </option>
-                    {employees.map((employee) => {
-                      return (
-                        <option value={employee.id} key={employee.id}>
-                          {employee.name}
+                  <div className="w-1/2">
+                    {test.estimatedDays && (
+                      <select
+                        defaultValue={""}
+                        onChange={(event) => assignEmployee(event, test.id)}
+                        className="select select-bordered select-accent select-sm w-full cursor-pointer text-black"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <option value="" disabled>
+                          Naam
                         </option>
-                      );
-                    })}
-                  </select>
-                )}
-                {!test.estimatedDays && (
-                  <p className="line-clamp-2 max-h-14 w-full text-ellipsis text-red-600">
-                    Testdagen moet nog ingevuld worden
-                  </p>
-                )}
-              </div>
+                        {employees.map((employee) => {
+                          return (
+                            <option value={employee.id} key={employee.id}>
+                              {employee.name}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    )}
+                    {!test.estimatedDays && (
+                      <p className="line-clamp-2 max-h-14 w-full text-ellipsis text-red-600">
+                        Testdagen moet nog ingevuld worden
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </SystemModalButton>
             </div>
           );
         })}
