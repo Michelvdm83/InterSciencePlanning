@@ -1,5 +1,6 @@
 import {
   addBusinessDays,
+  differenceInBusinessDays,
   eachDayOfInterval,
   formatDate,
   isMonday,
@@ -81,6 +82,15 @@ export default class ScheduleServiceNew {
 
   //get the number of working days between startDate (included) and untilDate (excluded unless untilIncluded = true)
   static #getNumberOfWorkingDays(startDate, untilDate, untilIncluded) {
+    const workingDays = differenceInBusinessDays(
+      new Date(untilDate),
+      new Date(startDate),
+    );
+    if (untilIncluded && !isWeekend(new Date(untilDate))) {
+      return workingDays + 1;
+    } else {
+      return workingDays;
+    }
     if (
       (untilDate - startDate < 86400000 && !untilIncluded) ||
       (untilDate - startDate < 0 && untilIncluded)
