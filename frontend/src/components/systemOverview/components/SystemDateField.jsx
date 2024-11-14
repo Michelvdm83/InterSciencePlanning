@@ -19,9 +19,9 @@ export default function SystemDateField({
 
   const classes =
     "input input-sm w-full text-accent select-text disabled:bg-white disabled:text-accent" +
-    (date || system[variable]
-      ? ""
-      : " text-transparent disabled:text-transparent");
+    (system[variable] === null || system[variable] === ""
+      ? " text-transparent disabled:text-transparent"
+      : "");
 
   return (
     <div>
@@ -32,15 +32,7 @@ export default function SystemDateField({
           variable === "expectedFinish" ? date || "" : system[variable] || ""
         }
         onChange={(event) => {
-          setSystem({ ...system, [variable]: event.target.value });
-        }}
-        onBlur={() => {
-          if (date === "") {
-            setSystem({
-              ...system,
-              [variable]: null,
-            });
-          }
+          setSystem({ ...system, [variable]: event.target.value || null });
         }}
         className={classes}
         disabled={!editable}
