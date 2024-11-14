@@ -50,11 +50,7 @@ public class SSPTaskService {
 
   public List<SSPTaskAssignedDTO> getAllByEmployeeId(UUID employeeId) {
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
-    return sspTaskRepository.findByEmployeeOrderByIndex(employee).stream()
-        .filter(
-            sspTask ->
-                sspTask.getDateCompleted() == null
-                    || !sspTask.getDateCompleted().isBefore(LocalDate.now()))
+    return sspTaskRepository.findByEmployeeAndUnfinishedTasks(employee, LocalDate.now()).stream()
         .map(SSPTaskAssignedDTO::from)
         .toList();
   }
