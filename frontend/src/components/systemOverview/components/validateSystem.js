@@ -16,8 +16,8 @@ export function translateError(error) {
       return "SSP-medewerker vereist om startdatum productie in te stellen";
     case "Estimated test days required for assigning an FT employee":
       return "Testdagen vereist om een FT-medewerker toe te wijzen";
-    case "FT employee needs to have function FT":
-      return "FT-medewerker moet de functie FT hebben";
+    case "FT employee needs to have function FT or FT team leader":
+      return "FT-medewerker moet de functie FT of FT-teamleider hebben";
     case "Estimated test days required for setting test start date":
       return "Testdagen vereist om startdatum test in te stellen";
     case "FT employee required for setting test start date":
