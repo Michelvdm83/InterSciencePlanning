@@ -6,6 +6,7 @@ import {
   isAfter,
   isBefore,
   isMonday,
+  isSameDay,
   isWeekend,
   nextMonday,
   previousMonday,
@@ -13,9 +14,11 @@ import {
 import ApiService from "./ApiService";
 
 export default class ScheduleServiceNew {
-  static #formatMyDate(date) {
-    return formatDate(new Date(date), "dd-MM-yyyy");
-  }
+  /* static #formatMyDate(date) {
+  //   return formatDate(new Date(date), "dd-MM-yyyy");
+  // }
+*/
+
   // get the date of the monday of the week
   static getMonday(myDate) {
     // let monday;
@@ -41,7 +44,7 @@ export default class ScheduleServiceNew {
     //const monday = isMonday(myDate)? new Date(myDate) : isWeekend(new Date(myDate))? nextMonday(new Date(myDate)) : previousMonday(new Date(myDate));
     //of als we altijd de maandag van de huidige week doen:
     // const monday = startOfWeek(new Date(myDate), { weekStartsOn: 1 });
-    return this.#formatMyDate(monday);
+    return monday;
   }
 
   //get a list of dates of workdays starting at startDate. Length of list is equal to numberOfDays
@@ -58,7 +61,7 @@ export default class ScheduleServiceNew {
     const returnArray = [];
     allDay.forEach((day) => {
       if (!isWeekend(day)) {
-        returnArray.push(this.#formatMyDate(day));
+        returnArray.push(day);
       }
     });
     return returnArray;
@@ -289,21 +292,45 @@ export default class ScheduleServiceNew {
           const task = tasks[index];
           let currentStatus = task.systemName ? task.status : "task";
 
+          //variabele startDate gaan gebruiken?
+          let startDate;
           if (!task.dateStarted) {
-            task.dateStarted = allDaysWithTasks[dayIndex].date;
+            startDate = allDaysWithTasks[dayIndex].date;
           } else {
-            task.dateStarted = this.#formatMyDate(new Date(task.dateStarted));
+            startDate = new Date(task.dateStarted);
           }
 
-          const startIndex = allDaysWithTasks.findIndex(
-            (d) => d.date === task.dateStarted,
+          if (isBefore(startDate, allDaysWithTasks[0].date)) {
+            startDate = allDaysWithTasks[dayIndex].date;
+          } else if (isBefore(startDate, allDaysWithTasks[dayIndex].date)) {
+            currentStatus = "conflict";
+          } else if (
+            //hiervoor check voor isAfter allDaysWithTasks laatste date?
+            isAfter(startDate, allDaysWithTasks[dayIndex].date)
+          ) {
+            dayIndex = allDaysWithTasks.findIndex((d) =>
+              isSameDay(d.date, startDate),
+            );
+          } // controle of startDate holiday is? of aan het einde deze check?
+
+          let completedDate;
+          if (task.dateCompleted) {
+            completedDate = new Date(task.dateCompleted);
+          } else {
+            //gebruik estimatedDays, voor elke vakantiedag, voeg 1 dag toe
+            let daysTillEnd = task.estimatedDays;
+            let currentIndex = dayIndex;
+            //loop door de periode om voor elke dag te kijken of het een vakantie is
+          }
+
+          /*const startIndex = allDaysWithTasks.findIndex(
+            (d) => isSameDay(d.date, startDate)
           );
           if (startIndex === -1) {
             // als dateStarted voor de periode is:
             if (isBefore(task.dateStarted, allDaysWithTasks[0].date)) {
               //als dit zo is, is begindatum vóór 1ste dag in periode > schuif begindatum op naar allDaysWithTasks[dayIndex]? ms aparte variabele startDate gebruiken?
-              currentStatus = "conflict";
-              task.status = "conflict";
+              task.dateStarted = allDaysWithTasks[dayIndex].date;
             } else {
               //welke andere reden kan er zijn? is er dan niet iets erg fout gegaan? oh, als je in het verleden kijkt ms, dus:
               break;
@@ -316,10 +343,11 @@ export default class ScheduleServiceNew {
             } else if (
               isAfter(task.dateStarted, allDaysWithTasks[dayIndex].date)
             ) {
+              
               dayIndex = startIndex;
             }
             //
-          }
+          }*/
 
           //taak begindatum? ja: zet dayIndex hierop (bij dayIndex === -1: wat dan?), nee: zet dateStarted op huidige dayIndex
           //taak einddatum? ja: vul allDaysWithTasks in t/m deze datum, nee: gebruik estimatedDays om einddatum te berekenen (rekening houdend met vakanties)
