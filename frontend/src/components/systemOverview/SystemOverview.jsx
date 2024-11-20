@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import SystemTextField from "./components/SystemTextField.jsx";
 import SystemDateField from "./components/SystemDateField.jsx";
 import ApiService from "../../services/ApiService.js";
 import EmployeeService from "../../services/EmployeeService.js";
-import SystemCheckboxField from "./components/SystemCheckBoxField.jsx";
 import SystemSelectStatusField from "./components/SystemSelectStatusField.jsx";
 import SystemSelectEmployeeField from "./components/SystemSelectEmployeeField.jsx";
 import SystemNumberField from "./components/SystemNumberField.jsx";
@@ -128,7 +127,7 @@ export default function SystemOverview({
     <dialog id={systemName || "new-system"} className="modal">
       <div className="modal-box w-fit max-w-full p-0">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
-          <div className="flex h-full w-full cursor-default justify-evenly gap-20 overflow-hidden bg-neutral p-9">
+          <div className="flex h-full w-full cursor-default justify-evenly gap-20 overflow-hidden bg-neutral px-9 py-4">
             {/*
                1st Collumn
              */}
@@ -141,15 +140,15 @@ export default function SystemOverview({
                 setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemTextField
-                title="P.O. Nummer"
-                variable="poNumber"
+                title="Systeemtype"
+                variable="systemType"
                 editable={employeeFunction == "TEAM_LEADER"}
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
               />
               <SystemTextField
-                title="Systeemtype"
-                variable="systemType"
+                title="P.O. Nummer"
+                variable="poNumber"
                 editable={employeeFunction == "TEAM_LEADER"}
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
