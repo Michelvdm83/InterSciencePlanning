@@ -87,14 +87,12 @@ public class SystemService {
     if (dto.agreedDate() != null) {
       system.setAgreedDate(dto.agreedDate());
     }
-
     if (nullValues.get("actualDeliveryDate")) {
       system.setActualDeliveryDate(null);
     }
     if (dto.actualDeliveryDate() != null) {
       system.setActualDeliveryDate(dto.actualDeliveryDate());
     }
-
     if (dto.customerContactInformation() != null) {
       system.setCustomerContactInformation(dto.customerContactInformation());
     }
@@ -104,6 +102,9 @@ public class SystemService {
     if (dto.estimatedConstructionDays() != null) {
       system.getConstructionTask().getSspTask().setEstimatedTime(dto.estimatedConstructionDays());
     }
+    if (nullValues.get("employeeSSP")) {
+      system.getConstructionTask().getSspTask().setEmployee(null);
+    }
     if (dto.employeeSSP() != null) {
       setSSPEmployee(dto, system.getConstructionTask().getSspTask());
     }
@@ -112,6 +113,9 @@ public class SystemService {
 
     if (dto.estimatedTestDays() != null) {
       system.getTestTask().setEstimatedTime(dto.estimatedTestDays());
+    }
+    if (nullValues.get("employeeFT")) {
+      system.getTestTask().setEmployee(null);
     }
     if (dto.employeeFT() != null) {
       setFTEmployee(dto, system.getTestTask());
@@ -139,6 +143,8 @@ public class SystemService {
     nullValues.put("startOfTest", isExplicitlyNull(jsonNode, "startOfTest"));
     nullValues.put("endOfTest", isExplicitlyNull(jsonNode, "endOfTest"));
     nullValues.put("actualDeliveryDate", isExplicitlyNull(jsonNode, "actualDeliveryDate"));
+    nullValues.put("employeeSSP", isExplicitlyNull(jsonNode, "employeeSSP"));
+    nullValues.put("employeeFT", isExplicitlyNull(jsonNode, "employeeFT"));
     return nullValues;
   }
 

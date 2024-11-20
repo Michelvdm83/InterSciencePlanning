@@ -33,9 +33,15 @@ public class TaskController {
         jsonNode.has("dateStarted") && jsonNode.get("dateStarted").isNull();
     boolean dateCompletedExplicitlyNull =
         jsonNode.has("dateCompleted") && jsonNode.get("dateCompleted").isNull();
+    boolean employeeExplicitlyNull = jsonNode.has("employee") && jsonNode.get("employee").isNull();
 
     TaskDTO taskDTO = objectMapper.convertValue(jsonNode, TaskDTO.class);
-    taskService.updateTask(taskDTO, id, dateStartedExplicitlyNull, dateCompletedExplicitlyNull);
+    taskService.updateTask(
+        taskDTO,
+        id,
+        dateStartedExplicitlyNull,
+        dateCompletedExplicitlyNull,
+        employeeExplicitlyNull);
     return ResponseEntity.ok().build();
   }
 
