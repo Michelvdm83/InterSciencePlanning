@@ -284,11 +284,13 @@ export default class ScheduleServiceNew {
         });
         let dayIndex = allDaysWithTasks.findIndex((d) => d.status === "empty");
         //const updatedData = originalData.map(x => (x.id === id ? { ...x, updatedField: 1 } : x));
-        for (let index = 0; index < tasks.length; index++) {
-          /* if(dayIndex === -1 || dayIndex >= allDaysWithTasks.length){
-                 break;
-              }*/
-
+        for (
+          let index = 0;
+          index < tasks.length &&
+          dayIndex < allDaysWithTasks.length &&
+          dayIndex !== -1;
+          index++
+        ) {
           const task = tasks[index];
           let currentStatus = task.systemName ? task.status : "task";
 
@@ -313,86 +315,98 @@ export default class ScheduleServiceNew {
             );
           } // controle of startDate holiday is? of aan het einde deze check?
 
-          let completedDate;
+          let daysTillEnd;
+          let endSet;
           if (task.dateCompleted) {
-            completedDate = new Date(task.dateCompleted);
-          } else {
-            //gebruik estimatedDays, voor elke vakantiedag, voeg 1 dag toe
-            let daysTillEnd = task.estimatedDays;
-            let currentIndex = dayIndex;
-            //loop door de periode om voor elke dag te kijken of het een vakantie is
-          }
-
-          /*const startIndex = allDaysWithTasks.findIndex(
-            (d) => isSameDay(d.date, startDate)
-          );
-          if (startIndex === -1) {
-            // als dateStarted voor de periode is:
-            if (isBefore(task.dateStarted, allDaysWithTasks[0].date)) {
-              //als dit zo is, is begindatum vóór 1ste dag in periode > schuif begindatum op naar allDaysWithTasks[dayIndex]? ms aparte variabele startDate gebruiken?
-              task.dateStarted = allDaysWithTasks[dayIndex].date;
-            } else {
-              //welke andere reden kan er zijn? is er dan niet iets erg fout gegaan? oh, als je in het verleden kijkt ms, dus:
-              break;
-            }
-          } else {
-            // dateStarted < huidige dag? currentstatus conflict?
-            if (isBefore(task.dateStarted, allDaysWithTasks[dayIndex].date)) {
-              currentStatus = "conflict";
-              //task.status = "conflict";
-            } else if (
-              isAfter(task.dateStarted, allDaysWithTasks[dayIndex].date)
-            ) {
-              
-              dayIndex = startIndex;
-            }
-            //
-          }*/
-
-          //taak begindatum? ja: zet dayIndex hierop (bij dayIndex === -1: wat dan?), nee: zet dateStarted op huidige dayIndex
-          //taak einddatum? ja: vul allDaysWithTasks in t/m deze datum, nee: gebruik estimatedDays om einddatum te berekenen (rekening houdend met vakanties)
-          let listOfDaysInPeriod;
-          if (task.dateCompleted) {
-            //periode vast, aantal dagen niet
-            const quantity = this.#getNumberOfWorkingDays(
-              task.dateStarted,
-              task.dateCompleted,
+            const completedDate = new Date(task.dateCompleted);
+            daysTillEnd = this.#getNumberOfWorkingDays(
+              startDate,
+              completedDate,
               true,
             );
-            listOfDaysInPeriod = this.getDates(task.dateStarted, quantity);
+            endSet = true;
           } else {
-            //aantal dagen = estimatedDays, tenzij status = BUILDING && vandaag is NA huidige datum + estimatedDays
-            if (task.status === "BUILDING") {
-              //als vandaag later verder dan huidige datum + estimatedDays, vergroot aantal dagen + status: "delayed"
+            daysTillEnd = task.estimatedDays;
+            endSet = false;
+          }
+          //loop door de periode om voor elke dag te kijken of het een vakantie is en of er al iets is ingepland
+          let scheduleDays = 0;
+          do {
+            currentDay = allDaysWithTasks[dayIndex];
+            if (endSet === true || currentDay.status === "empty") {
+              daysTillEnd--;
             }
-            listOfDaysInPeriod = this.getDates(
-              task.dateStarted,
-              task.estimatedDays,
+
+            if (currentDay.status === "empty") {
+              currentDay.status = currentStatus;
+              currentDay.taskName = task.systemName
+                ? task.systemName
+                : task.taskName;
+              scheduleDays++;
+            } else if (
+              currentDay.status !== "holiday" &&
+              currentStatus !== "conflict"
+            ) {
+              currentStatus = "conflict";
+              let tempIndex = dayIndex - 1;
+              while (
+                allDaysWithTasks[tempIndex].taskName === task.taskName &&
+                tempIndex >= 0
+              ) {
+                allDaysWithTasks[tempIndex].status = "conflict";
+                tempIndex--;
+              }
+            }
+
+            dayIndex++;
+          } while (daysTillEnd > 0 && dayIndex < allDaysWithTasks.length);
+
+          //als de taak op geen enkele dag in de planning staat, probeer hem dan op iig 1 dag neer te zetten
+          if (scheduleDays === 0) {
+            const nextOpenIndex = allDaysWithTasks.findIndex(
+              (d, index) => index >= dayIndex && d.status === "empty",
             );
+            if (nextOpenIndex !== -1) {
+              const nextOpenDay = allDaysWithTasks[nextOpenIndex];
+              nextOpenDay.status = "conflict";
+              nextOpenDay.taskName = currentDay.taskName = task.systemName
+                ? task.systemName
+                : task.taskName;
+              dayIndex = nextOpenIndex + 1;
+            }
           }
 
           //als de task voor de eerste (niet vakantie-)dag eindigd, moet deze task niet in het overzicht
           //als de task na de laatste (niet vakantie-)dag eindigd, invullen en break uit loop
-          /*let nrOfDays;
-          nrOfDays = task.dateCompleted
-            ? this.#getNumberOfWorkingDays(
-                task.dateStarted,
-                task.dateCompleted,
-                true,
-              )
-            : task.estimatedDays;
-          const days = this.getDates(task.dateStarted, nrOfDays);
-          if (
-            isBefore(
-              addBusinessDays(task.dateStarted, nrOfDays),
-              allDaysWithTasks[0].date,
-            )
-          ) {
-            //
-          }*/
         }
 
-        tasks.forEach((t) => {
+        let currentTaskName;
+        let currentTaskDays = 0;
+        let currentTaskStatus;
+        let loopIndex = 0;
+        do {
+          if (
+            loopIndex === allDaysWithTasks.length ||
+            allDaysWithTasks[loopIndex].taskName !== currentTaskName
+          ) {
+            if (currentTaskDays > 0) {
+              schedule.push({
+                taskName: currentTaskName,
+                numberOfDays: currentTaskDays,
+                status: currentTaskStatus,
+              });
+            }
+            if (loopIndex < allDaysWithTasks.length) {
+              currentTaskName = allDaysWithTasks[loopIndex].taskName;
+              currentTaskDays = 1;
+              currentTaskStatus = allDaysWithTasks[loopIndex].status;
+            }
+          }
+          loopIndex++;
+        } while (loopIndex <= allDaysWithTasks.length);
+
+        /* eerste poging tov vertraging:
+          tasks.forEach((t) => {
           //beter om filter te gebruiken ms?
           if (t.systemName && t.status === "BUILDING") {
             const totalNrOfDays = allDaysWithTasks.filter(
@@ -405,7 +419,7 @@ export default class ScheduleServiceNew {
               );
             }
           }
-        });
+        });*/
       })
       .catch(() => {
         return [
