@@ -81,9 +81,6 @@ public class SystemService {
     if (dto.systemType() != null) {
       system.setSystemType(dto.systemType());
     }
-    if (nullValues.get("employeeResponsible")) {
-      system.setEmployeeResponsible(null);
-    }
     if (dto.employeeResponsible() != null) {
       system.setEmployeeResponsible(dto.employeeResponsible());
     }
@@ -146,7 +143,6 @@ public class SystemService {
     nullValues.put("startOfTest", isExplicitlyNull(jsonNode, "startOfTest"));
     nullValues.put("endOfTest", isExplicitlyNull(jsonNode, "endOfTest"));
     nullValues.put("actualDeliveryDate", isExplicitlyNull(jsonNode, "actualDeliveryDate"));
-    nullValues.put("employeeResponsible", isExplicitlyNull(jsonNode, "employeeResponsible"));
     nullValues.put("employeeSSP", isExplicitlyNull(jsonNode, "employeeSSP"));
     nullValues.put("employeeFT", isExplicitlyNull(jsonNode, "employeeFT"));
     return nullValues;
