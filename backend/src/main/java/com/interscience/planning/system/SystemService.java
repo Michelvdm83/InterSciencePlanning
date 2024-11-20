@@ -49,7 +49,7 @@ public class SystemService {
     System system = new System(systemPostPatchDTO.name());
 
     if (systemPostPatchDTO.employeeResponsible() != null) {
-      setEmployeeResponsible(systemPostPatchDTO, system);
+      system.setEmployeeResponsible(systemPostPatchDTO.employeeResponsible());
     }
 
     system.setPoNumber(systemPostPatchDTO.poNumber());
@@ -89,7 +89,7 @@ public class SystemService {
       system.setSystemType(dto.systemType());
     }
     if (dto.employeeResponsible() != null) {
-      setEmployeeResponsible(dto, system);
+      system.setEmployeeResponsible(dto.employeeResponsible());
     }
     if (dto.agreedDate() != null) {
       system.setAgreedDate(dto.agreedDate());
@@ -207,15 +207,6 @@ public class SystemService {
     if (dto.endOfTest() != null) {
       setTestEndDate(dto, system.getTestTask());
     }
-  }
-
-  private void setEmployeeResponsible(SystemPostPatchDTO dto, System system) {
-    Employee employeeResponsible =
-        employeeRepository.findById(dto.employeeResponsible()).orElseThrow(NotFoundException::new);
-    if (employeeResponsible.getFunction() == Function.SSP) {
-      throw new BadRequestException("Employee responsible can't be an SSP employee");
-    }
-    system.setEmployeeResponsible(employeeResponsible);
   }
 
   private void setSSPEmployee(SystemPostPatchDTO dto, SSPTask sspTask) {
