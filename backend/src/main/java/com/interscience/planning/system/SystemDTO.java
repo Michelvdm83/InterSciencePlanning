@@ -10,14 +10,12 @@ public record SystemDTO(
     String systemType,
     LocalDate agreedDate,
     LocalDate actualDeliveryDate,
-    UUID employeeResponsible,
+    String employeeResponsible,
     UUID employeeFT,
     UUID employeeSSP,
     String notes,
     String customerContactInformation,
     String projectInformation,
-    Boolean schemeApproved,
-    Boolean specsheetApproved,
     String status,
     Boolean delayCheckedBySupervisor,
     LocalDate startOfConstruction,
@@ -30,8 +28,7 @@ public record SystemDTO(
 
   public static SystemDTO from(System system) {
 
-    UUID responsiblePerson =
-        system.getEmployeeResponsible() == null ? null : system.getEmployeeResponsible().getId();
+    String responsiblePerson = system.getEmployeeResponsible();
 
     UUID ftEmployee;
     if (system.getTestTask() == null || system.getTestTask().getEmployee() == null) {
@@ -88,8 +85,6 @@ public record SystemDTO(
         system.getNotes(),
         system.getCustomerContactInformation(),
         system.getProjectInformation(),
-        system.isSchemeApproved(),
-        system.isSpecsheetApproved(),
         system.getStatus().toString(),
         system.isDelayCheckedBySupervisor(),
         startOfConstruction,

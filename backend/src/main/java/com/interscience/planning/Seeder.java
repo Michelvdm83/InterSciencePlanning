@@ -161,9 +161,7 @@ public class Seeder implements CommandLineRunner {
 
     system.setStatus(SystemStatus.BUILDING);
 
-    Employee responsiblePerson =
-        employeeRepository.findByEmail("teamleider@interscience.nl").orElse(null);
-    system.setEmployeeResponsible(responsiblePerson);
+    system.setEmployeeResponsible("Henk");
 
     TestTask testTask = new TestTask();
     testTask.setSystem(system);

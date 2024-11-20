@@ -49,7 +49,7 @@ public class SystemService {
     System system = new System(systemPostPatchDTO.name());
 
     if (systemPostPatchDTO.employeeResponsible() != null) {
-      setEmployeeResponsible(systemPostPatchDTO, system);
+      system.setEmployeeResponsible(systemPostPatchDTO.employeeResponsible());
     }
 
     system.setPoNumber(systemPostPatchDTO.poNumber());
@@ -59,13 +59,6 @@ public class SystemService {
     system.setNotes(systemPostPatchDTO.notes());
     system.setCustomerContactInformation(systemPostPatchDTO.customerContactInformation());
     system.setProjectInformation(systemPostPatchDTO.projectInformation());
-    //    system.setSchemeApproved(
-    //        systemPostPatchDTO.schemeApproved() != null ? systemPostPatchDTO.schemeApproved() :
-    // false);
-    //    system.setSpecsheetApproved(
-    //        systemPostPatchDTO.specsheetApproved() != null
-    //            ? systemPostPatchDTO.specsheetApproved()
-    //            : false);
     system.setStatus(SystemStatus.TO_BE_PLANNED);
     system.setSeller(systemPostPatchDTO.seller());
 
@@ -92,7 +85,7 @@ public class SystemService {
       system.setEmployeeResponsible(null);
     }
     if (dto.employeeResponsible() != null) {
-      setEmployeeResponsible(dto, system);
+      system.setEmployeeResponsible(dto.employeeResponsible());
     }
     if (dto.agreedDate() != null) {
       system.setAgreedDate(dto.agreedDate());
@@ -142,10 +135,6 @@ public class SystemService {
     if (dto.notes() != null) {
       system.setNotes(dto.notes());
     }
-
-    //    system.setSchemeApproved(dto.schemeApproved() != null ? dto.schemeApproved() : false);
-    //    system.setSpecsheetApproved(dto.specsheetApproved() != null ? dto.specsheetApproved() :
-    // false);
 
     systemRepository.save(system);
   }
@@ -217,15 +206,6 @@ public class SystemService {
     if (dto.endOfTest() != null) {
       setTestEndDate(dto, system.getTestTask());
     }
-  }
-
-  private void setEmployeeResponsible(SystemPostPatchDTO dto, System system) {
-    Employee employeeResponsible =
-        employeeRepository.findById(dto.employeeResponsible()).orElseThrow(NotFoundException::new);
-    if (employeeResponsible.getFunction() == Function.SSP) {
-      throw new BadRequestException("Employee responsible can't be an SSP employee");
-    }
-    system.setEmployeeResponsible(employeeResponsible);
   }
 
   private void setSSPEmployee(SystemPostPatchDTO dto, SSPTask sspTask) {
