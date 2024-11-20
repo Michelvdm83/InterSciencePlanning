@@ -23,8 +23,6 @@ export default function SystemOverview({
   const [editedSystem, setEditedSystem] = useState({});
   const [error, setError] = useState("");
 
-  //needed to check if an textarea is selected
-  const textAreaRef = useRef(null);
   const employeeFunction = EmployeeService.getEmployeeFunction();
 
   useEffect(() => {
@@ -81,17 +79,7 @@ export default function SystemOverview({
   }
 
   function handleOnKeyDown(e) {
-    console.log(e.target);
-    console.log(textAreaRef.current);
-    textAreaRef.current = e.target;
-    console.log(e.target);
-    console.log(textAreaRef.current);
     if (e.key === "Enter") {
-      //checks if a textarea is selected and prevents the save action in that case, so going to a new line is still possible
-      if (textAreaRef.current && textAreaRef.current.contains(e.target)) {
-        console.log(e.target);
-        return;
-      }
       handleSave(e);
     }
     if (e.key === "Escape") {
@@ -203,7 +191,6 @@ export default function SystemOverview({
               />
               <SystemTextArea
                 heightCSS="h-48"
-                ref={textAreaRef}
                 title="Contactgegevens klant"
                 text={system.customerContactInformation}
                 variable="customerContactInformation"
@@ -328,7 +315,6 @@ export default function SystemOverview({
             <div className="flex flex-col gap-1">
               <SystemTextArea
                 heightCSS="h-56"
-                ref={projectInformationRef}
                 title="Project informatie"
                 text={system.projectInformation}
                 variable="projectInformation"
@@ -338,7 +324,6 @@ export default function SystemOverview({
               />
               <SystemTextArea
                 heightCSS="h-64"
-                ref={notesRef}
                 title="Notities"
                 text={system.notes}
                 variable="notes"
