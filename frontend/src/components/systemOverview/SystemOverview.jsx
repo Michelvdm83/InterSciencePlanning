@@ -127,6 +127,7 @@ export default function SystemOverview({
     <dialog id={systemName || "new-system"} className="modal">
       <div className="modal-box w-fit max-w-full p-0">
         <form method="dialog" onKeyDown={(e) => handleOnKeyDown(e)}>
+          {error && <p className="py-3 text-center text-red-600">{error}</p>}
           <div className="flex h-full w-full cursor-default justify-evenly gap-20 overflow-hidden bg-neutral px-9 py-4">
             {/*
                1st Collumn
@@ -348,7 +349,6 @@ export default function SystemOverview({
               </div>
             </div>
           </div>
-          {error && <p className="py-3 text-center text-red-600">{error}</p>}
         </form>
       </div>
     </dialog>
