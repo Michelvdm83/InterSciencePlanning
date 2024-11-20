@@ -10,7 +10,7 @@ public record SystemDTO(
     String systemType,
     LocalDate agreedDate,
     LocalDate actualDeliveryDate,
-    UUID employeeResponsible,
+    String employeeResponsible,
     UUID employeeFT,
     UUID employeeSSP,
     String notes,
@@ -28,8 +28,7 @@ public record SystemDTO(
 
   public static SystemDTO from(System system) {
 
-    UUID responsiblePerson =
-        system.getEmployeeResponsible() == null ? null : system.getEmployeeResponsible().getId();
+    String responsiblePerson = system.getEmployeeResponsible();
 
     UUID ftEmployee;
     if (system.getTestTask() == null || system.getTestTask().getEmployee() == null) {

@@ -7,7 +7,7 @@ public record SystemPostPatchDTO(
     String name,
     String poNumber,
     String systemType,
-    UUID employeeResponsible,
+    String employeeResponsible,
     LocalDate agreedDate,
     LocalDate actualDeliveryDate,
     SystemStatus status,

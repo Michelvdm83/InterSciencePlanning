@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function SystemTextArea({
   editable,
   title,
@@ -24,6 +26,7 @@ export default function SystemTextArea({
         }
         disabled={!editable}
         spellCheck="false"
+        onKeyDown={(e) => e.stopPropagation()}
       />
     </div>
   );
