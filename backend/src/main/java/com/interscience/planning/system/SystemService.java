@@ -59,13 +59,6 @@ public class SystemService {
     system.setNotes(systemPostPatchDTO.notes());
     system.setCustomerContactInformation(systemPostPatchDTO.customerContactInformation());
     system.setProjectInformation(systemPostPatchDTO.projectInformation());
-    //    system.setSchemeApproved(
-    //        systemPostPatchDTO.schemeApproved() != null ? systemPostPatchDTO.schemeApproved() :
-    // false);
-    //    system.setSpecsheetApproved(
-    //        systemPostPatchDTO.specsheetApproved() != null
-    //            ? systemPostPatchDTO.specsheetApproved()
-    //            : false);
     system.setStatus(SystemStatus.TO_BE_PLANNED);
     system.setSeller(systemPostPatchDTO.seller());
 
@@ -135,10 +128,6 @@ public class SystemService {
     if (dto.notes() != null) {
       system.setNotes(dto.notes());
     }
-
-    //    system.setSchemeApproved(dto.schemeApproved() != null ? dto.schemeApproved() : false);
-    //    system.setSpecsheetApproved(dto.specsheetApproved() != null ? dto.specsheetApproved() :
-    // false);
 
     systemRepository.save(system);
   }

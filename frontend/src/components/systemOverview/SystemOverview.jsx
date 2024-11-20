@@ -3,7 +3,6 @@ import SystemTextField from "./components/SystemTextField.jsx";
 import SystemDateField from "./components/SystemDateField.jsx";
 import ApiService from "../../services/ApiService.js";
 import EmployeeService from "../../services/EmployeeService.js";
-import SystemCheckboxField from "./components/SystemCheckBoxField.jsx";
 import SystemSelectStatusField from "./components/SystemSelectStatusField.jsx";
 import SystemSelectEmployeeField from "./components/SystemSelectEmployeeField.jsx";
 import SystemNumberField from "./components/SystemNumberField.jsx";
@@ -159,22 +158,6 @@ export default function SystemOverview({
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
               />
-
-              {/* <SystemCheckboxField
-                title="Schema goedgekeurd"
-                variable="schemeApproved"
-                editable={employeeFunction == "TEAM_LEADER"}
-                system={systemName ? editedSystem : system}
-                setSystem={systemName ? setEditedSystem : setSystem}
-              />
-
-              <SystemCheckboxField
-                title="Specsheet goedgekeurd"
-                variable="specsheetApproved"
-                editable={employeeFunction == "TEAM_LEADER"}
-                system={systemName ? editedSystem : system}
-                setSystem={systemName ? setEditedSystem : setSystem}
-              /> */}
 
               <SystemDateField
                 title="Afgesproken deadline"
