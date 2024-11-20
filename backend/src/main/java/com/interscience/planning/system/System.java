@@ -47,10 +47,6 @@ public class System {
 
   private String projectInformation;
 
-  private boolean schemeApproved;
-
-  private boolean specsheetApproved;
-
   private String seller;
 
   @Enumerated(EnumType.STRING)

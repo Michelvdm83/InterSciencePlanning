@@ -8,8 +8,6 @@ public record SystemPostPatchDTO(
     String poNumber,
     String systemType,
     String employeeResponsible,
-    Boolean schemeApproved,
-    Boolean specsheetApproved,
     LocalDate agreedDate,
     LocalDate actualDeliveryDate,
     SystemStatus status,
