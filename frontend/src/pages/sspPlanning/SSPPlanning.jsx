@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
 import ScheduleService from "../../services/ScheduleService.js";
 import SystemModalButton from "../../components/SystemModalButton.jsx";
+import TaskModalButton from "../sspScheduling/components/TaskModalButton.jsx";
 
 export default function SSPPlanning() {
   const planningDays = 20;
@@ -188,7 +189,14 @@ export default function SSPPlanning() {
                       key={overallIndex}
                       className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
                     >
-                      {i === 0 ? task.taskName : ""}
+                      <TaskModalButton
+                        id={task.taskId}
+                        updateOpenTasks={update}
+                      >
+                        <div className="underline hover:text-white">
+                          {i === 0 ? task.taskName : ""}
+                        </div>
+                      </TaskModalButton>
                     </div>
                   );
               });
