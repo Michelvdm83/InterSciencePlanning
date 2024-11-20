@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
-import ScheduleService from "../../services/ScheduleService.js";
+import ScheduleServiceNew from "../../services/ScheduleServiceNew.js";
 import SystemModalButton from "../../components/SystemModalButton.jsx";
 
 export default function SSPPlanning() {
   const planningDays = 20;
   //set begin date needed for later implementation of selecting the period you want to see
   const [beginDate, setBeginDate] = useState(
-    ScheduleService.getMonday(new Date()),
+    ScheduleServiceNew.getMonday(new Date()),
   );
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function SSPPlanning() {
         });
       });
 
-    setDateArray(ScheduleService.getDates(beginDate, planningDays));
+    setDateArray(ScheduleServiceNew.getDates(beginDate, planningDays));
     setLoading(false);
   }, []);
 
@@ -40,7 +40,7 @@ export default function SSPPlanning() {
   const getEmployeeTasks = async (employees) => {
     let newEmployeeTasksArray = [];
     for (const employee of employees) {
-      const newEmployeeTasks = await ScheduleService.getEmployeeSchedule(
+      const newEmployeeTasks = await ScheduleServiceNew.getEmployeeSchedule(
         beginDate,
         planningDays,
         employee.id,
