@@ -1,7 +1,6 @@
 package com.interscience.planning.system;
 
 import com.interscience.planning.constructiontask.ConstructionTask;
-import com.interscience.planning.employee.Employee;
 import com.interscience.planning.testtask.TestTask;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -34,7 +33,7 @@ public class System {
 
   private LocalDate actualDeliveryDate;
 
-  @ManyToOne private Employee employeeResponsible;
+  private String employeeResponsible;
 
   @OneToOne(mappedBy = "system", cascade = CascadeType.PERSIST)
   private TestTask testTask;
@@ -47,10 +46,6 @@ public class System {
   private String customerContactInformation;
 
   private String projectInformation;
-
-  private boolean schemeApproved;
-
-  private boolean specsheetApproved;
 
   private String seller;
 
