@@ -10,6 +10,7 @@ import {
   isWeekend,
   nextMonday,
   previousMonday,
+  subDays,
 } from "date-fns";
 import ApiService from "./ApiService";
 
@@ -82,12 +83,50 @@ export default class ScheduleServiceNew {
     return daysOfHolidays;
   }
 
+  static #getSchedule(allDaysWithTasks) {
+    const scheduling = [];
+    //vul de schedule van de return
+    let currentTaskName;
+    let currentTaskDays = 0;
+    let currentTaskStatus;
+    let loopIndex = 0;
+    do {
+      if (
+        loopIndex === allDaysWithTasks.length ||
+        allDaysWithTasks[loopIndex].taskName !== currentTaskName
+      ) {
+        if (currentTaskDays > 0) {
+          scheduling.push({
+            taskName: currentTaskName,
+            numberOfDays: currentTaskDays,
+            status: currentTaskStatus,
+          });
+        }
+        if (loopIndex < allDaysWithTasks.length) {
+          currentTaskName = allDaysWithTasks[loopIndex].taskName;
+          currentTaskDays = 0;
+          //nu nog zo voor testen, status straks eerder goed gezet
+          currentTaskStatus =
+            allDaysWithTasks[loopIndex].status === "BUILDING"
+              ? "started"
+              : allDaysWithTasks[loopIndex].status;
+        }
+      }
+      loopIndex++;
+      currentTaskDays++;
+    } while (loopIndex <= allDaysWithTasks.length);
+
+    return scheduling;
+  }
+
   //returns the schedule of the employee with employeeId in a period of numberOfDays, starting at startDate
   static async getEmployeeSchedule(startDate, numberOfDays, employeeId) {
     const allDays = this.getDates(startDate, numberOfDays);
-    const scheduling = [];
+    let scheduling = [];
 
     //hoe dit goed op te delen?
+    //aanroep + endpoint aanpassen zodat het de periode meegeeft en daarop de data beperkt die wordt teruggegeven
+    //"vandaag" word nu niet naar gekeken: dit is nodig voor de 'delayed'
     await ApiService.get(`employees/schedules/` + employeeId)
       .then((response) => {
         const tasks = response.data.allTasks ? response.data.allTasks : [];
@@ -132,7 +171,7 @@ export default class ScheduleServiceNew {
           } else if (isBefore(startDate, allDaysWithTasks[dayIndex].date)) {
             currentStatus = "conflict";
           } else if (
-            //hiervoor check voor isAfter allDaysWithTasks laatste date?
+            //hiervoor check voor isAfter allDaysWithTasks laatste date? Of niet nodig?
             isAfter(startDate, allDaysWithTasks[dayIndex].date)
           ) {
             dayIndex = allDaysWithTasks.findIndex((d) =>
@@ -153,91 +192,97 @@ export default class ScheduleServiceNew {
           } else {
             daysTillEnd = task.estimatedDays;
             endSet = false;
+            console.log(task);
+            if (task.dateStarted && isBefore(task.dateStarted, startDate)) {
+              const daysInBetween = eachDayOfInterval({
+                start: task.dateStarted,
+                end: subDays(startDate, 1),
+              });
+              console.log(daysInBetween);
+              daysInBetween.forEach((d) => {
+                console.log(daysTillEnd);
+                if (
+                  holidays.findIndex((hday) => isSameDay(hday, d)) === -1 &&
+                  !isWeekend(d)
+                ) {
+                  daysTillEnd--;
+                }
+              });
+              console.log(daysTillEnd);
+            }
             //hier berekening voor delayed
-            //voorwaarde: task.dateStarted && !task.dateCompleted && task.systemName?
+            //voorwaarde: task.status === "BUILDING"? ms + task.dateStarted?
             //ook checken voor volgende taak geen startdatum?
           }
 
-          let scheduleDays = 0;
-          do {
-            const currentDay = allDaysWithTasks[dayIndex];
+          if (daysTillEnd > 0) {
+            let scheduleDays = 0;
+            while (daysTillEnd > 0 && dayIndex < allDaysWithTasks.length) {
+              const currentDay = allDaysWithTasks[dayIndex];
 
-            if (endSet === true || currentDay.status === "empty") {
-              daysTillEnd--;
+              if (endSet === true || currentDay.status === "empty") {
+                daysTillEnd--;
+              }
+
+              if (currentDay.status === "empty") {
+                currentDay.status = currentStatus;
+                currentDay.taskName = task.systemName
+                  ? task.systemName
+                  : task.taskName;
+
+                scheduleDays++;
+              } else if (
+                currentDay.status !== "holiday" &&
+                currentStatus !== "conflict"
+              ) {
+                currentStatus = "conflict";
+                let tempIndex = dayIndex - 1;
+                //extra veiligheid of overbodig?
+                while (
+                  allDaysWithTasks[tempIndex].taskName === task.taskName &&
+                  tempIndex >= 0
+                ) {
+                  allDaysWithTasks[tempIndex].status = "conflict";
+                  tempIndex--;
+                }
+              }
+
+              dayIndex++;
             }
 
-            if (currentDay.status === "empty") {
-              currentDay.status = currentStatus;
-              currentDay.taskName = task.systemName
-                ? task.systemName
-                : task.taskName;
-
-              scheduleDays++;
-            } else if (
-              currentDay.status !== "holiday" &&
-              currentStatus !== "conflict"
-            ) {
-              currentStatus = "conflict";
-              let tempIndex = dayIndex - 1;
-              //extra veiligheid of overbodig?
-              while (
-                allDaysWithTasks[tempIndex].taskName === task.taskName &&
-                tempIndex >= 0
-              ) {
-                allDaysWithTasks[tempIndex].status = "conflict";
-                tempIndex--;
+            //als de taak op geen enkele dag in de planning staat, probeer hem dan op iig 1 dag neer te zetten
+            if (scheduleDays === 0) {
+              console.log(task);
+              const nextOpenIndex = allDaysWithTasks.findIndex(
+                (d, index) => index >= dayIndex && d.status === "empty",
+              );
+              if (nextOpenIndex !== -1) {
+                console.log(nextOpenIndex);
+                let nextOpenDay = allDaysWithTasks[nextOpenIndex];
+                console.log(nextOpenDay);
+                nextOpenDay.status = "conflict";
+                console.log(nextOpenDay);
+                nextOpenDay.taskName = task.systemName
+                  ? task.systemName
+                  : task.taskName;
+                console.log(nextOpenDay);
+                dayIndex = nextOpenIndex + 1;
+              } else {
+                dayIndex = -1;
               }
             }
+          } else {
+            if (tasks[index + 1] && !tasks[index + 1].dateStarted) {
+              const nextStart = task.dateCompleted
+                ? addBusinessDays(task.dateCompleted, 1)
+                : addBusinessDays(task.dateStarted, task.estimatedDays);
 
-            dayIndex++;
-          } while (daysTillEnd > 0 && dayIndex < allDaysWithTasks.length);
-
-          //als de taak op geen enkele dag in de planning staat, probeer hem dan op iig 1 dag neer te zetten
-          if (scheduleDays === 0) {
-            const nextOpenIndex = allDaysWithTasks.findIndex(
-              (d, index) => index >= dayIndex && d.status === "empty",
-            );
-            if (nextOpenIndex !== -1) {
-              const nextOpenDay = allDaysWithTasks[nextOpenIndex];
-              nextOpenDay.status = "conflict";
-              nextOpenDay.taskName = currentDay.taskName = task.systemName
-                ? task.systemName
-                : task.taskName;
-              dayIndex = nextOpenIndex + 1;
-            } //hier nog een regel voor wanneer er geen "empty" dag is?
+              tasks[index + 1].dateStarted = nextStart;
+            }
           }
         }
 
-        //vul de schedule van de return
-        let currentTaskName;
-        let currentTaskDays = 0;
-        let currentTaskStatus;
-        let loopIndex = 0;
-        do {
-          if (
-            loopIndex === allDaysWithTasks.length ||
-            allDaysWithTasks[loopIndex].taskName !== currentTaskName
-          ) {
-            if (currentTaskDays > 0) {
-              scheduling.push({
-                taskName: currentTaskName,
-                numberOfDays: currentTaskDays,
-                status: currentTaskStatus,
-              });
-            }
-            if (loopIndex < allDaysWithTasks.length) {
-              currentTaskName = allDaysWithTasks[loopIndex].taskName;
-              currentTaskDays = 0;
-              //nu nog zo voor testen, status straks eerder goed gezet
-              currentTaskStatus =
-                allDaysWithTasks[loopIndex].status === "BUILDING"
-                  ? "started"
-                  : allDaysWithTasks[loopIndex].status;
-            }
-          }
-          loopIndex++;
-          currentTaskDays++;
-        } while (loopIndex <= allDaysWithTasks.length);
+        scheduling = this.#getSchedule(allDaysWithTasks);
       })
       .catch(() => {
         return [
