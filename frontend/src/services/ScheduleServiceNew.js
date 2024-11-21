@@ -7,6 +7,7 @@ import {
   isBefore,
   isMonday,
   isSameDay,
+  isToday,
   isWeekend,
   nextMonday,
   previousMonday,
@@ -106,10 +107,7 @@ export default class ScheduleServiceNew {
           currentTaskName = allDaysWithTasks[loopIndex].taskName;
           currentTaskDays = 0;
           //nu nog zo voor testen, status straks eerder goed gezet
-          currentTaskStatus =
-            allDaysWithTasks[loopIndex].status === "BUILDING"
-              ? "started"
-              : allDaysWithTasks[loopIndex].status;
+          currentTaskStatus = allDaysWithTasks[loopIndex].status;
         }
       }
       loopIndex++;
@@ -124,9 +122,8 @@ export default class ScheduleServiceNew {
     const allDays = this.getDates(startDate, numberOfDays);
     let scheduling = [];
 
-    //hoe dit goed op te delen?
+    //hoe dit goed op te delen? zijn er nog dingen die op verschillende plekken worden herhaald?
     //aanroep + endpoint aanpassen zodat het de periode meegeeft en daarop de data beperkt die wordt teruggegeven
-    //"vandaag" word nu niet naar gekeken: dit is nodig voor de 'delayed'
     await ApiService.get(`employees/schedules/` + employeeId)
       .then((response) => {
         const tasks = response.data.allTasks ? response.data.allTasks : [];
@@ -159,6 +156,10 @@ export default class ScheduleServiceNew {
           const task = tasks[index];
           let currentStatus = task.systemName ? task.status : "task";
 
+          if (index === 0 && !task.dateStarted) {
+            task.dateStarted = new Date();
+          }
+
           let startDate;
           if (!task.dateStarted) {
             startDate = allDaysWithTasks[dayIndex].date;
@@ -190,17 +191,36 @@ export default class ScheduleServiceNew {
             );
             endSet = true;
           } else {
+            if (task.status === "BUILDING") {
+              let daysBuilding = this.#getNumberOfWorkingDays(
+                task.dateStarted,
+                new Date(),
+                true,
+              );
+              const thisDays = this.getDates(task.dateStarted, daysBuilding);
+              thisDays.forEach((d) => {
+                if (holidays.findIndex((hday) => isSameDay(hday, d)) !== -1) {
+                  daysBuilding--;
+                }
+              });
+
+              if (daysBuilding <= task.estimatedDays) {
+                currentStatus = "started";
+              } else {
+                currentStatus = "delayed";
+                task.estimatedDays = daysBuilding;
+              }
+            }
+
             daysTillEnd = task.estimatedDays;
             endSet = false;
-            console.log(task);
             if (task.dateStarted && isBefore(task.dateStarted, startDate)) {
               const daysInBetween = eachDayOfInterval({
                 start: task.dateStarted,
                 end: subDays(startDate, 1),
               });
-              console.log(daysInBetween);
+
               daysInBetween.forEach((d) => {
-                console.log(daysTillEnd);
                 if (
                   holidays.findIndex((hday) => isSameDay(hday, d)) === -1 &&
                   !isWeekend(d)
@@ -208,11 +228,7 @@ export default class ScheduleServiceNew {
                   daysTillEnd--;
                 }
               });
-              console.log(daysTillEnd);
             }
-            //hier berekening voor delayed
-            //voorwaarde: task.status === "BUILDING"? ms + task.dateStarted?
-            //ook checken voor volgende taak geen startdatum?
           }
 
           if (daysTillEnd > 0) {
