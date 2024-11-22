@@ -1,11 +1,11 @@
 package com.interscience.planning.employee;
 
-import com.interscience.planning.holiday.HolidayDTO;
-import com.interscience.planning.ssptask.SSPTaskDTO;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -60,10 +60,10 @@ public class EmployeeController {
   }
 
   @GetMapping("/schedules/{employeeId}")
-  public ResponseEntity<EmployeeScheduleDTO> getScheduleItems(@PathVariable UUID employeeId) {
-    List<SSPTaskDTO> employeeSSPTasks = employeeService.getEmployeeSSPTasks(employeeId);
-    List<HolidayDTO> employeeHolidays = employeeService.getEmployeeHolidays(employeeId);
-
-    return ResponseEntity.ok(new EmployeeScheduleDTO(employeeSSPTasks, employeeHolidays));
+  public ResponseEntity<EmployeeScheduleDTO> getScheduleItems(
+      @PathVariable UUID employeeId,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
+    return ResponseEntity.ok(employeeService.getEmployeeSchedule(employeeId, startDate, endDate));
   }
 }

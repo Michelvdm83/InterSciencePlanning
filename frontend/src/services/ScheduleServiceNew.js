@@ -71,7 +71,7 @@ export default class ScheduleServiceNew {
     }
   }
 
-  //get a list of dates, ordered old-new, of all holidays. filters duplicate dates
+  //get a list of dates, ordered old-new, of all holidays
   static #getDaysOfHolidays(holidays) {
     let daysOfHolidays = [];
     holidays.forEach((period) => {
@@ -106,7 +106,6 @@ export default class ScheduleServiceNew {
         if (loopIndex < allDaysWithTasks.length) {
           currentTaskName = allDaysWithTasks[loopIndex].taskName;
           currentTaskDays = 0;
-          //nu nog zo voor testen, status straks eerder goed gezet
           currentTaskStatus = allDaysWithTasks[loopIndex].status;
         }
       }
@@ -124,7 +123,10 @@ export default class ScheduleServiceNew {
 
     //hoe dit goed op te delen? zijn er nog dingen die op verschillende plekken worden herhaald?
     //aanroep + endpoint aanpassen zodat het de periode meegeeft en daarop de data beperkt die wordt teruggegeven
-    await ApiService.get(`employees/schedules/` + employeeId)
+    await ApiService.get(`employees/schedules/` + employeeId, {
+      startDate: allDays.at(0),
+      endDate: allDays.at(-1),
+    })
       .then((response) => {
         const tasks = response.data.allTasks ? response.data.allTasks : [];
         const holidays = response.data.holidays
@@ -138,9 +140,15 @@ export default class ScheduleServiceNew {
               date: day,
               taskName: "Vakantie",
               status: "holiday",
+              taskId: null,
             });
           } else {
-            allDaysWithTasks.push({ date: day, taskName: "", status: "empty" });
+            allDaysWithTasks.push({
+              date: day,
+              taskName: "",
+              status: "empty",
+              taskId: null,
+            });
             //hier komt nog id bij, zodat een taak ook klikbaar gemaakt kan worden in de planning
           }
         });
@@ -245,6 +253,7 @@ export default class ScheduleServiceNew {
                 currentDay.taskName = task.systemName
                   ? task.systemName
                   : task.taskName;
+                currentDay.taskId = task.systemName ? null : task.taskId;
 
                 scheduleDays++;
               } else if (
@@ -281,6 +290,7 @@ export default class ScheduleServiceNew {
                 nextOpenDay.taskName = task.systemName
                   ? task.systemName
                   : task.taskName;
+                nextOpenDay.taskId = task.systemName ? null : task.taskId;
                 console.log(nextOpenDay);
                 dayIndex = nextOpenIndex + 1;
               } else {
