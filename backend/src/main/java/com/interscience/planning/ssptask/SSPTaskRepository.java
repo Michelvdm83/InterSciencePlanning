@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Limit;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SSPTaskRepository extends JpaRepository<SSPTask, UUID> {
@@ -20,6 +22,9 @@ public interface SSPTaskRepository extends JpaRepository<SSPTask, UUID> {
 
   List<SSPTask> findFirst10ByEmployeeAndIndexGreaterThanEqualOrderByIndex(
       Employee employee, Integer index);
+
+  List<SSPTask> findByEmployeeAndIndexGreaterThanEqual(
+      Employee employee, Integer index, Sort sort, Limit limit);
 
   Optional<SSPTask> findFirstByEmployeeAndDateStartedBeforeOrderByIndexDesc(
       Employee employee, LocalDate date);

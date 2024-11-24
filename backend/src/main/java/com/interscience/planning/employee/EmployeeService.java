@@ -11,11 +11,14 @@ import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Limit;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -156,23 +159,43 @@ public class EmployeeService {
       UUID employeeId, LocalDate startDate, LocalDate endDate) {
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
 
-    List<SSPTaskDTO> sspTasks = getEmployeeSSPTasks(employee, startDate);
+    List<SSPTaskDTO> sspTasks = getEmployeeSSPTasks(employee, startDate, endDate);
 
-    LocalDate firstDate = sspTasks.isEmpty() ? startDate : sspTasks.getFirst().dateStarted();
+    LocalDate firstDate = startDate;
+    if (!sspTasks.isEmpty()
+        && sspTasks.getFirst().dateStarted() != null
+        && sspTasks.getFirst().dateStarted().isBefore(startDate)) {
+      firstDate = sspTasks.getFirst().dateStarted();
+    }
     List<HolidayDTO> holidays = getEmployeeHolidays(employee, firstDate, endDate);
     return new EmployeeScheduleDTO(sspTasks, holidays);
   }
 
-  private List<SSPTaskDTO> getEmployeeSSPTasks(Employee employee, LocalDate startDate) {
-    Optional<SSPTask> firstTask =
+  private List<SSPTaskDTO> getEmployeeSSPTasks(
+      Employee employee, LocalDate startDate, LocalDate endDate) {
+
+    // queries sort als argument geven, zodat het leesbaarder en herbruikbaarder wordt?
+    Optional<SSPTask> possibleFirstTask =
         sspTaskRepository.findFirstByEmployeeAndDateStartedBeforeOrderByIndexDesc(
             employee, startDate);
 
-    int firstIndex = firstTask.isPresent() ? firstTask.get().getIndex() : 0;
+    int firstIndex = 0;
+    int queryLimit = 10;
+    if (possibleFirstTask.isPresent()) {
+      SSPTask firstTask = possibleFirstTask.get();
+      firstIndex = firstTask.getIndex();
+      LocalDate firstDate =
+          firstTask.getDateStarted() == null ? startDate : firstTask.getDateStarted();
+      long daysBetween = firstDate.until(endDate, ChronoUnit.DAYS);
+      int newLimit = (int) (daysBetween / 3);
+      queryLimit = Math.max(queryLimit, newLimit);
+    }
 
+    Sort sort = Sort.by("index").ascending();
+    Limit limit = Limit.of(queryLimit);
     List<SSPTask> sspTasks =
-        sspTaskRepository.findFirst10ByEmployeeAndIndexGreaterThanEqualOrderByIndex(
-            employee, firstIndex);
+        sspTaskRepository.findByEmployeeAndIndexGreaterThanEqual(employee, firstIndex, sort, limit);
+
     return sspTasks.stream().map(SSPTaskDTO::from).collect(Collectors.toList());
   }
 
