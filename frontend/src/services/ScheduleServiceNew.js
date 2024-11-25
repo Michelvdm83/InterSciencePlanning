@@ -90,6 +90,8 @@ export default class ScheduleServiceNew {
     let currentTaskName;
     let currentTaskDays = 0;
     let currentTaskStatus;
+    let currentTaskId;
+    let currentIsSystem;
     let loopIndex = 0;
     do {
       if (
@@ -101,12 +103,16 @@ export default class ScheduleServiceNew {
             taskName: currentTaskName,
             numberOfDays: currentTaskDays,
             status: currentTaskStatus,
+            taskId: currentTaskId,
+            isSystem: currentIsSystem,
           });
         }
         if (loopIndex < allDaysWithTasks.length) {
           currentTaskName = allDaysWithTasks[loopIndex].taskName;
           currentTaskDays = 0;
           currentTaskStatus = allDaysWithTasks[loopIndex].status;
+          currentTaskId = allDaysWithTasks[loopIndex].taskId;
+          currentIsSystem = allDaysWithTasks[loopIndex].isSystem;
         }
       }
       loopIndex++;
@@ -141,6 +147,7 @@ export default class ScheduleServiceNew {
               taskName: "Vakantie",
               status: "holiday",
               taskId: null,
+              isSystem: false,
             });
           } else {
             allDaysWithTasks.push({
@@ -148,8 +155,8 @@ export default class ScheduleServiceNew {
               taskName: "",
               status: "empty",
               taskId: null,
+              isSystem: false,
             });
-            //hier komt nog id bij, zodat een taak ook klikbaar gemaakt kan worden in de planning
           }
         });
         let dayIndex = allDaysWithTasks.findIndex((d) => d.status === "empty");
@@ -254,6 +261,7 @@ export default class ScheduleServiceNew {
                   ? task.systemName
                   : task.taskName;
                 currentDay.taskId = task.systemName ? null : task.taskId;
+                currentDay.isSystem = task.systemName !== null;
 
                 scheduleDays++;
               } else if (
@@ -277,21 +285,17 @@ export default class ScheduleServiceNew {
 
             //als de taak op geen enkele dag in de planning staat, probeer hem dan op iig 1 dag neer te zetten
             if (scheduleDays === 0) {
-              console.log(task);
               const nextOpenIndex = allDaysWithTasks.findIndex(
                 (d, index) => index >= dayIndex && d.status === "empty",
               );
               if (nextOpenIndex !== -1) {
-                console.log(nextOpenIndex);
                 let nextOpenDay = allDaysWithTasks[nextOpenIndex];
-                console.log(nextOpenDay);
                 nextOpenDay.status = "conflict";
-                console.log(nextOpenDay);
                 nextOpenDay.taskName = task.systemName
                   ? task.systemName
                   : task.taskName;
                 nextOpenDay.taskId = task.systemName ? null : task.taskId;
-                console.log(nextOpenDay);
+                nextOpenDay.isSystem = task.systemName !== null;
                 dayIndex = nextOpenIndex + 1;
               } else {
                 dayIndex = -1;
