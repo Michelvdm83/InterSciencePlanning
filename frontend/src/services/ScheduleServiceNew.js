@@ -176,8 +176,9 @@ export default class ScheduleServiceNew {
           }
 
           let startDate;
-          if (!task.dateStarted) {
+          if (task.dateStarted === null) {
             startDate = allDaysWithTasks[dayIndex].date;
+            task.dateStarted = startDate;
           } else {
             startDate = new Date(task.dateStarted);
           }
@@ -197,7 +198,7 @@ export default class ScheduleServiceNew {
 
           let daysTillEnd;
           let endSet;
-          if (task.dateCompleted) {
+          if (task.dateCompleted !== null) {
             const completedDate = new Date(task.dateCompleted);
             daysTillEnd = this.#getNumberOfWorkingDays(
               allDaysWithTasks[dayIndex].date,
@@ -207,11 +208,15 @@ export default class ScheduleServiceNew {
             endSet = true;
           } else {
             if (task.status === "BUILDING") {
-              let daysBuilding = this.#getNumberOfWorkingDays(
-                task.dateStarted,
-                new Date(),
-                true,
-              );
+              let daysBuilding = 1;
+              if (isBefore(task.dateStarted, new Date())) {
+                daysBuilding = this.#getNumberOfWorkingDays(
+                  task.dateStarted,
+                  new Date(),
+                  true,
+                );
+              }
+
               const thisDays = this.getDates(task.dateStarted, daysBuilding);
               thisDays.forEach((d) => {
                 if (holidays.findIndex((hday) => isSameDay(hday, d)) !== -1) {
