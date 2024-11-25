@@ -52,7 +52,7 @@ public class System {
   @Enumerated(EnumType.STRING)
   private SystemStatus status;
 
-  private boolean delayCheckedBySupervisor = true;
+  private Boolean delayCheckedBySupervisor = null;
 
   public System(String name) {
     this.name = name;

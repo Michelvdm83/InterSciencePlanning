@@ -23,4 +23,6 @@ public interface SSPTaskRepository extends JpaRepository<SSPTask, UUID> {
       "SELECT t FROM SSPTask t WHERE t.employee = :employee AND (t.dateCompleted IS NULL OR t.dateCompleted >= :currentDate) ORDER BY t.index")
   List<SSPTask> findByEmployeeAndUnfinishedTasks(
       @Param("employee") Employee employee, @Param("currentDate") LocalDate currentDate);
+
+  List<SSPTask> findByEmployeeNotNullAndDateStartedNotNullAndDateCompletedNull();
 }
