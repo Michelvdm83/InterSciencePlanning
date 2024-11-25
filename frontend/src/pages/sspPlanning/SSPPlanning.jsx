@@ -161,13 +161,7 @@ export default function SSPPlanning() {
                     ? "border-black"
                     : `border-${bgColor}`;
 
-                if (
-                  (bgColor === "started" ||
-                    bgColor === "planned" ||
-                    bgColor === "done" ||
-                    bgColor === "primary") &&
-                  i === 0
-                ) {
+                if (task.isSystem && i === 0) {
                   return (
                     <div
                       key={overallIndex}
@@ -183,7 +177,7 @@ export default function SSPPlanning() {
                       </SystemModalButton>
                     </div>
                   );
-                } else
+                } else if (task.taskId && i === 0) {
                   return (
                     <div
                       key={overallIndex}
@@ -194,9 +188,18 @@ export default function SSPPlanning() {
                         updateOpenTasks={update}
                       >
                         <div className="underline hover:text-white">
-                          {i === 0 ? task.taskName : ""}
+                          {task.taskName}
                         </div>
                       </TaskModalButton>
+                    </div>
+                  );
+                } else
+                  return (
+                    <div
+                      key={overallIndex}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 truncate border-b-[1.5px] border-solid px-2`}
+                    >
+                      {i === 0 ? task.taskName : ""}
                     </div>
                   );
               });
