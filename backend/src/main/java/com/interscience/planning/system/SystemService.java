@@ -43,6 +43,18 @@ public class SystemService {
     return names.stream().map(SystemNameOnly::getName).toList();
   }
 
+  public List<SystemDTO> getDelayedSystems() {
+    return systemRepository.findByDelayCheckedBySupervisorFalse().stream()
+        .map(SystemDTO::from)
+        .toList();
+  }
+
+  public void setDelayCheckedTrue(String systemName) {
+    System system = systemRepository.findByName(systemName).orElseThrow(NotFoundException::new);
+    system.setDelayCheckedBySupervisor(true);
+    systemRepository.save(system);
+  }
+
   public void createNewSystem(SystemPostPatchDTO systemPostPatchDTO) {
     validateName(systemPostPatchDTO);
 

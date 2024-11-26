@@ -28,6 +28,17 @@ public class SystemController {
     return systemService.searchByName(contains);
   }
 
+  @GetMapping("/delayed")
+  public List<SystemDTO> getDelayedSystems() {
+    return systemService.getDelayedSystems();
+  }
+
+  @PatchMapping("/delayed/{systemName}")
+  public ResponseEntity<?> setDelayChecked(@PathVariable String systemName) {
+    systemService.setDelayCheckedTrue(systemName);
+    return ResponseEntity.ok().build();
+  }
+
   @PostMapping
   public ResponseEntity<?> createNewSystem(@RequestBody SystemPostPatchDTO systemPostPatchDTO) {
     systemService.createNewSystem(systemPostPatchDTO);

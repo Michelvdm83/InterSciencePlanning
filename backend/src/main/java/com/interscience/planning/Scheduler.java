@@ -5,6 +5,7 @@ import com.interscience.planning.holiday.Holiday;
 import com.interscience.planning.holiday.HolidayRepository;
 import com.interscience.planning.ssptask.SSPTask;
 import com.interscience.planning.ssptask.SSPTaskRepository;
+import com.interscience.planning.system.SystemRepository;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 public class Scheduler {
   private final SSPTaskRepository sspTaskRepository;
   private final HolidayRepository holidayRepository;
+  private final SystemRepository systemRepository;
 
   // test for scheduling
   @Scheduled(cron = "*/10 * * * * *")
@@ -30,15 +32,16 @@ public class Scheduler {
   @Scheduled(cron = "0 0 1 * * MON-FRI")
   public void checkForDelayedSystems() {
 
-    List<SSPTask> systemsInProgress =
+    List<SSPTask> tasksInProgress =
         sspTaskRepository.findByEmployeeNotNullAndDateStartedNotNullAndDateCompletedNull();
-    systemsInProgress.forEach(
+    tasksInProgress.forEach(
         (sspTask -> {
           if (sspTask.getConstructionTask() != null
               && sspTask.getConstructionTask().getSystem() != null) {
             var system = sspTask.getConstructionTask().getSystem();
             if (system.getDelayCheckedBySupervisor() == null && isDelayed(sspTask)) {
               system.setDelayCheckedBySupervisor(false);
+              systemRepository.save(system);
             }
           }
         }));
