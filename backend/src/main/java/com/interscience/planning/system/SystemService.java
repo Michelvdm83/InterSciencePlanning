@@ -49,7 +49,7 @@ public class SystemService {
     System system = new System(systemPostPatchDTO.name());
 
     if (systemPostPatchDTO.employeeResponsible() != null) {
-      setEmployeeResponsible(systemPostPatchDTO, system);
+      system.setEmployeeResponsible(systemPostPatchDTO.employeeResponsible());
     }
 
     system.setPoNumber(systemPostPatchDTO.poNumber());
@@ -59,13 +59,6 @@ public class SystemService {
     system.setNotes(systemPostPatchDTO.notes());
     system.setCustomerContactInformation(systemPostPatchDTO.customerContactInformation());
     system.setProjectInformation(systemPostPatchDTO.projectInformation());
-    //    system.setSchemeApproved(
-    //        systemPostPatchDTO.schemeApproved() != null ? systemPostPatchDTO.schemeApproved() :
-    // false);
-    //    system.setSpecsheetApproved(
-    //        systemPostPatchDTO.specsheetApproved() != null
-    //            ? systemPostPatchDTO.specsheetApproved()
-    //            : false);
     system.setStatus(SystemStatus.TO_BE_PLANNED);
     system.setSeller(systemPostPatchDTO.seller());
 
@@ -89,19 +82,17 @@ public class SystemService {
       system.setSystemType(dto.systemType());
     }
     if (dto.employeeResponsible() != null) {
-      setEmployeeResponsible(dto, system);
+      system.setEmployeeResponsible(dto.employeeResponsible());
     }
     if (dto.agreedDate() != null) {
       system.setAgreedDate(dto.agreedDate());
     }
-
     if (nullValues.get("actualDeliveryDate")) {
       system.setActualDeliveryDate(null);
     }
     if (dto.actualDeliveryDate() != null) {
       system.setActualDeliveryDate(dto.actualDeliveryDate());
     }
-
     if (dto.customerContactInformation() != null) {
       system.setCustomerContactInformation(dto.customerContactInformation());
     }
@@ -111,6 +102,9 @@ public class SystemService {
     if (dto.estimatedConstructionDays() != null) {
       system.getConstructionTask().getSspTask().setEstimatedTime(dto.estimatedConstructionDays());
     }
+    if (nullValues.get("employeeSSP")) {
+      system.getConstructionTask().getSspTask().setEmployee(null);
+    }
     if (dto.employeeSSP() != null) {
       setSSPEmployee(dto, system.getConstructionTask().getSspTask());
     }
@@ -119,6 +113,9 @@ public class SystemService {
 
     if (dto.estimatedTestDays() != null) {
       system.getTestTask().setEstimatedTime(dto.estimatedTestDays());
+    }
+    if (nullValues.get("employeeFT")) {
+      system.getTestTask().setEmployee(null);
     }
     if (dto.employeeFT() != null) {
       setFTEmployee(dto, system.getTestTask());
@@ -136,10 +133,6 @@ public class SystemService {
       system.setNotes(dto.notes());
     }
 
-    //    system.setSchemeApproved(dto.schemeApproved() != null ? dto.schemeApproved() : false);
-    //    system.setSpecsheetApproved(dto.specsheetApproved() != null ? dto.specsheetApproved() :
-    // false);
-
     systemRepository.save(system);
   }
 
@@ -150,6 +143,8 @@ public class SystemService {
     nullValues.put("startOfTest", isExplicitlyNull(jsonNode, "startOfTest"));
     nullValues.put("endOfTest", isExplicitlyNull(jsonNode, "endOfTest"));
     nullValues.put("actualDeliveryDate", isExplicitlyNull(jsonNode, "actualDeliveryDate"));
+    nullValues.put("employeeSSP", isExplicitlyNull(jsonNode, "employeeSSP"));
+    nullValues.put("employeeFT", isExplicitlyNull(jsonNode, "employeeFT"));
     return nullValues;
   }
 
@@ -209,15 +204,6 @@ public class SystemService {
     }
   }
 
-  private void setEmployeeResponsible(SystemPostPatchDTO dto, System system) {
-    Employee employeeResponsible =
-        employeeRepository.findById(dto.employeeResponsible()).orElseThrow(NotFoundException::new);
-    if (employeeResponsible.getFunction() == Function.SSP) {
-      throw new BadRequestException("Employee responsible can't be an SSP employee");
-    }
-    system.setEmployeeResponsible(employeeResponsible);
-  }
-
   private void setSSPEmployee(SystemPostPatchDTO dto, SSPTask sspTask) {
     if (dto.estimatedConstructionDays() == null && sspTask.getEstimatedTime() == null) {
       throw new BadRequestException(
@@ -271,9 +257,7 @@ public class SystemService {
     }
 
     LocalDate testStartDate =
-        dto.startOfTest() != null
-            ? dto.startOfTest()
-            : system.getTestTask().getDateStarted();
+        dto.startOfTest() != null ? dto.startOfTest() : system.getTestTask().getDateStarted();
     if (testStartDate != null && dto.endOfConstruction().isAfter(testStartDate)) {
       throw new BadRequestException("Construction end date must be on or before test start date");
     }
@@ -306,8 +290,9 @@ public class SystemService {
     }
     Employee ftEmployee =
         employeeRepository.findById(dto.employeeFT()).orElseThrow(NotFoundException::new);
-    if (ftEmployee.getFunction() != Function.FT) {
-      throw new BadRequestException("FT employee needs to have function FT");
+    if (ftEmployee.getFunction() != Function.FT
+        && ftEmployee.getFunction() != Function.FT_TEAM_LEADER) {
+      throw new BadRequestException("FT employee needs to have function FT or FT team leader");
     }
     testTask.setEmployee(ftEmployee);
   }
@@ -332,10 +317,7 @@ public class SystemService {
     if (dto.employeeFT() == null && system.getTestTask().getEmployee() == null) {
       throw new BadRequestException("FT employee required for setting test start date");
     }
-    LocalDate endDate =
-        dto.endOfTest() != null
-            ? dto.endOfTest()
-            : testTask.getDateCompleted();
+    LocalDate endDate = dto.endOfTest() != null ? dto.endOfTest() : testTask.getDateCompleted();
     if (endDate != null && dto.startOfTest().isAfter(endDate)) {
       throw new BadRequestException("Test end date must be on or after test start date");
     }

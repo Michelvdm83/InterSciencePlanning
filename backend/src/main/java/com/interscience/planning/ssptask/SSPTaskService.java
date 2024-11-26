@@ -5,6 +5,7 @@ import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class SSPTaskService {
 
   public List<SSPTaskAssignedDTO> getAllByEmployeeId(UUID employeeId) {
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
-    return sspTaskRepository.findByEmployeeOrderByIndex(employee).stream()
+    return sspTaskRepository.findByEmployeeAndUnfinishedTasks(employee, LocalDate.now()).stream()
         .map(SSPTaskAssignedDTO::from)
         .toList();
   }
