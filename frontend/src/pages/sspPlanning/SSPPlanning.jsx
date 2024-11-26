@@ -4,12 +4,16 @@ import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
 import ScheduleService from "../../services/ScheduleService.js";
 import SystemModalButton from "../../components/SystemModalButton.jsx";
+import { addDays, format } from "date-fns";
 
 export default function SSPPlanning() {
   const planningDays = 20;
   //set begin date needed for later implementation of selecting the period you want to see
   const [beginDate, setBeginDate] = useState(
     ScheduleService.getMonday(new Date()),
+  );
+  const [currentWeek, setCurrentWeek] = useState(
+    format(beginDate, "yyyy'-W'ww"),
   );
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,12 +34,18 @@ export default function SSPPlanning() {
       });
 
     setDateArray(ScheduleService.getDates(beginDate, planningDays));
+    setCurrentWeek(format(beginDate, "yyyy'-W'ww"));
     setLoading(false);
-  }, []);
+  }, [beginDate]);
 
   function update() {
     getEmployeeTasks(employees);
   }
+
+  const handleWeekChange = (newDate) => {
+    console.log(newDate);
+    setBeginDate(ScheduleService.getMonday(newDate));
+  };
 
   const getEmployeeTasks = async (employees) => {
     let newEmployeeTasksArray = [];
@@ -197,14 +207,24 @@ export default function SSPPlanning() {
         </div>
         {/* paginator */}
         <div className="join mt-2 self-center">
-          <button className="btn btn-outline join-item">Week terug</button>
+          <button
+            className="btn btn-outline join-item"
+            onClick={() => setBeginDate(addDays(beginDate, -7))}
+          >
+            Week terug
+          </button>
           <input
             className="btn btn-outline join-item"
             type="week"
-            id="week"
-            name="week"
+            value={currentWeek}
+            onChange={(event) => handleWeekChange(event.target.valueAsDate)}
           />
-          <button className="btn btn-outline join-item">Week vooruit</button>
+          <button
+            className="btn btn-outline join-item"
+            onClick={() => setBeginDate(addDays(beginDate, 7))}
+          >
+            Week vooruit
+          </button>
         </div>
       </div>
     </div>
