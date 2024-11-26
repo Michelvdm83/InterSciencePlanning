@@ -224,11 +224,13 @@ export default class ScheduleServiceNew {
                 }
               });
 
-              if (daysBuilding <= task.estimatedDays) {
-                currentStatus = "started";
-              } else {
-                currentStatus = "delayed";
-                task.estimatedDays = daysBuilding;
+              if (currentStatus !== "conflict") {
+                if (daysBuilding <= task.estimatedDays) {
+                  currentStatus = "started";
+                } else {
+                  currentStatus = "delayed";
+                  task.estimatedDays = daysBuilding;
+                }
               }
             }
 
