@@ -68,7 +68,7 @@ export default function SSPPlanning() {
   }
 
   return (
-    <div className="flex h-full w-full justify-center overflow-auto p-8">
+    <div className="flex h-full w-full justify-center overflow-auto p-6">
       <div className="flex h-max max-h-full max-w-full flex-col overflow-hidden rounded-lg border border-secondary p-4">
         <div
           className={`grid p-0 grid-cols-[repeat(${employees.length + 1},150px)] max-w-full grid-flow-col grid-rows-[repeat(21,auto)] overflow-scroll bg-base-100 text-center font-Effra_Md`}
@@ -194,6 +194,17 @@ export default function SSPPlanning() {
               });
             });
           })}
+        </div>
+        {/* paginator */}
+        <div className="join mt-2 self-center">
+          <button className="btn btn-outline join-item">Week terug</button>
+          <input
+            className="btn btn-outline join-item"
+            type="week"
+            id="week"
+            name="week"
+          />
+          <button className="btn btn-outline join-item">Week vooruit</button>
         </div>
       </div>
     </div>
