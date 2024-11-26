@@ -181,7 +181,7 @@ export default function SSPPlanning() {
                   return (
                     <div
                       key={overallIndex}
-                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 border-b-[1.5px] border-solid`}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] h-7 truncate border-b-[1.5px] border-solid px-2`}
                     >
                       <TaskModalButton
                         id={task.taskId}

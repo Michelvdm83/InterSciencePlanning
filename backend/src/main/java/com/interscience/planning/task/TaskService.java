@@ -51,7 +51,8 @@ public class TaskService {
       TaskDTO taskDTO,
       UUID id,
       boolean dateStartedExplicitlyNull,
-      boolean dateCompletedExplicitlyNull) {
+      boolean dateCompletedExplicitlyNull,
+      boolean employeeExplicitlyNull) {
     Task task = taskRepository.findById(id).orElseThrow(NotFoundException::new);
     if (taskDTO.name() != null && !taskDTO.name().isBlank()) {
       task.setName(taskDTO.name());
@@ -67,6 +68,9 @@ public class TaskService {
       task.getSspTask().setEstimatedTime(taskDTO.estimatedTime());
     }
 
+    if (employeeExplicitlyNull) {
+      task.getSspTask().setEmployee(null);
+    }
     if (taskDTO.employee() != null) {
       Employee employee =
           employeeRepository.findById(taskDTO.employee()).orElseThrow(NotFoundException::new);
