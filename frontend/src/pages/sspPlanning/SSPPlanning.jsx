@@ -166,7 +166,7 @@ export default function SSPPlanning() {
                 */
 
                 const borderClass =
-                  i === task.numberOfDays - 1 && (overallIndex + 1) % 5 != 0
+                  i === task.numberOfDays - 1 && (overallIndex + 1) % 5 !== 0
                     ? "border-black"
                     : `border-${bgColor}`;
 
