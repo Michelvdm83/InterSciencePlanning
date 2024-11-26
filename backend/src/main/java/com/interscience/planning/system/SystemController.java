@@ -29,13 +29,13 @@ public class SystemController {
   }
 
   @GetMapping("/delayed")
-  public List<SystemDTO> getDelayedSystems() {
+  public List<SystemDelayedDTO> getDelayedSystems() {
     return systemService.getDelayedSystems();
   }
 
-  @PatchMapping("/delayed/{systemName}")
-  public ResponseEntity<?> setDelayChecked(@PathVariable String systemName) {
-    systemService.setDelayCheckedTrue(systemName);
+  @PatchMapping("/delayed")
+  public ResponseEntity<?> setDelayChecked(@RequestBody SystemSetCheckedDTO dto) {
+    systemService.setDelayChecked(dto);
     return ResponseEntity.ok().build();
   }
 
