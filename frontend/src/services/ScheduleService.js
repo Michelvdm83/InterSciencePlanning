@@ -202,12 +202,14 @@ export default class ScheduleService {
           let daysTillEnd;
           let endSet;
           if (task.dateCompleted !== null) {
-            const completedDate = new Date(task.dateCompleted);
-            daysTillEnd = this.#getNumberOfWorkingDays(
-              allDaysWithTasks[dayIndex].date,
-              completedDate,
-              true,
-            );
+            if (dayIndex < allDaysWithTasks.length) {
+              const completedDate = new Date(task.dateCompleted);
+              daysTillEnd = this.#getNumberOfWorkingDays(
+                allDaysWithTasks[dayIndex].date,
+                completedDate,
+                true,
+              );
+            }
             endSet = true;
           } else {
             if (task.status === "BUILDING") {
