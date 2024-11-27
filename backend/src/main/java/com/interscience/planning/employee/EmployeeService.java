@@ -4,15 +4,21 @@ import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
 import com.interscience.planning.holiday.HolidayDTO;
 import com.interscience.planning.holiday.HolidayRepository;
+import com.interscience.planning.ssptask.SSPTask;
 import com.interscience.planning.ssptask.SSPTaskDTO;
 import com.interscience.planning.ssptask.SSPTaskRepository;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Limit;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -149,16 +155,54 @@ public class EmployeeService {
     }
   }
 
-  public List<SSPTaskDTO> getEmployeeSSPTasks(UUID employeeId) {
+  public EmployeeScheduleDTO getEmployeeSchedule(
+      UUID employeeId, LocalDate startDate, LocalDate endDate) {
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
-    return sspTaskRepository.findByEmployeeOrderByIndex(employee).stream()
-        .map(SSPTaskDTO::from)
-        .collect(Collectors.toList());
+
+    List<SSPTaskDTO> sspTasks = getEmployeeSSPTasks(employee, startDate, endDate);
+
+    LocalDate firstDate = startDate;
+    if (!sspTasks.isEmpty()
+        && sspTasks.getFirst().dateStarted() != null
+        && sspTasks.getFirst().dateStarted().isBefore(startDate)) {
+      firstDate = sspTasks.getFirst().dateStarted();
+    }
+    List<HolidayDTO> holidays = getEmployeeHolidays(employee, firstDate, endDate);
+    return new EmployeeScheduleDTO(sspTasks, holidays);
   }
 
-  public List<HolidayDTO> getEmployeeHolidays(UUID employeeId) {
-    Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
-    return holidayRepository.findByEmployeeId(employeeId).stream()
+  private List<SSPTaskDTO> getEmployeeSSPTasks(
+      Employee employee, LocalDate startDate, LocalDate endDate) {
+
+    // queries sort als argument geven, zodat het leesbaarder en herbruikbaarder wordt?
+    Optional<SSPTask> possibleFirstTask =
+        sspTaskRepository.findFirstByEmployeeAndDateStartedBeforeOrderByIndexDesc(
+            employee, startDate);
+
+    int firstIndex = 0;
+    int queryLimit = 10;
+    if (possibleFirstTask.isPresent()) {
+      SSPTask firstTask = possibleFirstTask.get();
+      firstIndex = firstTask.getIndex();
+      LocalDate firstDate =
+          firstTask.getDateStarted() == null ? startDate : firstTask.getDateStarted();
+      long daysBetween = firstDate.until(endDate, ChronoUnit.DAYS);
+      int newLimit = (int) (daysBetween / 3);
+      queryLimit = Math.max(queryLimit, newLimit);
+    }
+
+    Sort sort = Sort.by("index").ascending();
+    Limit limit = Limit.of(queryLimit);
+    List<SSPTask> sspTasks =
+        sspTaskRepository.findByEmployeeAndIndexGreaterThanEqual(employee, firstIndex, sort, limit);
+
+    return sspTasks.stream().map(SSPTaskDTO::from).collect(Collectors.toList());
+  }
+
+  private List<HolidayDTO> getEmployeeHolidays(
+      Employee employee, LocalDate firstDate, LocalDate lastDate) {
+
+    return holidayRepository.findAllByEmployeeAndBetween(employee, firstDate, lastDate).stream()
         .map(HolidayDTO::from)
         .collect(Collectors.toList());
   }
