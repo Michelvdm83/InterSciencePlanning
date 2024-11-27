@@ -54,7 +54,7 @@ export default function SSPSCheduling() {
         openTasks={openTasks}
         updateOpenTasks={updateOpenTasks}
       />
-      <DelayedSystems />
+      <DelayedSystems updateOpenTasks={updateOpenTasks} openTasks={openTasks} />
     </div>
   );
 }

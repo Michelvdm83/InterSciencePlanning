@@ -23,7 +23,7 @@ public class Scheduler {
   private final HolidayRepository holidayRepository;
   private final SystemRepository systemRepository;
 
-  // test for scheduling
+  // om te kunnen zien dat scheduled werkt. Na testen/pull request review deze functie verwijderen
   @Scheduled(cron = "*/10 * * * * *")
   public void checkForDelayedSystemsTest() {
     System.out.println(LocalDateTime.now());

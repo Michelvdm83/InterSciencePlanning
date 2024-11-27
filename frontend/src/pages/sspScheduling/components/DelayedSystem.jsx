@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import SystemModalButton from "../../../components/SystemModalButton";
 import ApiService from "../../../services/ApiService";
 
-export default function DelayedSystem({ system, setUncheckedDelays }) {
+export default function DelayedSystem({ system, updateOpenTasks }) {
   const [affectedSystems, setAffectedSystems] = useState([]);
 
   function updateChecked(event) {
@@ -20,7 +20,10 @@ export default function DelayedSystem({ system, setUncheckedDelays }) {
     <div className="flex w-3/4 flex-col justify-around overflow-auto rounded-md bg-white">
       <div className="grid h-fit grid-cols-2 px-2">
         <div className="h-fit w-fit">
-          <SystemModalButton systemName={system.name}>
+          <SystemModalButton
+            systemName={system.name}
+            updateOpenTasks={updateOpenTasks}
+          >
             <div className="cursor-pointer text-primary">{system.name}</div>
           </SystemModalButton>
         </div>
@@ -50,7 +53,11 @@ export default function DelayedSystem({ system, setUncheckedDelays }) {
           <div className="collapse-content">
             {affectedSystems.map((name) => {
               return (
-                <SystemModalButton systemName={name}>
+                <SystemModalButton
+                  systemName={name}
+                  key={name}
+                  updateOpenTasks={updateOpenTasks}
+                >
                   <div className="text-primary">{name}</div>
                 </SystemModalButton>
               );
