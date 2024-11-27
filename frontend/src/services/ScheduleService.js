@@ -194,6 +194,9 @@ export default class ScheduleService {
             dayIndex = allDaysWithTasks.findIndex((d) =>
               isSameDay(d.date, startDate),
             );
+            if (dayIndex === -1) {
+              dayIndex = allDaysWithTasks.length;
+            }
           }
 
           let daysTillEnd;
