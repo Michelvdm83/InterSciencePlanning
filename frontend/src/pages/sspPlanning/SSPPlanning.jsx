@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
 import ScheduleService from "../../services/ScheduleService.js";
 import SystemModalButton from "../../components/SystemModalButton.jsx";
-import { addDays, format } from "date-fns";
+import { addDays, format, subDays } from "date-fns";
 
 export default function SSPPlanning() {
   const planningDays = 20;
@@ -43,7 +43,6 @@ export default function SSPPlanning() {
   }
 
   const handleWeekChange = (newDate) => {
-    console.log(newDate);
     setBeginDate(ScheduleService.getMonday(newDate));
   };
 
@@ -209,7 +208,7 @@ export default function SSPPlanning() {
         <div className="join mt-2 self-center">
           <button
             className="btn btn-outline join-item"
-            onClick={() => setBeginDate(addDays(beginDate, -7))}
+            onClick={() => setBeginDate(subDays(beginDate, 7))}
           >
             Week terug
           </button>
