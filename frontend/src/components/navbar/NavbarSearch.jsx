@@ -48,7 +48,11 @@ export default function NavbarSearch() {
           {namesList.length > 0 &&
             namesList.map((systemName) => {
               return (
-                <SystemModalButton key={systemName} systemName={systemName}>
+                <SystemModalButton
+                  key={systemName}
+                  systemName={systemName}
+                  updateOpenTasks={window.location.reload()}
+                >
                   <li>
                     <div className="text-primary">{systemName}</div>
                   </li>
