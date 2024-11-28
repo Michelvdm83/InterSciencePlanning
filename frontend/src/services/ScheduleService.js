@@ -199,6 +199,7 @@ export default class ScheduleService {
             }
             endSet = true;
           } else {
+            //if the dateCompleted is null and the status is BUILDING, it is a system that is currently being build
             if (task.status === "BUILDING") {
               let daysBuilding = 1;
               if (isBefore(task.dateStarted, new Date())) {
@@ -284,7 +285,7 @@ export default class ScheduleService {
             }
 
             //if scheduleDays = 0, then it isn't on the schedule. if it is a task with an enddate,
-            //then this can put it on a later date, so it isn't lost
+            //then this can put it on a later date, so it isn't lost on the schedule
             if (scheduleDays === 0) {
               const nextOpenIndex = allDaysWithTasks.findIndex(
                 (d, index) => index >= dayIndex && d.status === "empty",
@@ -303,7 +304,8 @@ export default class ScheduleService {
               }
             }
           } else {
-            //if there is another task in the tasks array and it doesn't have a startdate, set it to start directly after this task
+            //if there is another task in the tasks array and it doesn't have a startdate while calculating before the first date of allDaysWithTasks
+            //, set it to start directly after this task
             if (tasks[index + 1] && !tasks[index + 1].dateStarted) {
               const nextStart = task.dateCompleted
                 ? addBusinessDays(task.dateCompleted, 1)
