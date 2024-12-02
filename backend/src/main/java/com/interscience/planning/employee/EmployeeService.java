@@ -174,7 +174,6 @@ public class EmployeeService {
   private List<SSPTaskDTO> getEmployeeSSPTasks(
       Employee employee, LocalDate startDate, LocalDate endDate) {
 
-    // queries sort als argument geven, zodat het leesbaarder en herbruikbaarder wordt?
     Optional<SSPTask> possibleFirstTask =
         sspTaskRepository.findFirstByEmployeeAndDateStartedBeforeOrderByIndexDesc(
             employee, startDate);

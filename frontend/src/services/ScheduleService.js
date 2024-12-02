@@ -11,31 +11,15 @@ import {
   isWeekend,
   nextMonday,
   previousMonday,
+  startOfWeek,
   subDays,
 } from "date-fns";
 import ApiService from "./ApiService";
 
 export default class ScheduleService {
-  /* static #formatMyDate(date) {
-  //   return formatDate(new Date(date), "dd-MM-yyyy");
-  // }
-*/
-
   // get the date of the monday of the week
   static getMonday(myDate) {
-    let monday;
-    if (isMonday(myDate)) {
-      monday = new Date(myDate);
-    } else if (isWeekend(new Date(myDate))) {
-      monday = nextMonday(new Date(myDate));
-    } else {
-      monday = previousMonday(new Date(myDate));
-    }
-    // onderstaand is hetzelfde, maar in 1 regel. wat is duidelijker?
-    //const monday = isMonday(myDate)? new Date(myDate) : isWeekend(new Date(myDate))? nextMonday(new Date(myDate)) : previousMonday(new Date(myDate));
-    //of als we altijd de maandag van de huidige week doen:
-    // const monday = startOfWeek(new Date(myDate), { weekStartsOn: 1 });
-    return monday;
+    return startOfWeek(new Date(myDate), { weekStartsOn: 1 });
   }
 
   //get a list of dates of workdays starting at startDate. Length of list is equal to numberOfDays
@@ -84,9 +68,10 @@ export default class ScheduleService {
     return daysOfHolidays;
   }
 
+  //converts the allDaysWithTasks array to the schedule array used in SSPPlanning.jsx
   static #getSchedule(allDaysWithTasks) {
     const scheduling = [];
-    //vul de schedule van de return
+
     let currentTaskName;
     let currentTaskDays = 0;
     let currentTaskStatus;
@@ -127,8 +112,6 @@ export default class ScheduleService {
     const allDays = this.getDates(startDate, numberOfDays);
     let scheduling = [];
 
-    //hoe dit goed op te delen? zijn er nog dingen die op verschillende plekken worden herhaald?
-    //aanroep + endpoint aanpassen zodat het de periode meegeeft en daarop de data beperkt die wordt teruggegeven
     await ApiService.get(`employees/schedules/` + employeeId, {
       startDate: allDays.at(0),
       endDate: allDays.at(-1),
@@ -139,6 +122,7 @@ export default class ScheduleService {
           ? this.#getDaysOfHolidays(response.data.holidays)
           : [];
 
+        //allDaysWithTasks array is used to keep track of when tasks are scheduled and find possible conflicts
         let allDaysWithTasks = [];
         allDays.forEach((day) => {
           if (holidays.findIndex((hday) => isSameDay(hday, day)) !== -1) {
@@ -159,8 +143,10 @@ export default class ScheduleService {
             });
           }
         });
+        //the dayIndex variable is used to keep track of at what day the scheduling is at that moment
         let dayIndex = allDaysWithTasks.findIndex((d) => d.status === "empty");
 
+        //this loops through the tasks array 1 by 1, updating the allDaysWithTasks array at the end each time
         for (
           let index = 0;
           index < tasks.length &&
@@ -171,6 +157,7 @@ export default class ScheduleService {
           const task = tasks[index];
           let currentStatus = task.systemName ? task.status : "task";
 
+          //if the first task doesn't have a startdate, it is set to start 'today'
           if (index === 0 && !task.dateStarted) {
             task.dateStarted = new Date();
           }
@@ -183,14 +170,12 @@ export default class ScheduleService {
             startDate = new Date(task.dateStarted);
           }
 
+          //checks for situations where adjustments are necessary
           if (isBefore(startDate, allDaysWithTasks[0].date)) {
             startDate = allDaysWithTasks[dayIndex].date;
           } else if (isBefore(startDate, allDaysWithTasks[dayIndex].date)) {
             currentStatus = "conflict";
-          } else if (
-            //hiervoor check voor isAfter allDaysWithTasks laatste date? Of niet nodig?
-            isAfter(startDate, allDaysWithTasks[dayIndex].date)
-          ) {
+          } else if (isAfter(startDate, allDaysWithTasks[dayIndex].date)) {
             dayIndex = allDaysWithTasks.findIndex((d) =>
               isSameDay(d.date, startDate),
             );
@@ -201,15 +186,20 @@ export default class ScheduleService {
 
           let daysTillEnd;
           let endSet;
+          //if the task has an enddate, the daysTillEnd are set to that period, else it is either set to the estimatedDays or
+          //if a system is still being build make sure that they are working on it 'today'
           if (task.dateCompleted !== null) {
-            const completedDate = new Date(task.dateCompleted);
-            daysTillEnd = this.#getNumberOfWorkingDays(
-              allDaysWithTasks[dayIndex].date,
-              completedDate,
-              true,
-            );
+            if (dayIndex < allDaysWithTasks.length) {
+              const completedDate = new Date(task.dateCompleted);
+              daysTillEnd = this.#getNumberOfWorkingDays(
+                allDaysWithTasks[dayIndex].date,
+                completedDate,
+                true,
+              );
+            }
             endSet = true;
           } else {
+            //if the dateCompleted is null and the status is BUILDING, it is a system that is currently being build
             if (task.status === "BUILDING") {
               let daysBuilding = 1;
               if (isBefore(task.dateStarted, new Date())) {
@@ -256,6 +246,7 @@ export default class ScheduleService {
             }
           }
 
+          //if daysTillEnd > 0, add it to allDaysWithTasks so it will be on the schedule
           if (daysTillEnd > 0) {
             let scheduleDays = 0;
             while (daysTillEnd > 0 && dayIndex < allDaysWithTasks.length) {
@@ -280,7 +271,7 @@ export default class ScheduleService {
               ) {
                 currentStatus = "conflict";
                 let tempIndex = dayIndex - 1;
-                //extra veiligheid of overbodig?
+
                 while (
                   allDaysWithTasks[tempIndex].taskName === task.taskName &&
                   tempIndex >= 0
@@ -293,7 +284,8 @@ export default class ScheduleService {
               dayIndex++;
             }
 
-            //als de taak op geen enkele dag in de planning staat, probeer hem dan op iig 1 dag neer te zetten
+            //if scheduleDays = 0, then it isn't on the schedule. if it is a task with an enddate,
+            //then this can put it on a later date, so it isn't lost on the schedule
             if (scheduleDays === 0) {
               const nextOpenIndex = allDaysWithTasks.findIndex(
                 (d, index) => index >= dayIndex && d.status === "empty",
@@ -312,6 +304,8 @@ export default class ScheduleService {
               }
             }
           } else {
+            //if there is another task in the tasks array and it doesn't have a startdate while calculating before the first date of allDaysWithTasks
+            //, set it to start directly after this task
             if (tasks[index + 1] && !tasks[index + 1].dateStarted) {
               const nextStart = task.dateCompleted
                 ? addBusinessDays(task.dateCompleted, 1)
