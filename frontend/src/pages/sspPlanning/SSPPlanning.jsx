@@ -28,15 +28,22 @@ export default function SSPPlanning() {
       })
       .then((sortedEmployees) => {
         setEmployees(sortedEmployees);
-        getEmployeeTasks(sortedEmployees).then(() => {
-          setLoadingSchedule(false);
-        });
+      });
+  }, []);
+
+  useEffect(() => {
+    if (employees.length > 0) {
+      setLoading(true);
+      setLoadingSchedule(true);
+      getEmployeeTasks(employees).then(() => {
+        setLoadingSchedule(false);
       });
 
-    setDateArray(ScheduleService.getDates(beginDate, planningDays));
-    setCurrentWeek(format(beginDate, "yyyy'-W'ww"));
-    setLoading(false);
-  }, [beginDate]);
+      setDateArray(ScheduleService.getDates(beginDate, planningDays));
+      setCurrentWeek(format(beginDate, "yyyy'-W'ww"));
+      setLoading(false);
+    }
+  }, [employees, beginDate]);
 
   function update() {
     getEmployeeTasks(employees);
