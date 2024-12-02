@@ -228,7 +228,7 @@ export default function SSPPlanning() {
             showYearDropdown
             scrollableYearDropdown
             calendarStartDay={1} //starts week on monday
-            filterDate={(date) => date.getDay() !== 0 && date.getDay() !== 6} //makes satarday and sunday unselectable
+            filterDate={(date) => date.getDay() !== 0 && date.getDay() !== 6} //makes saturday and sunday unselectable
             showWeekNumbers
             showWeekPicker
             todayButton="Vandaag" //adds the button to select the current day
