@@ -147,7 +147,7 @@ export default function TestsPerEmployee({
             >
               <SystemModalButton
                 systemName={test.systemName}
-                updateOpenTasks={() => {
+                functionOnModalClose={() => {
                   getCurrentEmployeeTasks();
                   updateOpenTests();
                 }}

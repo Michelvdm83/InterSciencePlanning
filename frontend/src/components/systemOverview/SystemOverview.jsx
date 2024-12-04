@@ -16,6 +16,7 @@ export default function SystemOverview({
   systemName,
   modalIsOpen,
   setModalIsOpen,
+  functionOnClose,
 }) {
   const [expectedFinish, setExpectedFinish] = useState(null);
   const [system, setSystem] = useState({});
@@ -72,6 +73,7 @@ export default function SystemOverview({
   }, [modalIsOpen, systemName, system]);
 
   function handleClose() {
+    functionOnClose();
     setModalIsOpen(false);
     setSystem({});
     setEditedSystem({});
