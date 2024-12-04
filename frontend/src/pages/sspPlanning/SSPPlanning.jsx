@@ -178,7 +178,7 @@ export default function SSPPlanning() {
                     >
                       <SystemModalButton
                         systemName={task.taskName}
-                        updateOpenTasks={() => update}
+                        updateOpenTasks={update}
                       >
                         <div className="underline hover:text-white">
                           {task.taskName}
@@ -194,7 +194,7 @@ export default function SSPPlanning() {
                     >
                       <TaskModalButton
                         id={task.taskId}
-                        updateOpenTasks={() => update}
+                        updateOpenTasks={update}
                       >
                         <div className="underline hover:text-white">
                           {task.taskName}
