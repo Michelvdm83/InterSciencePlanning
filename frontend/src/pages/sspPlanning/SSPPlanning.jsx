@@ -45,10 +45,6 @@ export default function SSPPlanning() {
     }
   }, [employees, beginDate]);
 
-  function update() {
-    getEmployeeTasks(employees);
-  }
-
   const getEmployeeTasks = async (employees) => {
     let newEmployeeTasksArray = [];
     for (const employee of employees) {
@@ -186,7 +182,7 @@ export default function SSPPlanning() {
                     >
                       <SystemModalButton
                         systemName={task.taskName}
-                        updateOpenTasks={update}
+                        functionOnModalClose={() => getEmployeeTasks(employees)}
                       >
                         <div className="underline hover:text-white">
                           {task.taskName}
