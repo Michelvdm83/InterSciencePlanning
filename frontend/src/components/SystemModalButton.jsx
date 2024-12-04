@@ -4,19 +4,13 @@ import SystemOverview from "./systemOverview/SystemOverview";
 export default function SystemModalButton({
   systemName,
   children,
-  updateOpenTasks,
+  functionOnModalClose,
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   function handleOpenModal() {
     setModalIsOpen(true);
   }
-
-  useEffect(() => {
-    if (updateOpenTasks) {
-      updateOpenTasks();
-    }
-  }, [modalIsOpen]);
 
   return (
     <div>
@@ -26,6 +20,7 @@ export default function SystemModalButton({
       </div>
       {modalIsOpen && (
         <SystemOverview
+          functionOnClose={functionOnModalClose}
           systemName={systemName}
           modalIsOpen={modalIsOpen}
           setModalIsOpen={setModalIsOpen}

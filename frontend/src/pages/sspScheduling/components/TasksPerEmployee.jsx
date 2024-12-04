@@ -55,7 +55,7 @@ export default function TasksPerEmployee({
         <div className="w-fit whitespace-nowrap">
           <SystemModalButton
             systemName={currentTask.systemName}
-            updateOpenTasks={updateOpenTasks}
+            functionOnModalClose={updateOpenTasks}
           >
             {getStandardField(
               "Systeem: " + currentTask.systemName,

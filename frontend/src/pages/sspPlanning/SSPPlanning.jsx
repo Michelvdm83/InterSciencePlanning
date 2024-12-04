@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService.js";
 import ScheduleService from "../../services/ScheduleService.js";
 import SystemModalButton from "../../components/SystemModalButton.jsx";
-import { addDays, format, subDays } from "date-fns";
+import { addDays, subDays } from "date-fns";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function SSPPlanning() {
   const planningDays = 20;
@@ -12,9 +14,7 @@ export default function SSPPlanning() {
   const [beginDate, setBeginDate] = useState(
     ScheduleService.getMonday(new Date()),
   );
-  const [currentWeek, setCurrentWeek] = useState(
-    format(beginDate, "yyyy'-W'ww"),
-  );
+  const [currentWeek, setCurrentWeek] = useState(beginDate);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingSchedule, setLoadingSchedule] = useState(true);
@@ -28,23 +28,22 @@ export default function SSPPlanning() {
       })
       .then((sortedEmployees) => {
         setEmployees(sortedEmployees);
-        getEmployeeTasks(sortedEmployees).then(() => {
-          setLoadingSchedule(false);
-        });
+      });
+  }, []);
+
+  useEffect(() => {
+    if (employees.length > 0) {
+      setLoading(true);
+      setLoadingSchedule(true);
+      getEmployeeTasks(employees).then(() => {
+        setLoadingSchedule(false);
       });
 
-    setDateArray(ScheduleService.getDates(beginDate, planningDays));
-    setCurrentWeek(format(beginDate, "yyyy'-W'ww"));
-    setLoading(false);
-  }, [beginDate]);
-
-  function update() {
-    getEmployeeTasks(employees);
-  }
-
-  const handleWeekChange = (newDate) => {
-    setBeginDate(ScheduleService.getMonday(newDate));
-  };
+      setDateArray(ScheduleService.getDates(beginDate, planningDays));
+      setCurrentWeek(beginDate);
+      setLoading(false);
+    }
+  }, [employees, beginDate]);
 
   const getEmployeeTasks = async (employees) => {
     let newEmployeeTasksArray = [];
@@ -183,7 +182,7 @@ export default function SSPPlanning() {
                     >
                       <SystemModalButton
                         systemName={task.taskName}
-                        updateOpenTasks={update}
+                        functionOnModalClose={() => getEmployeeTasks(employees)}
                       >
                         <div className="underline hover:text-white">
                           {task.taskName}
@@ -207,19 +206,31 @@ export default function SSPPlanning() {
         {/* paginator */}
         <div className="join mt-2 self-center">
           <button
-            className="btn btn-outline join-item"
+            className="btn btn-outline join-item text-lg"
             onClick={() => setBeginDate(subDays(beginDate, 7))}
           >
             Week terug
           </button>
-          <input
-            className="btn btn-outline join-item"
-            type="week"
-            value={currentWeek}
-            onChange={(event) => handleWeekChange(event.target.valueAsDate)}
+          <DatePicker
+            className="btn btn-outline join-item p-0 text-lg"
+            selected={currentWeek}
+            onChange={(date) => {
+              setCurrentWeek(date);
+              setBeginDate(ScheduleService.getMonday(date));
+            }}
+            dateFormat="'Week 'I', 'R" //the way the week is displayed on the button, e.x. "Week 52, 2024"
+            fixedHeight
+            dateFormatCalendar="MMMM" //format on top op the popup
+            showYearDropdown
+            scrollableYearDropdown
+            calendarStartDay={1} //starts week on monday
+            filterDate={(date) => date.getDay() !== 0 && date.getDay() !== 6} //makes saturday and sunday unselectable
+            showWeekNumbers
+            showWeekPicker
+            todayButton="Vandaag" //adds the button to select the current day
           />
           <button
-            className="btn btn-outline join-item"
+            className="btn btn-outline join-item text-lg"
             onClick={() => setBeginDate(addDays(beginDate, 7))}
           >
             Week vooruit

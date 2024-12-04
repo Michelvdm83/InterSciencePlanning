@@ -36,7 +36,7 @@ export default function SSPSCheduling() {
         <dialog id="new_task_modal" className="modal">
           <NewTaskModal updateOpenTasks={updateOpenTasks} />
         </dialog>
-        <SystemModalButton updateOpenTasks={updateOpenTasks}>
+        <SystemModalButton functionOnModalClose={updateOpenTasks}>
           <div className="btn btn-accent btn-lg mb-2 w-full rounded-md">
             Nieuw Systeem
           </div>

@@ -23,7 +23,7 @@ export default function UnplannedTasks({
     <div className="m-4 flex w-1/3 flex-col items-center gap-2 overflow-auto rounded-md bg-neutral p-5">
       <div className="flex w-3/4 justify-between border-b-2 border-black">
         <div className="w-1/2 pb-2 pt-2">Nog in te plannen</div>
-        <SystemModalButton updateOpenTasks={updateOpenTests}>
+        <SystemModalButton functionOnModalClose={updateOpenTests}>
           <TiPlus className="h-full cursor-pointer text-4xl text-accent" />
         </SystemModalButton>
       </div>
@@ -32,7 +32,7 @@ export default function UnplannedTasks({
           return (
             <div className="w-3/4" key={test.id}>
               <SystemModalButton
-                updateOpenTasks={updateOpenTests}
+                functionOnModalClose={updateOpenTests}
                 systemName={test.systemName}
               >
                 <div className="flex max-h-16 w-full cursor-pointer items-center gap-2 rounded-md bg-white p-3">
