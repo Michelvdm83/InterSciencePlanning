@@ -22,6 +22,7 @@ public class Scheduler {
   private final HolidayRepository holidayRepository;
   private final SystemRepository systemRepository;
 
+  // scheduled for every workday at 01:00
   @Scheduled(cron = "0 0 1 * * MON-FRI")
   public void checkForDelayedSystems() {
 
