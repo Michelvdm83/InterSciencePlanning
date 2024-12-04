@@ -7,14 +7,17 @@ export default function SystemModalButton({
   updateOpenTasks,
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [updatable, setUpdatable] = useState(false);
 
   function handleOpenModal() {
+    setUpdatable(true);
     setModalIsOpen(true);
   }
 
   useEffect(() => {
-    if (updateOpenTasks) {
+    if (updateOpenTasks && updatable && !modalIsOpen) {
       updateOpenTasks();
+      setUpdatable(false);
     }
   }, [modalIsOpen]);
 
