@@ -8,7 +8,6 @@ import com.interscience.planning.ssptask.SSPTaskRepository;
 import com.interscience.planning.system.SystemRepository;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -22,12 +21,6 @@ public class Scheduler {
   private final SSPTaskRepository sspTaskRepository;
   private final HolidayRepository holidayRepository;
   private final SystemRepository systemRepository;
-
-  // om te kunnen zien dat scheduled werkt. Na testen/pull request review deze functie verwijderen
-  @Scheduled(cron = "*/10 * * * * *")
-  public void checkForDelayedSystemsTest() {
-    System.out.println(LocalDateTime.now());
-  }
 
   @Scheduled(cron = "0 0 1 * * MON-FRI")
   public void checkForDelayedSystems() {
