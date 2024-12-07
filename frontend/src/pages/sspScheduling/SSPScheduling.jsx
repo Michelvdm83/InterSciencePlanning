@@ -5,6 +5,7 @@ import NewTaskModal from "./components/NewTaskModal.jsx";
 import UnplannedTasks from "./components/UnplannedTasks.jsx";
 import TasksPerEmployee from "./components/TasksPerEmployee.jsx";
 import ApiService from "../../services/ApiService.js";
+import DelayedSystems from "./components/DelayedSystems.jsx";
 
 export default function SSPSCheduling() {
   const [employees, setEmployees] = useState([]);
@@ -36,7 +37,7 @@ export default function SSPSCheduling() {
         <dialog id="new_task_modal" className="modal">
           <NewTaskModal updateOpenTasks={updateOpenTasks} />
         </dialog>
-        <SystemModalButton updateOpenTasks={updateOpenTasks}>
+        <SystemModalButton functionOnModalClose={updateOpenTasks}>
           <div className="btn btn-accent btn-lg mb-2 w-full rounded-md">
             Nieuw Systeem
           </div>
@@ -53,11 +54,7 @@ export default function SSPSCheduling() {
         openTasks={openTasks}
         updateOpenTasks={updateOpenTasks}
       />
-      <div className="m-4 w-1/3 rounded-md bg-neutral">
-        <h2 className="px-8 py-6 font-Effra_Bd text-xl text-secondary">
-          Vertraagde systemen
-        </h2>
-      </div>
+      <DelayedSystems updateOpenTasks={updateOpenTasks} openTasks={openTasks} />
     </div>
   );
 }

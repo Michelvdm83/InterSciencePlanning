@@ -10,4 +10,6 @@ public interface SystemRepository extends JpaRepository<System, UUID> {
 
   List<SystemNameOnly> findFirst6SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(
       String contains);
+
+  List<System> findByDelayCheckedBySupervisorFalse();
 }

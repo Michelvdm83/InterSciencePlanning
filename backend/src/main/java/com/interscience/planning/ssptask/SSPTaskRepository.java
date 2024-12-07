@@ -16,10 +16,6 @@ public interface SSPTaskRepository extends JpaRepository<SSPTask, UUID> {
 
   List<SSPTask> findByEmployee(Employee employee);
 
-  List<SSPTask> findByEmployeeOrderByIndex(Employee employee);
-
-  List<SSPTask> findByEmployeeId(UUID employeeId);
-
   List<SSPTask> findByEmployeeAndIndexGreaterThan(Employee employee, Integer index);
 
   @Query(
@@ -27,8 +23,7 @@ public interface SSPTaskRepository extends JpaRepository<SSPTask, UUID> {
   List<SSPTask> findByEmployeeAndUnfinishedTasks(
       @Param("employee") Employee employee, @Param("currentDate") LocalDate currentDate);
 
-  List<SSPTask> findFirst10ByEmployeeAndIndexGreaterThanEqualOrderByIndex(
-      Employee employee, Integer index);
+  List<SSPTask> findByEmployeeNotNullAndDateStartedNotNullAndDateCompletedNull();
 
   List<SSPTask> findByEmployeeAndIndexGreaterThanEqual(
       Employee employee, Integer index, Sort sort, Limit limit);

@@ -16,6 +16,7 @@ import com.interscience.planning.testtask.TestTask;
 import com.interscience.planning.testtask.TestTaskRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,44 @@ public class SystemService {
     List<SystemNameOnly> names =
         systemRepository.findFirst6SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(contains);
     return names.stream().map(SystemNameOnly::getName).toList();
+  }
+
+  public List<SystemDelayedDTO> getDelayedSystems() {
+    List<System> delayedSystems = systemRepository.findByDelayCheckedBySupervisorFalse();
+    List<SystemDelayedDTO> returnList = new ArrayList<>();
+    delayedSystems.forEach(
+        (system -> {
+          SSPTask sspTask = system.getConstructionTask().getSspTask();
+          String employeeName =
+              sspTask.getEmployee() == null ? "" : sspTask.getEmployee().getName();
+
+          returnList.add(
+              new SystemDelayedDTO(system.getName(), employeeName, getAffectedSystems(sspTask)));
+        }));
+    return returnList;
+  }
+
+  private List<String> getAffectedSystems(SSPTask sspTask) {
+
+    List<String> affectedSystems = new ArrayList<>();
+    sspTaskRepository
+        .findByEmployeeAndIndexGreaterThan(sspTask.getEmployee(), sspTask.getIndex())
+        .forEach(
+            (task) -> {
+              if (task.getConstructionTask() != null) {
+                affectedSystems.add(task.getConstructionTask().getSystem().getName());
+              }
+            });
+    return affectedSystems;
+  }
+
+  public void setDelayChecked(SystemSetCheckedDTO dto) {
+    System system =
+        systemRepository.findByName(dto.systemName()).orElseThrow(NotFoundException::new);
+    if (dto.checked() != null) {
+      system.setDelayCheckedBySupervisor(dto.checked());
+      systemRepository.save(system);
+    }
   }
 
   public void createNewSystem(SystemPostPatchDTO systemPostPatchDTO) {

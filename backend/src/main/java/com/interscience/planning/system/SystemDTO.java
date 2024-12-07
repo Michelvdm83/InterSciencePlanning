@@ -86,7 +86,7 @@ public record SystemDTO(
         system.getCustomerContactInformation(),
         system.getProjectInformation(),
         system.getStatus().toString(),
-        system.isDelayCheckedBySupervisor(),
+        system.getDelayCheckedBySupervisor(),
         startOfConstruction,
         endOfConstruction,
         estimatedConstructionDays,

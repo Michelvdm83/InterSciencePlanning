@@ -68,7 +68,7 @@ export default function PlannableTask({
     return (
       <SystemModalButton
         systemName={systemName}
-        updateOpenTasks={updateOpenTasks}
+        functionOnModalClose={updateOpenTasks}
       >
         {getStandardField(systemName)}
       </SystemModalButton>
