@@ -193,7 +193,7 @@ export default function SSPPlanning() {
                     >
                       <TaskModalButton
                         id={task.taskId}
-                        updateOpenTasks={update}
+                        functionOnModalClose={() => getEmployeeTasks(employees)}
                       >
                         <div className="underline hover:text-white">
                           {task.taskName}

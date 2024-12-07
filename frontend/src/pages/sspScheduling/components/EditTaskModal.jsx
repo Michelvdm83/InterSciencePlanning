@@ -7,7 +7,12 @@ import TaskDateField from "./TaskDateField.jsx";
 import TaskSelectEmployeeField from "./TaskSelectEmployeeField.jsx";
 import { translateError, validateTaskData } from "./validateTaskData.js";
 
-export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
+export default function EditTaskModal({
+  id,
+  modalIsOpen,
+  setModalIsOpen,
+  functionOnClose,
+}) {
   const [task, setTask] = useState({});
   const [editedTask, setEditedTask] = useState({});
   const [error, setError] = useState("");
@@ -61,6 +66,7 @@ export default function EditTaskModal({ id, modalIsOpen, setModalIsOpen }) {
     setEditedTask({});
     setError("");
     setModalIsOpen(false);
+    functionOnClose();
   };
 
   const handleNewTaskSave = (e) => {
