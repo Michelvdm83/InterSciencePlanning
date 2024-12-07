@@ -7,6 +7,7 @@ import SystemModalButton from "../../components/SystemModalButton.jsx";
 import { addDays, subDays } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import TaskModalButton from "../sspScheduling/components/TaskModalButton.jsx";
 
 export default function SSPPlanning() {
   const planningDays = 20;
@@ -168,13 +169,7 @@ export default function SSPPlanning() {
                     ? "border-black"
                     : `border-${bgColor}`;
 
-                if (
-                  (bgColor === "started" ||
-                    bgColor === "planned" ||
-                    bgColor === "done" ||
-                    bgColor === "primary") &&
-                  i === 0
-                ) {
+                if (task.isSystem && i === 0) {
                   return (
                     <div
                       key={overallIndex}
@@ -188,6 +183,22 @@ export default function SSPPlanning() {
                           {task.taskName}
                         </div>
                       </SystemModalButton>
+                    </div>
+                  );
+                } else if (task.taskId && i === 0) {
+                  return (
+                    <div
+                      key={overallIndex}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] flex h-7 w-auto justify-center border-b-[1.5px] border-solid text-start`}
+                    >
+                      <TaskModalButton
+                        id={task.taskId}
+                        functionOnModalClose={() => getEmployeeTasks(employees)}
+                      >
+                        <div className="underline hover:text-white">
+                          {task.taskName}
+                        </div>
+                      </TaskModalButton>
                     </div>
                   );
                 } else
