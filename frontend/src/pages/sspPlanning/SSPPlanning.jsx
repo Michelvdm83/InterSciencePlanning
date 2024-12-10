@@ -72,21 +72,27 @@ export default function SSPPlanning() {
     });
   };
 
-  // if (loading === true || loadingSchedule === true || true) {
-  //   return (
-  //     <img src="src/assets/ssp_loading.gif" alt="loading..." className="z-50" />
-  //   );
-  // }
+  if (loading === true || loadingSchedule === true || true) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <img
+          src="src/assets/ssp_loading.gif"
+          alt="loading..."
+          className="fixed z-50"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full w-full justify-center overflow-auto p-6">
-      {(loading === true || loadingSchedule === true) && (
+      {/*(loading === true || loadingSchedule === true) && (
         <img
           src="src/assets/ssp_loading.gif"
           alt="loading..."
           className="fixed z-50 self-center"
         />
-      )}
+      )*/}
       <div className="flex h-max max-h-full max-w-full flex-col overflow-hidden rounded-lg border border-secondary p-4">
         <div
           className={`grid p-0 grid-cols-[repeat(${employees.length + 1},150px)] max-w-full grid-flow-col grid-rows-[repeat(21,auto)] overflow-scroll bg-base-100 text-center font-Effra_Md`}
