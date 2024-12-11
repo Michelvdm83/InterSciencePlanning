@@ -11,6 +11,7 @@ import {
   translateError,
   validateSystemData,
 } from "./components/validateSystem.js";
+import { addDays } from "date-fns";
 
 export default function SystemOverview({
   systemName,
@@ -85,6 +86,40 @@ export default function SystemOverview({
     }
     if (e.key === "Escape") {
       e.preventDefault();
+    }
+  }
+
+  function onStatusChange(status) {
+    console.log(status);
+    switch (status) {
+      case "BUILDING":
+        if (!system.startOfConstruction) {
+          console.log("automatische startdatum invullen");
+          const newDay = newWeekDay();
+          const formattedDefaultDate = newDay.toISOString().split("T")[0];
+          setSystem({
+            ...system,
+            ["startOfConstruction"]: formattedDefaultDate,
+          });
+        }
+        break;
+      case "TRANSFERRED":
+        break;
+      case "TESTING":
+        break;
+      case "FINISHED":
+        break;
+    }
+  }
+
+  function newWeekDay() {
+    const day = new Date();
+    if (day.getDay() === 0) {
+      return addDays(day, 1);
+    } else if (day.getDay() === 7) {
+      return addDays(day, 2);
+    } else {
+      return day;
     }
   }
 
@@ -213,6 +248,7 @@ export default function SystemOverview({
                 editable={systemName && true}
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
+                onStatusChange={(status) => onStatusChange(status)}
               />
               {/*
                 SSP Fields

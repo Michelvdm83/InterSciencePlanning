@@ -4,11 +4,22 @@ export default function SystemSelectStatusField({
   system,
   setSystem,
   variable,
+  onStatusChange,
 }) {
   const classes = `
     select select-bordered select-sm w-full text-accent
     ${!editable ? "disabled:bg-white disabled:text-accent" : ""}
 `;
+
+  function handleChange(status) {
+    if (onStatusChange) {
+      onStatusChange(status);
+    }
+    setSystem({
+      ...system,
+      [variable]: status === "" ? null : status,
+    });
+  }
 
   return (
     <div>
@@ -16,10 +27,7 @@ export default function SystemSelectStatusField({
       <select
         value={system[variable]}
         onChange={(event) => {
-          setSystem({
-            ...system,
-            [variable]: event.target.value === "" ? null : event.target.value,
-          });
+          handleChange(event.target.value);
         }}
         className={classes}
         disabled={!editable}
