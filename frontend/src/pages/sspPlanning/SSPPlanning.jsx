@@ -76,7 +76,7 @@ export default function SSPPlanning() {
     <div className="flex h-full w-full justify-center overflow-auto">
       {
         //display loading icon
-        (loading === true || loadingSchedule === true || true) && (
+        (loading === true || loadingSchedule === true) && (
           <div className="fixed z-50 flex h-full w-full flex-col items-center justify-center pb-20">
             <img
               src="src/assets/ssp_loading.gif"
