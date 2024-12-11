@@ -9,5 +9,6 @@ public enum SystemStatus {
   FINISHED,
   INSTALLED,
   PROBLEMS,
-  IN_WAIT
+  IN_WAIT,
+  DONE
 }
