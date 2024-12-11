@@ -74,16 +74,19 @@ export default function SSPPlanning() {
 
   return (
     <div className="flex h-full w-full justify-center overflow-auto">
-      {(loading === true || loadingSchedule === true) && (
-        <div className="fixed z-50 flex h-full w-full flex-col items-center justify-center pb-20">
-          <img
-            src="src/assets/ssp_loading.gif"
-            alt="loading..."
-            className="w-1/4"
-          />
-          <div className="text-2xl text-secondary">Loading...</div>
-        </div>
-      )}
+      {
+        //display loading icon
+        (loading === true || loadingSchedule === true || true) && (
+          <div className="fixed z-50 flex h-full w-full flex-col items-center justify-center pb-20">
+            <img
+              src="src/assets/ssp_loading.gif"
+              alt="loading..."
+              className="w-1/4"
+            />
+            <div className="text-2xl text-secondary">&emsp;Loading...</div>
+          </div>
+        )
+      }
       <div className="m-6 flex h-max max-h-full max-w-full flex-col overflow-hidden rounded-lg border border-secondary p-4">
         <div
           className={`grid p-0 grid-cols-[repeat(${employees.length + 1},150px)] max-w-full grid-flow-col grid-rows-[repeat(21,auto)] overflow-scroll bg-base-100 text-center font-Effra_Md`}
