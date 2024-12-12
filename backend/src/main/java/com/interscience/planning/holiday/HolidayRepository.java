@@ -13,6 +13,8 @@ public interface HolidayRepository extends JpaRepository<Holiday, UUID> {
 
   List<Holiday> findAllByEndDateGreaterThanEqual(LocalDate date);
 
+  List<Holiday> findAllByEndDateGreaterThanEqualAndEmployeeId(LocalDate date, UUID employeeId);
+
   @Query(
       "SELECT h FROM Holiday h WHERE h.employee = :employee AND ((h.startDate BETWEEN :firstDate AND :lastDate) OR (h.endDate BETWEEN :firstDate AND :lastDate))")
   List<Holiday> findAllByEmployeeAndBetween(

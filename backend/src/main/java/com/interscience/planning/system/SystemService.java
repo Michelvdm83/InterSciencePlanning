@@ -8,6 +8,8 @@ import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.employee.Function;
 import com.interscience.planning.exceptions.BadRequestException;
 import com.interscience.planning.exceptions.NotFoundException;
+import com.interscience.planning.holiday.Holiday;
+import com.interscience.planning.holiday.HolidayRepository;
 import com.interscience.planning.ssptask.SSPTask;
 import com.interscience.planning.ssptask.SSPTaskAssignDTO;
 import com.interscience.planning.ssptask.SSPTaskRepository;
@@ -15,12 +17,13 @@ import com.interscience.planning.ssptask.SSPTaskService;
 import com.interscience.planning.testtask.TestTask;
 import com.interscience.planning.testtask.TestTaskRepository;
 import jakarta.transaction.Transactional;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Limit;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,9 +36,130 @@ public class SystemService {
   private final ConstructionTaskRepository constructionTaskRepository;
   private final TestTaskRepository testTaskRepository;
   private final SSPTaskService sspTaskService;
+  private final HolidayRepository holidayRepository;
 
-  public System getSystem(String name) {
-    return systemRepository.findByName(name).orElseThrow(NotFoundException::new);
+  public SystemDTO getSystem(String name) {
+    System system = systemRepository.findByName(name).orElseThrow(NotFoundException::new);
+    LocalDate expectedEndDate = getExpectedEndDate(system);
+    return SystemDTO.fromWithEndDate(system, expectedEndDate);
+  }
+
+  private LocalDate getExpectedEndDate(System system) {
+    SystemDTO dto = SystemDTO.from(system);
+    if (dto.employeeSSP() == null) {
+      return null;
+    } else if (dto.endOfTest() != null) {
+      return dto.endOfTest();
+    } else if (dto.startOfTest() != null) {
+      return addBusinessDays(dto.startOfTest(), dto.estimatedTestDays() - 1);
+    } else if (dto.endOfConstruction() != null) {
+      return addBusinessDays(dto.endOfConstruction(), dto.estimatedTestDays());
+    } else if (dto.startOfConstruction() != null) {
+      LocalDate endOfConstruction =
+          addWorkDays(
+              dto.employeeSSP(), dto.startOfConstruction(), dto.estimatedConstructionDays() - 1);
+      int testDays = dto.estimatedTestDays() == null ? 0 : dto.estimatedTestDays();
+      return addBusinessDays(endOfConstruction, testDays);
+
+    } else {
+      Employee employee =
+          employeeRepository.findById(dto.employeeSSP()).orElseThrow(NotFoundException::new);
+      SSPTask firstTask =
+          sspTaskRepository
+              .findFirstByEmployeeAndDateStartedBeforeOrderByIndexDesc(employee, LocalDate.now())
+              .orElse(null);
+
+      List<SSPTask> tasks;
+      if (firstTask == null) {
+        tasks = sspTaskRepository.findByEmployee(employee);
+      } else {
+        tasks =
+            sspTaskRepository.findByEmployeeAndIndexGreaterThanEqual(
+                employee, firstTask.getIndex(), Sort.by("index").ascending(), Limit.unlimited());
+      }
+      int daysToAdd = 0;
+      for (SSPTask sspTask : tasks) {
+        daysToAdd += sspTask.getEstimatedTime();
+      }
+      LocalDate firstDate;
+      if (firstTask == null || firstTask.getDateStarted() == null) {
+        firstDate = LocalDate.now();
+      } else {
+        firstDate = firstTask.getDateStarted();
+      }
+      LocalDate endOfProduction = addWorkDays(dto.employeeSSP(), firstDate, daysToAdd - 1);
+      int testDays = dto.estimatedTestDays() == null ? 0 : dto.estimatedTestDays();
+      return addBusinessDays(endOfProduction, testDays);
+    }
+  }
+
+  private LocalDate addWorkDays(UUID employeeId, LocalDate startDate, int daysToAdd) {
+    List<Holiday> holidays =
+        holidayRepository.findAllByEndDateGreaterThanEqualAndEmployeeId(startDate, employeeId);
+
+    LocalDate endDateWithoutHolidays = addBusinessDays(startDate, daysToAdd);
+    if (holidays.isEmpty()) {
+      return endDateWithoutHolidays;
+    }
+    Predicate<Holiday> startDateInPeriod =
+        holiday ->
+            startDate.isAfter(holiday.getStartDate().minusDays(1))
+                && holiday.getStartDate().isBefore(endDateWithoutHolidays.plusDays(1));
+    Predicate<Holiday> endDateInPeriod =
+        holiday ->
+            startDate.isAfter(holiday.getEndDate().minusDays(1))
+                && holiday.getEndDate().isBefore(endDateWithoutHolidays.plusDays(1));
+
+    long nrOfHolidaysOverlapping =
+        holidays.stream()
+            .filter(holiday -> startDateInPeriod.or(endDateInPeriod).test(holiday))
+            .count();
+    if (nrOfHolidaysOverlapping == 0) {
+      return endDateWithoutHolidays;
+    }
+    List<LocalDate> daysOfHolidays = new ArrayList<>();
+    holidays.forEach(
+        hday -> {
+          List<LocalDate> daysOfHoliday =
+              hday.getStartDate().datesUntil(hday.getEndDate().plusDays(1)).toList();
+          daysOfHolidays.addAll(daysOfHoliday);
+        });
+
+    return addBusinessDays(startDate, daysToAdd, daysOfHolidays);
+  }
+
+  private LocalDate addBusinessDays(
+      LocalDate startDate, int daysToAdd, List<LocalDate> daysOfHolidays) {
+    if (daysToAdd <= 0) {
+      return startDate;
+    }
+    LocalDate resultDate = startDate;
+    for (int addedDays = 0; addedDays < daysToAdd; addedDays++) {
+      resultDate = resultDate.plusDays(1);
+      DayOfWeek dayOfDate = resultDate.getDayOfWeek();
+      if (dayOfDate == DayOfWeek.SATURDAY || dayOfDate == DayOfWeek.SUNDAY) {
+        daysToAdd++;
+      } else if (daysOfHolidays != null && daysOfHolidays.contains(resultDate)) {
+        daysToAdd++;
+      }
+    }
+    return resultDate;
+  }
+
+  private LocalDate addBusinessDays(LocalDate startDate, int daysToAdd) {
+    return addBusinessDays(startDate, daysToAdd, null);
+    //    if (daysToAdd <= 0) {
+    //      return startDate;
+    //    }
+    //    LocalDate resultDate = startDate;
+    //    for (int addedDays = 0; addedDays < daysToAdd; addedDays++) {
+    //      resultDate = resultDate.plusDays(1);
+    //      DayOfWeek dayOfDate = resultDate.getDayOfWeek();
+    //      if (dayOfDate == DayOfWeek.SATURDAY || dayOfDate == DayOfWeek.SUNDAY) {
+    //        daysToAdd++;
+    //      }
+    //    }
+    //    return resultDate;
   }
 
   public List<String> searchByName(String contains) {
