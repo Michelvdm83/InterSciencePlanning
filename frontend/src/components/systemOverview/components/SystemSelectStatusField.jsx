@@ -13,42 +13,44 @@ export default function SystemSelectStatusField({
 `;
 
   function handleChange(status) {
+    //checks if the status change comes with an automatic date fill
     switch (status) {
       case "BUILDING":
-        if (!system.startOfConstruction) {
-          setStatusAndDate(status, "startOfConstruction");
-        }
+        setStatusAndDate(status, "startOfConstruction");
         break;
       case "TRANSFERRED":
-        if (!system.endOfConstruction) {
-          setStatusAndDate(status, "endOfConstruction");
-        }
+        setStatusAndDate(status, "endOfConstruction");
         break;
       case "TESTING":
-        if (!system.startOfTest) {
-          setStatusAndDate(status, "startOfTest");
-        }
+        setStatusAndDate(status, "startOfTest");
         break;
       case "FINISHED":
-        if (!system.endOfTest) {
-          setStatusAndDate(status, "endOfTest");
-        }
+        setStatusAndDate(status, "endOfTest");
         break;
       default:
-        setSystem({
-          ...system,
-          [variable]: status === "" ? null : status,
-        });
+        setStatus(status);
     }
   }
 
-  //updates the system and autofill the date field with the current date
+  //checks if the dateToAutoFill already has a date, if not, it will fill in the current workday (or next monday if it is saturday or sunday). if it does have a date already, it will only  set the status with the setStatus() function.
   function setStatusAndDate(status, dateToAutoFill) {
-    const newDay = newWeekDay();
-    const formattedDefaultDate = newDay.toISOString().split("T")[0];
+    if (!system.dateToAutoFill) {
+      const workingDay = newWeekDay();
+      const formattedDate = workingDay.toISOString().split("T")[0];
+      setSystem({
+        ...system,
+        [dateToAutoFill]: formattedDate,
+        [variable]: status === "" ? null : status,
+      });
+    } else {
+      setStatus(status);
+    }
+  }
+
+  //updates the status of the system
+  function setStatus(status) {
     setSystem({
       ...system,
-      [dateToAutoFill]: formattedDefaultDate,
       [variable]: status === "" ? null : status,
     });
   }
