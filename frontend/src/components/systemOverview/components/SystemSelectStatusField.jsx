@@ -13,7 +13,6 @@ export default function SystemSelectStatusField({
 `;
 
   function handleChange(status) {
-    console.log(system);
     switch (status) {
       case "BUILDING":
         if (!system.startOfConstruction) {
