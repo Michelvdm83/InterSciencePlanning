@@ -1,4 +1,4 @@
-import { addDays } from "date-fns";
+import { isWeekend, nextMonday } from "date-fns";
 
 export default function SystemSelectStatusField({
   editable,
@@ -34,9 +34,14 @@ export default function SystemSelectStatusField({
 
   //checks if the dateToAutoFill already has a date, if not, it will fill in the current workday (or next monday if it is saturday or sunday). if it does have a date already, it will only  set the status with the setStatus() function.
   function setStatusAndDate(status, dateToAutoFill) {
-    if (!system.dateToAutoFill) {
-      const workingDay = newWeekDay();
+    if (!system[dateToAutoFill]) {
+      //returns current workday or the next monday if it is saturday or sunday
+      const workingDay = isWeekend(new Date())
+        ? nextMonday(new Date())
+        : new Date();
+
       const formattedDate = workingDay.toISOString().split("T")[0];
+
       setSystem({
         ...system,
         [dateToAutoFill]: formattedDate,
@@ -53,18 +58,6 @@ export default function SystemSelectStatusField({
       ...system,
       [variable]: status === "" ? null : status,
     });
-  }
-
-  //returns current workday or the next monday if it is saturday or sunday
-  function newWeekDay() {
-    const day = new Date();
-    if (day.getDay() === 0) {
-      return addDays(day, 1);
-    } else if (day.getDay() === 7) {
-      return addDays(day, 2);
-    } else {
-      return day;
-    }
   }
 
   return (
