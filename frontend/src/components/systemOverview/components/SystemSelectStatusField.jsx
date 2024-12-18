@@ -1,3 +1,5 @@
+import EmployeeService from "../../../services/EmployeeService";
+
 export default function SystemSelectStatusField({
   editable,
   title,
@@ -9,6 +11,8 @@ export default function SystemSelectStatusField({
     select select-bordered select-sm w-full text-accent
     ${!editable ? "disabled:bg-white disabled:text-accent" : ""}
 `;
+
+  const employeeFunction = EmployeeService.getEmployeeFunction();
 
   return (
     <div>
@@ -33,6 +37,9 @@ export default function SystemSelectStatusField({
         <option value="PROBLEMS">FT: problemen</option>
         <option value="IN_WAIT">in afwachting van klant</option>
         <option value="INSTALLED">geïnstalleerd</option>
+        <option value="DONE" disabled={employeeFunction !== "TEAM_LEADER"}>
+          afgerond
+        </option>
       </select>
     </div>
   );

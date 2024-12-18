@@ -3,6 +3,7 @@ package com.interscience.planning.testtask;
 import com.interscience.planning.employee.Employee;
 import com.interscience.planning.employee.EmployeeRepository;
 import com.interscience.planning.exceptions.NotFoundException;
+import com.interscience.planning.system.SystemStatus;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,11 @@ public class TestTaskController {
   @GetMapping("/by-employee/{employeeId}")
   public List<TestTaskDto> getAllByEmployeeId(@PathVariable UUID employeeId) {
     Employee employee = employeeRepository.findById(employeeId).orElseThrow(NotFoundException::new);
-    return testTaskRepository.findByEmployee(employee).stream().map(TestTaskDto::from).toList();
+    return testTaskRepository
+        .findByEmployeeAndSystem_StatusNot(employee, SystemStatus.DONE)
+        .stream()
+        .map(TestTaskDto::from)
+        .toList();
   }
 
   @GetMapping("/unassigned")
