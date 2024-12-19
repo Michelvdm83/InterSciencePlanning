@@ -93,6 +93,10 @@ public class SystemService {
     }
   }
 
+  // by giving an employeeId, startDate and number of days to add (daysToAdd),
+  // this will find and use all holidays of the employee and makes a list of dates of all days of
+  // those holidays that
+  // fall in the period. After this it calls addBusinessDays with that List as parameter
   private LocalDate addWorkDays(UUID employeeId, LocalDate startDate, int daysToAdd) {
     List<Holiday> holidays =
         holidayRepository.findAllByEndDateGreaterThanEqualAndEmployeeId(startDate, employeeId);
@@ -128,6 +132,8 @@ public class SystemService {
     return addBusinessDays(startDate, daysToAdd, daysOfHolidays);
   }
 
+  // adds 'daysToAdd' businessdays to the startdate, returns the resulting date
+  // if daysOfHolidays is given, it also checks for holidays
   private LocalDate addBusinessDays(
       LocalDate startDate, int daysToAdd, List<LocalDate> daysOfHolidays) {
     if (daysToAdd <= 0) {
@@ -148,18 +154,6 @@ public class SystemService {
 
   private LocalDate addBusinessDays(LocalDate startDate, int daysToAdd) {
     return addBusinessDays(startDate, daysToAdd, null);
-    //    if (daysToAdd <= 0) {
-    //      return startDate;
-    //    }
-    //    LocalDate resultDate = startDate;
-    //    for (int addedDays = 0; addedDays < daysToAdd; addedDays++) {
-    //      resultDate = resultDate.plusDays(1);
-    //      DayOfWeek dayOfDate = resultDate.getDayOfWeek();
-    //      if (dayOfDate == DayOfWeek.SATURDAY || dayOfDate == DayOfWeek.SUNDAY) {
-    //        daysToAdd++;
-    //      }
-    //    }
-    //    return resultDate;
   }
 
   public List<String> searchByName(String contains) {
