@@ -24,9 +24,14 @@ public record SystemDTO(
     LocalDate startOfTest,
     LocalDate endOfTest,
     Integer estimatedTestDays,
-    String seller) {
+    String seller,
+    LocalDate expectedEndDate) {
 
   public static SystemDTO from(System system) {
+    return fromWithEndDate(system, null);
+  }
+
+  public static SystemDTO fromWithEndDate(System system, LocalDate expectedEndDate) {
 
     String responsiblePerson = system.getEmployeeResponsible();
 
@@ -93,6 +98,7 @@ public record SystemDTO(
         startOfTest,
         endOfTest,
         estimatedTestDays,
-        system.getSeller());
+        system.getSeller(),
+        expectedEndDate);
   }
 }

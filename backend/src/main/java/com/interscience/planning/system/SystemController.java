@@ -22,8 +22,7 @@ public class SystemController {
 
   @GetMapping("/{systemName}")
   public ResponseEntity<SystemDTO> getSystem(@PathVariable String systemName) {
-    System system = systemService.getSystem(systemName);
-    return ResponseEntity.ok(SystemDTO.from(system));
+    return ResponseEntity.ok(systemService.getSystem(systemName));
   }
 
   @GetMapping("/search")
