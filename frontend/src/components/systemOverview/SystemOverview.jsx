@@ -73,7 +73,9 @@ export default function SystemOverview({
   }, [modalIsOpen, systemName, system]);
 
   function handleClose() {
-    functionOnClose();
+    if (functionOnClose) {
+      functionOnClose();
+    }
     setModalIsOpen(false);
     setSystem({});
     setEditedSystem({});

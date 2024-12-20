@@ -159,7 +159,12 @@ export default class ScheduleService {
 
           //if the first task doesn't have a startdate, it is set to start 'today'
           if (index === 0 && !task.dateStarted) {
-            task.dateStarted = new Date();
+            let today = new Date();
+            if (isWeekend(today)) {
+              task.dateStarted = nextMonday(today);
+            } else {
+              task.dateStarted = today;
+            }
           }
 
           let startDate;
