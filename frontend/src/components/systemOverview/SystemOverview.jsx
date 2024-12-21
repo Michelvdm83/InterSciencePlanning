@@ -36,25 +36,7 @@ export default function SystemOverview({
 
         setSystem(data);
 
-        const startDate = new Date(
-          response.data.startOfTest
-            ? response.data.startOfTest
-            : response.data.startOfConstruction
-              ? response.data.startOfConstruction
-              : new Date(),
-        );
-        const buildTime = response.data.estimatedConstructionDays
-          ? response.data.estimatedConstructionDays
-          : 0;
-        const testTime = response.data.estimatedTestDays
-          ? response.data.estimatedTestDays
-          : 0;
-        const addedDate = new Date(
-          startDate.setDate(startDate.getDate() + (buildTime + testTime)),
-        );
-        let expectedDate = addedDate.toISOString().split("T")[0];
-
-        setExpectedFinish(expectedDate);
+        setExpectedFinish(response.data.expectedEndDate);
       };
       fetchData();
     }
