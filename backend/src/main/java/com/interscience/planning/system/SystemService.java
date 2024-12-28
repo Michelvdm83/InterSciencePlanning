@@ -264,6 +264,8 @@ public class SystemService {
     }
     if (dto.employeeSSP() != null) {
       setSSPEmployee(dto, system.getConstructionTask().getSspTask());
+    } else {
+      // ik ben hem kwijt, hier moet code om de begin en einddatum van ssp bouwen op null te zetten.
     }
 
     handleConstructionDates(system, dto, nullValues);
