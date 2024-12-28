@@ -33,16 +33,41 @@ export default function SystemSelectEmployeeField({
     filteredEmployees = employees;
   }
 
+  function handleChange(employee) {
+    if (employee === "") {
+      switch (variable) {
+        case "employeeSSP":
+          setSystem({
+            ...system,
+            ["startOfConstruction"]: null,
+            ["endOfConstruction"]: null,
+            [variable]: employee === "" ? null : employee,
+          });
+          break;
+        case "employeeFT":
+          setSystem({
+            ...system,
+            ["startOfTest"]: null,
+            ["endOfTest"]: null,
+            [variable]: employee === "" ? null : employee,
+          });
+          break;
+      }
+    } else {
+      setSystem({
+        ...system,
+        [variable]: employee === "" ? null : employee,
+      });
+    }
+  }
+
   return (
     <div>
       <div>{title}</div>
       <select
         value={system[variable] || ""}
         onChange={(event) => {
-          setSystem({
-            ...system,
-            [variable]: event.target.value === "" ? null : event.target.value,
-          });
+          handleChange(event.target.value);
         }}
         className={classes}
         disabled={!editable}
