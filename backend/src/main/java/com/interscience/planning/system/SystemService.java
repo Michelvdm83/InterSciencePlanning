@@ -265,7 +265,10 @@ public class SystemService {
     if (dto.employeeSSP() != null) {
       setSSPEmployee(dto, system.getConstructionTask().getSspTask());
     } else {
-      // ik ben hem kwijt, hier moet code om de begin en einddatum van ssp bouwen op null te zetten.
+      // if there is no employee assigned to this task, the dateStarted and dateCompleted will be
+      // set on null
+      system.getConstructionTask().getSspTask().setDateStarted(null);
+      system.getConstructionTask().getSspTask().setDateCompleted(null);
     }
 
     handleConstructionDates(system, dto, nullValues);
@@ -278,6 +281,11 @@ public class SystemService {
     }
     if (dto.employeeFT() != null) {
       setFTEmployee(dto, system.getTestTask());
+    } else {
+      // if there is no employee assigned to this task, the dateStarted and dateCompleted will be
+      // set on null
+      system.getTestTask().setDateStarted(null);
+      system.getTestTask().setDateCompleted(null);
     }
 
     handleTestDates(system, dto, nullValues);
