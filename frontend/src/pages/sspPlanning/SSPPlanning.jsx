@@ -132,6 +132,7 @@ export default function SSPPlanning() {
                   case "holiday":
                     bgColor = "holiday";
                     break;
+                  case "BUILDING":
                   case "started":
                     bgColor = "started";
                     break;
@@ -146,6 +147,7 @@ export default function SSPPlanning() {
                   case "INSTALLED":
                   case "PROBLEMS":
                   case "IN_WAIT":
+                  case "DONE":
                     bgColor = "done";
                     break;
                   case "task":
