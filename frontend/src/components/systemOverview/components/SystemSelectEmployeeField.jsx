@@ -40,6 +40,8 @@ export default function SystemSelectEmployeeField({
           ...system,
           ["startOfConstruction"]: null,
           ["endOfConstruction"]: null,
+          ["startOfTest"]: null,
+          ["endOfTest"]: null,
           [variable]: employee === "" ? null : employee,
         });
         break;
