@@ -147,6 +147,7 @@ export default function SSPPlanning() {
                   case "INSTALLED":
                   case "PROBLEMS":
                   case "IN_WAIT":
+                  case "DONE":
                     bgColor = "done";
                     break;
                   case "task":
