@@ -34,30 +34,23 @@ export default function SystemSelectEmployeeField({
   }
 
   function handleChange(employee) {
-    if (employee === "") {
-      switch (variable) {
-        case "employeeSSP":
-          setSystem({
-            ...system,
-            ["startOfConstruction"]: null,
-            ["endOfConstruction"]: null,
-            [variable]: employee === "" ? null : employee,
-          });
-          break;
-        case "employeeFT":
-          setSystem({
-            ...system,
-            ["startOfTest"]: null,
-            ["endOfTest"]: null,
-            [variable]: employee === "" ? null : employee,
-          });
-          break;
-      }
-    } else {
-      setSystem({
-        ...system,
-        [variable]: employee === "" ? null : employee,
-      });
+    switch (variable) {
+      case "employeeSSP":
+        setSystem({
+          ...system,
+          ["startOfConstruction"]: null,
+          ["endOfConstruction"]: null,
+          [variable]: employee === "" ? null : employee,
+        });
+        break;
+      case "employeeFT":
+        setSystem({
+          ...system,
+          ["startOfTest"]: null,
+          ["endOfTest"]: null,
+          [variable]: employee === "" ? null : employee,
+        });
+        break;
     }
   }
 
