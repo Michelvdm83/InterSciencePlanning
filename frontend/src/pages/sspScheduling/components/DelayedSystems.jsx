@@ -11,7 +11,7 @@ export default function DelayedSystems({ openTasks, updateOpenTasks }) {
     });
   }, [openTasks]);
   return (
-    <div className="m-4 flex w-1/3 flex-col items-center gap-2 rounded-md bg-neutral">
+    <div className="flex w-full flex-grow flex-col items-center rounded-md bg-neutral">
       <div className="flex w-full justify-between border-b-2 border-black">
         <h2 className="px-8 py-4 font-Effra_Bd text-xl text-secondary">
           Vertraagde systemen
