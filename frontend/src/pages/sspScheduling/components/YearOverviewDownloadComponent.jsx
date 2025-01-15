@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import { format } from "date-fns";
 
 export default function YearOverviewDownloadComponent() {
+  const [year, setYear] = useState(new Date());
   // Define column headers for CSV
   const fileHeaders = ["product_name", "price", "quantity", "total_price"];
 
@@ -38,7 +41,10 @@ export default function YearOverviewDownloadComponent() {
       const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", "product_data.csv");
+      link.setAttribute(
+        "download",
+        "Jaaroverzicht_" + format(year, "yyyy") + ".csv",
+      );
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -81,7 +87,16 @@ export default function YearOverviewDownloadComponent() {
 
   // Render the button for CSV export
   return (
-    <div className="h-max w-full gap-2 rounded-md bg-neutral p-2">
+    <div className="flex h-max w-full items-center justify-center gap-10 rounded-md bg-neutral p-3">
+      <DatePicker
+        className="w-44 rounded-md bg-white p-0 text-center text-lg"
+        selected={year}
+        onChange={(date) => setYear(date)}
+        showYearPicker
+        dateFormat="yyyy"
+        yearItemNumber={4}
+        showMonthYearDropdown
+      />
       <button
         className="btn btn-accent"
         onClick={() => {
