@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import { format } from "date-fns";
+import ApiService from "../../../services/ApiService.js";
 
 export default function YearOverviewDownloadComponent() {
   const [year, setYear] = useState(new Date());
   // Define column headers for CSV
-  const fileHeaders = ["product_name", "price", "quantity", "total_price"];
+  const fileHeaders = ["name", "systemType"];
 
   // Function to convert JSON to CSV string
   function convertJSONToCSV(jsonData, columnHeaders) {
@@ -51,39 +52,13 @@ export default function YearOverviewDownloadComponent() {
     }
   }
 
-  // Sample JSON data for products
-  const dummyData = [
-    {
-      product_name: "Widget",
-      price: 50,
-      quantity: 2,
-      total_price: 100,
-    },
-    {
-      product_name: "Gadget",
-      price: 100,
-      quantity: 1,
-      total_price: 100,
-    },
-    {
-      product_name: "Tool",
-      price: 75,
-      quantity: 3,
-      total_price: 225,
-    },
-    {
-      product_name: "Accessory",
-      price: 25,
-      quantity: 4,
-      total_price: 100,
-    },
-    {
-      product_name: "Equipment",
-      price: 200,
-      quantity: 1,
-      total_price: 200,
-    },
-  ];
+  function handleDownloadButtonClick() {
+    ApiService.get("systems/year-overview/" + format(year, "yyyy")).then(
+      (response) => {
+        downloadCSV(response.data, fileHeaders);
+      },
+    );
+  }
 
   // Render the button for CSV export
   return (
@@ -100,7 +75,7 @@ export default function YearOverviewDownloadComponent() {
       <button
         className="btn btn-accent"
         onClick={() => {
-          downloadCSV(dummyData, fileHeaders);
+          handleDownloadButtonClick();
         }}
       >
         Download Jaaroverzicht
