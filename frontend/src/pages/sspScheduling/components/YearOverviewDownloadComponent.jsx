@@ -5,29 +5,28 @@ import ApiService from "../../../services/ApiService.js";
 
 export default function YearOverviewDownloadComponent() {
   const [year, setYear] = useState(new Date());
-  // Define column headers for CSV
+  // Define column headers for CSV, used to set the data in the correct format
   const fileHeaders = ["name", "systemType"];
 
   // Function to convert JSON to CSV string
   function convertJSONToCSV(jsonData, columnHeaders) {
-    // Check if JSON data is empty
-    if (jsonData.length === 0) {
-      return "";
-    }
-
-    // Create headers string
-    const headers = columnHeaders.join(",") + "\n";
-
     // Map JSON data to CSV rows
     const rows = jsonData
-      .map((row) => {
+      .sort(sortOnSystemTypeThenName)
+      .map((row) =>
         // Map each row to CSV format
-        return columnHeaders.map((field) => row[field] || "").join(",");
-      })
+        columnHeaders.map((field) => row[field] || "").join(","),
+      )
       .join("\n");
 
-    // Combine headers and rows
-    return headers + rows;
+    // Combine Dutch headers and rows
+    return "Naam,Systeem type\n" + rows;
+  }
+
+  function sortOnSystemTypeThenName(a, b) {
+    if (a.systemType != b.systemType)
+      return a.systemType.localeCompare(b.systemType);
+    return a.name.localeCompare(b.name);
   }
 
   // Function to initiate CSV download
@@ -60,7 +59,6 @@ export default function YearOverviewDownloadComponent() {
     );
   }
 
-  // Render the button for CSV export
   return (
     <div className="flex h-max w-full items-center justify-center gap-10 rounded-md bg-neutral p-3">
       <DatePicker

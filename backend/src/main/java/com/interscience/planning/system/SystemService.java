@@ -177,17 +177,15 @@ public class SystemService {
     return returnList;
   }
 
-  // gets all the systems that are build in the selected year and returns a List of their
-  // YearOverviewDTOs
   public List<YearOverviewDTO> getSystemsBuildInACertainYear(int year) {
     List<SSPTask> tasksCompleted = sspTaskRepository.findByDateCompletedInYear(year);
-    List<YearOverviewDTO> returnList = new ArrayList<>();
+    List<YearOverviewDTO> systemsBuildInThisYear = new ArrayList<>();
     tasksCompleted.forEach(
         task -> {
           System system = task.getConstructionTask().getSystem();
-          returnList.add(new YearOverviewDTO(system.getName(), system.getSystemType()));
+          systemsBuildInThisYear.add(new YearOverviewDTO(system.getName(), system.getSystemType()));
         });
-    return returnList;
+    return systemsBuildInThisYear;
   }
 
   private List<String> getAffectedSystems(SSPTask sspTask) {

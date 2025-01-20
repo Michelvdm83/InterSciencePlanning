@@ -38,7 +38,8 @@ public class SystemController {
   // endpoint that returns a list with all the systems that ssp finished building in the selected
   // year in the needed format to convert to a csv file on the front end
   @GetMapping("/year-overview/{year}")
-  public ResponseEntity<?> getSystemsBuildInACertainYear(@PathVariable String year) {
+  public ResponseEntity<List<YearOverviewDTO>> getSystemsBuildInACertainYear(
+      @PathVariable String year) {
     int intYear;
     try {
       intYear = Integer.parseInt(year);
