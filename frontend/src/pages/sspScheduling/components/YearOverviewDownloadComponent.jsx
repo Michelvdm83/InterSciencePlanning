@@ -20,7 +20,7 @@ export default function YearOverviewDownloadComponent() {
       .join("\n");
 
     // Combine Dutch headers and rows
-    return "Naam,Systeem type\n" + rows;
+    return "Systeem naam,Type\n" + rows;
   }
 
   function sortOnSystemTypeThenName(a, b) {
