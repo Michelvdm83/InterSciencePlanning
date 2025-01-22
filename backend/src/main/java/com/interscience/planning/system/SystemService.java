@@ -182,8 +182,11 @@ public class SystemService {
     List<YearOverviewDTO> systemsBuildInThisYear = new ArrayList<>();
     tasksCompleted.forEach(
         task -> {
-          System system = task.getConstructionTask().getSystem();
-          systemsBuildInThisYear.add(new YearOverviewDTO(system.getName(), system.getSystemType()));
+          if (task.getConstructionTask() != null) {
+            System system = task.getConstructionTask().getSystem();
+            systemsBuildInThisYear.add(
+                new YearOverviewDTO(system.getName(), system.getSystemType()));
+          }
         });
     return systemsBuildInThisYear;
   }
