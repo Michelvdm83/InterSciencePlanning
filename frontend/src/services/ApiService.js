@@ -32,8 +32,6 @@ export default class ApiService {
       .catch((error) => {
         if (error.response && error.response.status === 401) {
           EmployeeService.logout();
-        } else {
-          alert("Oops, er ging iets fout... \nHTTP Response " + error.status);
         }
         return Promise.reject(error);
       });
