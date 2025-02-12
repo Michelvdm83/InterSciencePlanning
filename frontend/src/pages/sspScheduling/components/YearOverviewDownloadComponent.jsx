@@ -33,30 +33,27 @@ export default function YearOverviewDownloadComponent() {
   function downloadCSV(jsonData, headers) {
     const csvData = convertJSONToCSV(jsonData, headers);
 
-    // Check if CSV data is empty
-    if (csvData === "") {
-      alert("No data to export");
-    } else {
-      // Create CSV file and initiate download
-      const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute(
-        "download",
-        "Jaaroverzicht_" + format(year, "yyyy") + ".csv",
-      );
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    // Create CSV file and initiate download
+    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute(
+      "download",
+      "Jaaroverzicht_" + format(year, "yyyy") + ".csv",
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   function handleDownloadButtonClick() {
-    ApiService.get("systems/year-overview/" + format(year, "yyyy")).then(
-      (response) => {
+    ApiService.get("systems/year-overview/" + format(year, "yyyy"))
+      .then((response) => {
         downloadCSV(response.data, fileHeaders);
-      },
-    );
+      })
+      .catch((error) => {
+        alert("Oops, er ging iets fout... \nHTTP Response " + error.status);
+      });
   }
 
   return (
