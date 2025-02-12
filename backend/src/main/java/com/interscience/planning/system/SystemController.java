@@ -35,6 +35,20 @@ public class SystemController {
     return systemService.getDelayedSystems();
   }
 
+  // endpoint that returns a list with all the systems that ssp finished building in the selected
+  // year in the needed format to convert to a csv file on the front end
+  @GetMapping("/year-overview/{year}")
+  public ResponseEntity<List<YearOverviewDTO>> getSystemsBuildInACertainYear(
+      @PathVariable String year) {
+    int intYear;
+    try {
+      intYear = Integer.parseInt(year);
+    } catch (NumberFormatException e) {
+      return ResponseEntity.badRequest().build();
+    }
+    return ResponseEntity.ok(systemService.getSystemsBuildInACertainYear(intYear));
+  }
+
   @PatchMapping("/delayed")
   public ResponseEntity<?> setDelayChecked(@RequestBody SystemSetCheckedDTO dto) {
     systemService.setDelayChecked(dto);

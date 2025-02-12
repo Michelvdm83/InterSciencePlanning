@@ -30,4 +30,8 @@ public interface SSPTaskRepository extends JpaRepository<SSPTask, UUID> {
 
   Optional<SSPTask> findFirstByEmployeeAndDateStartedBeforeOrderByIndexDesc(
       Employee employee, LocalDate date);
+
+  // returns all the systems that ssp finished in the given year
+  @Query("SELECT t FROM SSPTask t WHERE YEAR(t.dateCompleted) = :year")
+  List<SSPTask> findByDateCompletedInYear(@Param("year") int year);
 }
