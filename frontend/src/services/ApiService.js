@@ -1,7 +1,10 @@
 import axios from "axios";
 import EmployeeService from "./EmployeeService";
+import { apiUrl } from "../configuration.js";
 
-const API_URL = "http://localhost:8080/api/v1";
+const API_URL = apiUrl + "/api/v1";
+//const API_URL = import.meta.env.VITE_API_URL + "/api/v1";
+//const API_URL = "http://localhost:8080/api/V1";
 
 export const TOKEN_STORAGE_LOCATION = "JWT";
 
