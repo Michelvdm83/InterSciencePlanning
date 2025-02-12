@@ -8,6 +8,7 @@ import { addDays, subDays } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import TaskModalButton from "../sspScheduling/components/TaskModalButton.jsx";
+import ssp_loading from "../../assets/ssp_loading.gif";
 
 export default function SSPPlanning() {
   const planningDays = 20;
@@ -78,11 +79,7 @@ export default function SSPPlanning() {
         //display loading icon
         (loading === true || loadingSchedule === true) && (
           <div className="fixed z-50 flex h-full w-full flex-col items-center justify-center pb-20">
-            <img
-              src="src/assets/ssp_loading.gif"
-              alt="loading..."
-              className="w-1/4"
-            />
+            <img src={ssp_loading} alt="loading..." className="w-1/4" />
             <div className="text-2xl text-secondary">&emsp;Loading...</div>
           </div>
         )
