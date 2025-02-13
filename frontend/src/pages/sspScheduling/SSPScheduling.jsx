@@ -6,6 +6,7 @@ import UnplannedTasks from "./components/UnplannedTasks.jsx";
 import TasksPerEmployee from "./components/TasksPerEmployee.jsx";
 import ApiService from "../../services/ApiService.js";
 import DelayedSystems from "./components/DelayedSystems.jsx";
+import YearOverviewDownloadComponent from "./components/YearOverviewDownloadComponent.jsx";
 
 export default function SSPSCheduling() {
   const [employees, setEmployees] = useState([]);
@@ -54,7 +55,13 @@ export default function SSPSCheduling() {
         openTasks={openTasks}
         updateOpenTasks={updateOpenTasks}
       />
-      <DelayedSystems updateOpenTasks={updateOpenTasks} openTasks={openTasks} />
+      <div className="m-4 flex w-1/3 flex-col gap-4">
+        <DelayedSystems
+          updateOpenTasks={updateOpenTasks}
+          openTasks={openTasks}
+        />
+        <YearOverviewDownloadComponent />
+      </div>
     </div>
   );
 }

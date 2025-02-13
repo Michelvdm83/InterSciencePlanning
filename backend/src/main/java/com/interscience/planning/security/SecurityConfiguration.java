@@ -55,6 +55,8 @@ public class SecurityConfiguration {
                     .hasRole("TEAM_LEADER")
                     .requestMatchers("/api/v1/systems/delayed/**")
                     .hasRole("TEAM_LEADER")
+                    .requestMatchers("api/v1/systems/year-overview")
+                    .hasRole("TEAM_LEADER")
                     .requestMatchers("api/v1/employees/ssp-planning")
                     .hasAnyRole("TEAM_LEADER", "SSP")
                     .requestMatchers("api/v1/employees/ft-planning")
