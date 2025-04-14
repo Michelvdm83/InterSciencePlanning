@@ -25,7 +25,7 @@ export default function EditTaskModal({
     const fetchData = async () => {
       try {
         const response = await ApiService.get(
-          `http://localhost:8080/api/v1/tasks/${id}`,
+          "http://" + window.location.hostname + `:8080/api/v1/tasks/${id}`,
         );
         const data = response.data;
         setTask(data);

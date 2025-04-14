@@ -29,7 +29,9 @@ export default function SystemOverview({
     if (systemName) {
       const fetchData = async () => {
         const response = await ApiService.get(
-          `http://localhost:8080/api/v1/systems/${systemName}`,
+          "http://" +
+            window.location.hostname +
+            `:8080/api/v1/systems/${systemName}`,
         );
 
         const data = response.data;
