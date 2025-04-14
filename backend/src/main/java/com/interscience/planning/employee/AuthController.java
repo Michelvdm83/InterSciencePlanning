@@ -22,7 +22,7 @@ public class AuthController {
 
   @PostMapping("login")
   public ResponseEntity<TokenDTO> login(@RequestBody AuthDTO authDTO) {
-    String email = authDTO.email();
+    String email = authDTO.email().toLowerCase();
     String password = authDTO.password();
     if (email == null) throw new BadRequestException("Email is required");
     if (password == null) throw new BadRequestException("Password is required");
