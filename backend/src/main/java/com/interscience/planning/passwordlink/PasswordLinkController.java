@@ -39,8 +39,12 @@ public class PasswordLinkController {
 
   @PostMapping("/send-reset-link")
   public ResponseEntity<PasswordLink> createResetLink(@RequestBody Map<String, String> request) {
-    String email = request.get("email").toLowerCase();
-    Employee employee = employeeRepository.findByEmail(email).orElseThrow(NotFoundException::new);
+    String email = request.get("email");
+    if (email == null) {
+      throw new BadRequestException("Email is required");
+    }
+    Employee employee =
+        employeeRepository.findByEmail(email.toLowerCase()).orElseThrow(NotFoundException::new);
     if (!employee.isEnabled()) {
       throw new NotFoundException();
     }
