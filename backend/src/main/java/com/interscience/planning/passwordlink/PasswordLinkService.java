@@ -5,6 +5,7 @@ import com.interscience.planning.mail.EmailServiceImpl;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,15 +14,15 @@ public class PasswordLinkService {
   private static final int PASSWORD_LINK_EXPIRATION_DAYS = 2;
   private final EmailServiceImpl emailServiceImpl;
 
+  @Value("${interscience.cors}")
+  private String cors;
+
   public void sendEmail(PasswordLink passwordLink, Employee employee) {
     String email = employee.getEmail();
     String employeeName = employee.getName().split(" ")[0];
 
     String setPasswordLink =
-        "http://localhost:5173/wachtwoord-instellen/"
-            + employee.getId()
-            + "/"
-            + passwordLink.getId();
+        cors + "/wachtwoord-instellen/" + employee.getId() + "/" + passwordLink.getId();
     String message =
         "<html><body>Beste "
             + employeeName
