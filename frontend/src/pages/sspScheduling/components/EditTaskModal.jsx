@@ -24,9 +24,7 @@ export default function EditTaskModal({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await ApiService.get(
-          "http://" + window.location.hostname + `:8080/api/v1/tasks/${id}`,
-        );
+        const response = await ApiService.get(`tasks/${id}`);
         const data = response.data;
         setTask(data);
         setEditedTask(data);
