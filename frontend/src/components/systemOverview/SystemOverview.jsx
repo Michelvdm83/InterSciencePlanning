@@ -28,9 +28,7 @@ export default function SystemOverview({
   useEffect(() => {
     if (systemName) {
       const fetchData = async () => {
-        const response = await ApiService.get(
-          `http://localhost:8080/api/v1/systems/${systemName}`,
-        );
+        const response = await ApiService.get(`systems/${systemName}`);
 
         const data = response.data;
 
