@@ -1,7 +1,9 @@
 import axios from "axios";
 import EmployeeService from "./EmployeeService";
 
-const API_URL = "http://localhost:8080/api/v1";
+// window.location.hostname gives back the ip of the host machine,
+// this way it will dynamically find the correct API URL given that they run on the same machine
+const API_URL = "http://" + window.location.hostname + ":8080/api/v1";
 
 export const TOKEN_STORAGE_LOCATION = "JWT";
 
