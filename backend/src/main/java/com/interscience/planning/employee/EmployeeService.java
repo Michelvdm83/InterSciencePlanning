@@ -57,12 +57,13 @@ public class EmployeeService {
     if (employeeDTO.function() == null) {
       throw new BadRequestException("Function is required");
     }
-    if (employeeRepository.findByEmail(employeeDTO.email()).isPresent()) {
+    if (employeeRepository.findByEmail(employeeDTO.email().toLowerCase()).isPresent()) {
       throw new BadRequestException("Employee with this email already exists");
     }
 
     Employee newEmployee =
-        new Employee(employeeDTO.name(), employeeDTO.email(), null, employeeDTO.function());
+        new Employee(
+            employeeDTO.name(), employeeDTO.email().toLowerCase(), null, employeeDTO.function());
     employeeRepository.save(newEmployee);
     return EmployeeResponseDTO.from(newEmployee);
   }
@@ -83,7 +84,7 @@ public class EmployeeService {
       if (!isValidEmail(employeeDTO.email())) {
         throw new BadRequestException("Email is not valid");
       }
-      employee.setEmail(employeeDTO.email());
+      employee.setEmail(employeeDTO.email().toLowerCase());
     }
     if (employeeDTO.function() != null) {
       if (employee.equals(loggedInEmployee)) {
@@ -147,7 +148,7 @@ public class EmployeeService {
 
   public boolean isValidEmail(String email) {
     try {
-      InternetAddress internetAddress = new InternetAddress(email);
+      InternetAddress internetAddress = new InternetAddress(email.toLowerCase());
       internetAddress.validate();
       return true;
     } catch (AddressException e) {
