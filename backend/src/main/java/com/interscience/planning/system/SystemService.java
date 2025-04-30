@@ -46,19 +46,19 @@ public class SystemService {
 
   private LocalDate getExpectedEndDate(System system) {
     SystemDTO dto = SystemDTO.from(system);
+    int testDays = dto.estimatedTestDays() == null? 1 : dto.estimatedTestDays();
     if (dto.employeeSSP() == null) {
       return null;
     } else if (dto.endOfTest() != null) {
       return dto.endOfTest();
     } else if (dto.startOfTest() != null) {
-      return addBusinessDays(dto.startOfTest(), dto.estimatedTestDays() - 1);
+      return addBusinessDays(dto.startOfTest(), testDays - 1);
     } else if (dto.endOfConstruction() != null) {
-      return addBusinessDays(dto.endOfConstruction(), dto.estimatedTestDays());
+      return addBusinessDays(dto.endOfConstruction(), testDays);
     } else if (dto.startOfConstruction() != null) {
       LocalDate endOfConstruction =
           addWorkDays(
               dto.employeeSSP(), dto.startOfConstruction(), dto.estimatedConstructionDays() - 1);
-      int testDays = dto.estimatedTestDays() == null ? 0 : dto.estimatedTestDays();
       return addBusinessDays(endOfConstruction, testDays);
 
     } else {
@@ -88,7 +88,6 @@ public class SystemService {
         firstDate = firstTask.getDateStarted();
       }
       LocalDate endOfProduction = addWorkDays(dto.employeeSSP(), firstDate, daysToAdd - 1);
-      int testDays = dto.estimatedTestDays() == null ? 0 : dto.estimatedTestDays();
       return addBusinessDays(endOfProduction, testDays);
     }
   }
