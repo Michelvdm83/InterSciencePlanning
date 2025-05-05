@@ -55,7 +55,6 @@ export default function SSPPlanning() {
         planningDays,
         employee.id,
       );
-
       newEmployeeTasksArray.push(newEmployeeTasks);
     }
     setEmployeeTasks(newEmployeeTasksArray);
@@ -200,7 +199,11 @@ export default function SSPPlanning() {
                       key={overallIndex}
                       className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] flex h-7 w-auto justify-center border-b-[1.5px] border-solid text-start`}
                     >
-                      <div className="">P.O. Number test</div>
+                      <div
+                        className={`${task.orderPickedByWarehouse === true ? "font-bold" : ""}`}
+                      >
+                        {task.poNumber ? "P.O. " + task.poNumber : ""}
+                      </div>
                     </div>
                   );
                   // checks if the gridcell is the first cell of a task, if so, it displays the name of the task
