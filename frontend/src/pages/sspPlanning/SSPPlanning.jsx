@@ -176,7 +176,7 @@ export default function SSPPlanning() {
                   i === task.numberOfDays - 1 && (overallIndex + 1) % 5 !== 0
                     ? "border-black"
                     : `border-${bgColor}`;
-
+                //checks if the gridcell is the first of a system, if so, it displays the name and makes the name a button to open the system modal
                 if (task.isSystem && i === 0) {
                   return (
                     <div
@@ -193,6 +193,17 @@ export default function SSPPlanning() {
                       </SystemModalButton>
                     </div>
                   );
+                  // checks if the gridcell is the last cell for that system, if so, it displays the P.O. number of that system in the cell
+                } else if (task.isSystem && i === task.numberOfDays - 1) {
+                  return (
+                    <div
+                      key={overallIndex}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] flex h-7 w-auto justify-center border-b-[1.5px] border-solid text-start`}
+                    >
+                      <div className="">P.O. Number test</div>
+                    </div>
+                  );
+                  // checks if the gridcell is the first cell of a task, if so, it displays the name of the task
                 } else if (task.taskId && i === 0) {
                   return (
                     <div
@@ -209,6 +220,7 @@ export default function SSPPlanning() {
                       </TaskModalButton>
                     </div>
                   );
+                  // if it is not the above cases, it displays a empty cell in the color of the right system/task or holiday.
                 } else
                   return (
                     <div
