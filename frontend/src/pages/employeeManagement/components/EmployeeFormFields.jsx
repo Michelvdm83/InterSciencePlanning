@@ -40,6 +40,7 @@ export default function EmployeeFormFields({ employee, setEmployee }) {
           <option value="FT_TEAM_LEADER">FT-Teamleider</option>
           <option value="SSP">SSP</option>
           <option value="FT">FT</option>
+          <option value="WAREHOUSE">Warehouse</option>
         </select>
       </label>
     </>

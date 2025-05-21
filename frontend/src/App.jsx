@@ -20,6 +20,7 @@ export default function App() {
   function getHomeRoute() {
     switch (EmployeeService.getEmployeeFunction()) {
       case "TEAM_LEADER":
+      case "WAREHOUSE":
       case "SSP":
         return <Route path="/" element={<SSPPlanning />} />;
       case "FT":
