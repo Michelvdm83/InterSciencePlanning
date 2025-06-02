@@ -192,7 +192,9 @@ export default function SystemOverview({
               <SystemSelectStatusField
                 title="Status"
                 variable="status"
-                editable={systemName && true}
+                editable={
+                  systemName && employeeFunction !== "WAREHOUSE" && true
+                }
                 system={systemName ? editedSystem : system}
                 setSystem={systemName ? setEditedSystem : setSystem}
               />
