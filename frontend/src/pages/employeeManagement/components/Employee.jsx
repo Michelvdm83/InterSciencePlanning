@@ -35,7 +35,9 @@ export default function Employee({ employee, employees, setEmployees }) {
             ? "SSP Teamleider"
             : employee.function === "FT_TEAM_LEADER"
               ? "FT Teamleider"
-              : employee.function}
+              : employee.function === "WAREHOUSE"
+                ? "Magazijn"
+                : employee.function}
         </p>
       </div>
       <p className="col-span-3 row-span-1">{employee.email}</p>
