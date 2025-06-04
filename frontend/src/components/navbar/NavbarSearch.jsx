@@ -13,6 +13,7 @@ export default function NavbarSearch() {
   }
 
   let allowSearch = true;
+
   function updateSearch(searchString) {
     if (searchString.length < 3) {
       setNamesList([]);
@@ -48,7 +49,10 @@ export default function NavbarSearch() {
           {namesList.length > 0 &&
             namesList.map((systemName) => {
               return (
-                <SystemModalButton key={systemName} systemName={systemName}>
+                <SystemModalButton
+                  key={systemName}
+                  systemName={systemName.substring(0, systemName.indexOf(" "))}
+                >
                   <li>
                     <div className="text-primary">{systemName}</div>
                   </li>
