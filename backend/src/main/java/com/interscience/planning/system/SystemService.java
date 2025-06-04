@@ -156,9 +156,11 @@ public class SystemService {
   }
 
   public List<String> searchByName(String contains) {
-    List<SystemNameOnly> names =
-        systemRepository.findFirst6SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(contains);
-    return names.stream().map(SystemNameOnly::getName).toList();
+    List<System> systems =
+        systemRepository
+            .findFirst6SystemNamesByNameContainingIgnoreCaseOrPoNumberContainingIgnoreCaseOrderByNameDesc(
+                contains, contains);
+    return systems.stream().map(system -> system.getName() + " - " + system.getPoNumber()).toList();
   }
 
   public List<SystemDelayedDTO> getDelayedSystems() {
