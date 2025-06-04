@@ -197,8 +197,14 @@ export default function SSPPlanning() {
                   return (
                     <div
                       key={overallIndex}
-                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] flex h-7 w-auto justify-center border-b-[1.5px] border-solid text-start`}
+                      className={`${borderClass} bg-${bgColor} col-start-${employeeIndex + 2} mr-[2px] flex h-7 w-auto items-center justify-center gap-2 border-b-[1.5px] border-solid text-start`}
                     >
+                      <input
+                        className="checkbox-primary checkbox checkbox-sm disabled:bg-white disabled:opacity-70"
+                        disabled
+                        type="checkbox"
+                        checked={task.orderPickedByWarehouse}
+                      />
                       <div
                         className={`${task.orderPickedByWarehouse === true ? "font-bold" : ""}`}
                       >

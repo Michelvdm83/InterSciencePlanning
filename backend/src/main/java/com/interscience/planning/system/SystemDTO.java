@@ -7,6 +7,7 @@ import java.util.UUID;
 public record SystemDTO(
     String name,
     String poNumber,
+    Boolean orderPickedByWarehouse,
     String systemType,
     LocalDate agreedDate,
     LocalDate actualDeliveryDate,
@@ -81,6 +82,7 @@ public record SystemDTO(
     return new SystemDTO(
         system.getName(),
         system.getPoNumber(),
+        system.getOrderPickedByWarehouse(),
         system.getSystemType(),
         system.getAgreedDate(),
         system.getActualDeliveryDate(),
