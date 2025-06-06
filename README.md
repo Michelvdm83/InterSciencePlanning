@@ -30,7 +30,7 @@ MAIL_FROM : full email adress (with the example of "abc@gmail.com" this will be 
 
 ### Frontend Instructions
 
-The frontend is build with yarn
+- The frontend is build with yarn
 
 #### Instructions for  deployment on a Windows IIS Server
 https://letsreact.org/deploy-react-application-on-iis-server/#:~:text=Setting%20up%20IIS%20Server <br/>
