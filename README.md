@@ -1,6 +1,6 @@
 # Interscience Planning App
 The Interscience planning app is an application that we made as a final assignment for our study to become Fullstack Java developer.  <br/>
-The application helps to automate the planning for the manufacturing and testing of lab analyzing equipment.
+The application helps to automate and visualize the planning for the manufacturing and testing of lab analyzing equipment.
 
 ## Installation Instructions
 
