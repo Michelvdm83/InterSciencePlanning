@@ -46,7 +46,7 @@ public class SystemService {
 
   private LocalDate getExpectedEndDate(System system) {
     SystemDTO dto = SystemDTO.from(system);
-    int testDays = dto.estimatedTestDays() == null? 1 : dto.estimatedTestDays();
+    int testDays = dto.estimatedTestDays() == null ? 1 : dto.estimatedTestDays();
     if (dto.employeeSSP() == null) {
       return null;
     } else if (dto.endOfTest() != null) {
