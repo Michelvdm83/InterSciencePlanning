@@ -30,7 +30,7 @@ public record SSPTaskDTO(
       System thisSystem = sspTask.getConstructionTask().getSystem();
       systemName = thisSystem == null ? null : thisSystem.getName();
       poNumber = thisSystem == null ? null : thisSystem.getPoNumber();
-      orderPickedByWarehouse = thisSystem == null ? null : thisSystem.getOrderPickedByWarehouse();
+      orderPickedByWarehouse = thisSystem == null ? null : thisSystem.isOrderPickedByWarehouse();
       status = thisSystem == null ? null : thisSystem.getStatus().name();
     } else if (sspTask.getTask() != null) {
       taskName = sspTask.getTask().getName();

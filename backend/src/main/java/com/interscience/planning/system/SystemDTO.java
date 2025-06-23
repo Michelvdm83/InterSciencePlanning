@@ -82,7 +82,7 @@ public record SystemDTO(
     return new SystemDTO(
         system.getName(),
         system.getPoNumber(),
-        system.getOrderPickedByWarehouse(),
+        system.isOrderPickedByWarehouse(),
         system.getSystemType(),
         system.getAgreedDate(),
         system.getActualDeliveryDate(),
