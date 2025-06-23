@@ -69,7 +69,7 @@ public class SystemController {
     Map<String, Boolean> nullValues = systemService.checkForExplicitNullValues(jsonNode);
 
     SystemPostPatchDTO dto = objectMapper.convertValue(jsonNode, SystemPostPatchDTO.class);
-
+    java.lang.System.out.println(dto);
     Employee employee = (Employee) authentication.getPrincipal();
 
     if (dto.status() == SystemStatus.DONE) {
@@ -80,7 +80,7 @@ public class SystemController {
 
     if (dto.orderPickedByWarehouse() != null) {
       if (!employee.getFunction().name().contains("TEAM_LEADER")
-          || !employee.getFunction().name().contains("WAREHOUSE")) {
+          && !employee.getFunction().name().contains("WAREHOUSE")) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
       }
     }
