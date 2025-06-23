@@ -156,7 +156,7 @@ public class SystemService {
   }
 
   public List<String> searchByName(String contains) {
-    List<System> systems =
+    List<SystemNameAndPoNumberOnly> systems =
         systemRepository
             .findFirst6SystemNamesByNameContainingIgnoreCaseOrPoNumberContainingIgnoreCaseOrderByNameDesc(
                 contains, contains);

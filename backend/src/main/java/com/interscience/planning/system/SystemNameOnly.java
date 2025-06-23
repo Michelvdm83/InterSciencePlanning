@@ -1,5 +1,7 @@
 package com.interscience.planning.system;
 
-public interface SystemNameOnly {
+public interface SystemNameAndPoNumberOnly {
   String getName();
+
+  String getPoNumber();
 }

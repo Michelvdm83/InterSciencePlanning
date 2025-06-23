@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SystemRepository extends JpaRepository<System, UUID> {
   Optional<System> findByName(String name);
 
-  List<System>
+  List<SystemNameAndPoNumberOnly>
       findFirst6SystemNamesByNameContainingIgnoreCaseOrPoNumberContainingIgnoreCaseOrderByNameDesc(
           String name, String poNumber);
 
