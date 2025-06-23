@@ -70,9 +70,17 @@ public class SystemController {
 
     SystemPostPatchDTO dto = objectMapper.convertValue(jsonNode, SystemPostPatchDTO.class);
 
+    Employee employee = (Employee) authentication.getPrincipal();
+
     if (dto.status() == SystemStatus.DONE) {
-      Employee employee = (Employee) authentication.getPrincipal();
       if (!employee.getFunction().name().contains("TEAM_LEADER")) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
+    }
+
+    if (dto.orderPickedByWarehouse() != null) {
+      if (!employee.getFunction().name().contains("TEAM_LEADER")
+          || !employee.getFunction().name().contains("WAREHOUSE")) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
       }
     }
