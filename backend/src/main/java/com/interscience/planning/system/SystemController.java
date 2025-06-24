@@ -26,7 +26,7 @@ public class SystemController {
   }
 
   @GetMapping("/search")
-  public List<String> searchByName(@RequestParam String contains) {
+  public List<SystemSearchDTO> searchByName(@RequestParam String contains) {
     return systemService.searchByName(contains);
   }
 
