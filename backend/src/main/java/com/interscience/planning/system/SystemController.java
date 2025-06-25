@@ -69,7 +69,6 @@ public class SystemController {
     Map<String, Boolean> nullValues = systemService.checkForExplicitNullValues(jsonNode);
 
     SystemPostPatchDTO dto = objectMapper.convertValue(jsonNode, SystemPostPatchDTO.class);
-    java.lang.System.out.println(dto);
     Employee employee = (Employee) authentication.getPrincipal();
 
     if (dto.status() == SystemStatus.DONE) {

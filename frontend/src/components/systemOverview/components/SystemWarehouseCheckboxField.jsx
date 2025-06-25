@@ -9,7 +9,7 @@ export default function SystemWarehouseCheckboxField({
       <input
         type="checkbox"
         className={`checkbox-accent checkbox bg-white disabled:opacity-80`}
-        checked={system[variable]}
+        checked={system[variable] ? system[variable] : false}
         onChange={(event) =>
           setSystem({ ...system, [variable]: event.target.checked })
         }
