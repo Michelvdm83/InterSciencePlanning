@@ -54,8 +54,10 @@ export default function NavbarSearch() {
                   systemName={system.systemName}
                 >
                   <li>
-                    <div className="text-primary">
-                      {system.systemName + " - " + system.poNumber}
+                    <div className="justify-center text-primary">
+                      {system.poNumber
+                        ? system.systemName + " - " + system.poNumber
+                        : system.systemName}
                     </div>
                   </li>
                 </SystemModalButton>
