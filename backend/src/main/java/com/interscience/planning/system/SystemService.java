@@ -223,6 +223,7 @@ public class SystemService {
     }
 
     system.setPoNumber(systemPostPatchDTO.poNumber());
+    system.setOrderPickedByWarehouse(systemPostPatchDTO.orderPickedByWarehouse());
     system.setSystemType(systemPostPatchDTO.systemType());
     system.setAgreedDate(systemPostPatchDTO.agreedDate());
     system.setActualDeliveryDate(systemPostPatchDTO.actualDeliveryDate());
