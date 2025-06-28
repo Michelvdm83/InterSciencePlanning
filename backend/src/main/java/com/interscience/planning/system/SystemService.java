@@ -222,8 +222,12 @@ public class SystemService {
       system.setEmployeeResponsible(systemPostPatchDTO.employeeResponsible());
     }
 
+    if (systemPostPatchDTO.orderPickedByWarehouse() != null) {
+      system.setOrderPickedByWarehouse(systemPostPatchDTO.orderPickedByWarehouse());
+    }
+
     system.setPoNumber(systemPostPatchDTO.poNumber());
-    system.setOrderPickedByWarehouse(systemPostPatchDTO.orderPickedByWarehouse());
+
     system.setSystemType(systemPostPatchDTO.systemType());
     system.setAgreedDate(systemPostPatchDTO.agreedDate());
     system.setActualDeliveryDate(systemPostPatchDTO.actualDeliveryDate());
