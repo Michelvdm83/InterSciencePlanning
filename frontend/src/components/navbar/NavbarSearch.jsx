@@ -3,25 +3,26 @@ import ApiService from "../../services/ApiService";
 import SystemModalButton from "../SystemModalButton";
 
 export default function NavbarSearch() {
-  const [nameSearch, setNameSearch] = useState("");
-  const [namesList, setNamesList] = useState([]);
+  const [systemSearch, setSystemSearch] = useState("");
+  const [systemList, setSystemList] = useState([]);
 
   function onChange(event) {
     const searchString = event.target.value;
-    setNameSearch(searchString);
+    setSystemSearch(searchString);
     updateSearch(searchString);
   }
 
   let allowSearch = true;
+
   function updateSearch(searchString) {
     if (searchString.length < 3) {
-      setNamesList([]);
+      setSystemList([]);
     }
     if (searchString.length > 2 && allowSearch) {
       allowSearch = false;
       ApiService.get("systems/search", { contains: searchString }).then(
         (response) => {
-          setNamesList(response.data);
+          setSystemList(response.data);
         },
       );
       setTimeout(() => {
@@ -36,21 +37,28 @@ export default function NavbarSearch() {
         type="text"
         placeholder="Zoek Systeem"
         className="input input-bordered w-24 md:w-auto"
-        value={nameSearch}
+        value={systemSearch}
         onChange={(event) => onChange(event)}
         onFocus={(event) => updateSearch(event.target.value)}
       />
-      {namesList.length > 0 && (
+      {systemList.length > 0 && (
         <ul
           tabIndex={0}
           className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
         >
-          {namesList.length > 0 &&
-            namesList.map((systemName) => {
+          {systemList.length > 0 &&
+            systemList.map((system) => {
               return (
-                <SystemModalButton key={systemName} systemName={systemName}>
+                <SystemModalButton
+                  key={system.systemName}
+                  systemName={system.systemName}
+                >
                   <li>
-                    <div className="text-primary">{systemName}</div>
+                    <div className="justify-center text-primary">
+                      {system.poNumber
+                        ? system.systemName + " - " + system.poNumber
+                        : system.systemName}
+                    </div>
                   </li>
                 </SystemModalButton>
               );
