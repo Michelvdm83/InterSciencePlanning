@@ -155,10 +155,17 @@ public class SystemService {
     return addBusinessDays(startDate, daysToAdd, null);
   }
 
-  public List<String> searchByName(String contains) {
-    List<SystemNameOnly> names =
-        systemRepository.findFirst6SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(contains);
-    return names.stream().map(SystemNameOnly::getName).toList();
+  public List<SystemSearchDTO> searchByName(String contains) {
+    List<SystemNameAndPoNumberOnly> systems =
+        systemRepository
+            .findFirst6SystemNamesByNameContainingIgnoreCaseOrPoNumberContainingIgnoreCaseOrderByNameDesc(
+                contains, contains);
+    List<SystemSearchDTO> returnList = new ArrayList<>();
+    systems.forEach(
+        (system -> {
+          returnList.add(new SystemSearchDTO(system.getName(), system.getPoNumber()));
+        }));
+    return returnList;
   }
 
   public List<SystemDelayedDTO> getDelayedSystems() {
