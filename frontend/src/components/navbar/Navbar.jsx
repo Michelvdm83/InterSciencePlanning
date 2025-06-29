@@ -17,6 +17,7 @@ export default function Navbar() {
         setShowSSPPages(true);
         setShowFTPages(true);
         break;
+      case "WAREHOUSE":
       case "SSP":
         setShowSSPPages(true);
         break;

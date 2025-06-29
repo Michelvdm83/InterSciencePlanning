@@ -46,19 +46,19 @@ public class SystemService {
 
   private LocalDate getExpectedEndDate(System system) {
     SystemDTO dto = SystemDTO.from(system);
+    int testDays = dto.estimatedTestDays() == null ? 1 : dto.estimatedTestDays();
     if (dto.employeeSSP() == null) {
       return null;
     } else if (dto.endOfTest() != null) {
       return dto.endOfTest();
     } else if (dto.startOfTest() != null) {
-      return addBusinessDays(dto.startOfTest(), dto.estimatedTestDays() - 1);
+      return addBusinessDays(dto.startOfTest(), testDays - 1);
     } else if (dto.endOfConstruction() != null) {
-      return addBusinessDays(dto.endOfConstruction(), dto.estimatedTestDays());
+      return addBusinessDays(dto.endOfConstruction(), testDays);
     } else if (dto.startOfConstruction() != null) {
       LocalDate endOfConstruction =
           addWorkDays(
               dto.employeeSSP(), dto.startOfConstruction(), dto.estimatedConstructionDays() - 1);
-      int testDays = dto.estimatedTestDays() == null ? 0 : dto.estimatedTestDays();
       return addBusinessDays(endOfConstruction, testDays);
 
     } else {
@@ -88,7 +88,6 @@ public class SystemService {
         firstDate = firstTask.getDateStarted();
       }
       LocalDate endOfProduction = addWorkDays(dto.employeeSSP(), firstDate, daysToAdd - 1);
-      int testDays = dto.estimatedTestDays() == null ? 0 : dto.estimatedTestDays();
       return addBusinessDays(endOfProduction, testDays);
     }
   }
@@ -156,10 +155,17 @@ public class SystemService {
     return addBusinessDays(startDate, daysToAdd, null);
   }
 
-  public List<String> searchByName(String contains) {
-    List<SystemNameOnly> names =
-        systemRepository.findFirst6SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(contains);
-    return names.stream().map(SystemNameOnly::getName).toList();
+  public List<SystemSearchDTO> searchByName(String contains) {
+    List<SystemNameAndPoNumberOnly> systems =
+        systemRepository
+            .findFirst6SystemNamesByNameContainingIgnoreCaseOrPoNumberContainingIgnoreCaseOrderByNameDesc(
+                contains, contains);
+    List<SystemSearchDTO> returnList = new ArrayList<>();
+    systems.forEach(
+        (system -> {
+          returnList.add(new SystemSearchDTO(system.getName(), system.getPoNumber()));
+        }));
+    return returnList;
   }
 
   public List<SystemDelayedDTO> getDelayedSystems() {
@@ -223,7 +229,12 @@ public class SystemService {
       system.setEmployeeResponsible(systemPostPatchDTO.employeeResponsible());
     }
 
+    if (systemPostPatchDTO.orderPickedByWarehouse() != null) {
+      system.setOrderPickedByWarehouse(systemPostPatchDTO.orderPickedByWarehouse());
+    }
+
     system.setPoNumber(systemPostPatchDTO.poNumber());
+
     system.setSystemType(systemPostPatchDTO.systemType());
     system.setAgreedDate(systemPostPatchDTO.agreedDate());
     system.setActualDeliveryDate(systemPostPatchDTO.actualDeliveryDate());
@@ -248,6 +259,9 @@ public class SystemService {
     }
     if (dto.poNumber() != null) {
       system.setPoNumber(dto.poNumber());
+    }
+    if (dto.orderPickedByWarehouse() != null) {
+      system.setOrderPickedByWarehouse(dto.orderPickedByWarehouse());
     }
     if (dto.systemType() != null) {
       system.setSystemType(dto.systemType());

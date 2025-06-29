@@ -26,7 +26,7 @@ public class PasswordLinkController {
     if (!employee.isEnabled()) {
       throw new NotFoundException();
     }
-    if (passwordLinkRepository.findByEmployee(employee).isPresent()) {
+    if (hasValidLink(employee)) {
       throw new BadRequestException("A password link for this employee already exists");
     }
 
@@ -35,6 +35,19 @@ public class PasswordLinkController {
     passwordLinkService.sendEmail(passwordLink, employee);
 
     return ResponseEntity.ok().build();
+  }
+
+  private boolean hasValidLink(Employee employee) {
+    var possibleLink = passwordLinkRepository.findByEmployee(employee);
+    if (possibleLink.isPresent()) {
+      PasswordLink currentLink = possibleLink.get();
+      if (passwordLinkService.linkHasExpired(currentLink)) {
+        passwordLinkRepository.delete(currentLink);
+      } else {
+        return true;
+      }
+    }
+    return false;
   }
 
   @PostMapping("/send-reset-link")
@@ -48,7 +61,7 @@ public class PasswordLinkController {
     if (!employee.isEnabled()) {
       throw new NotFoundException();
     }
-    if (passwordLinkRepository.findByEmployee(employee).isPresent()) {
+    if (hasValidLink(employee)) {
       throw new BadRequestException("A password link for this employee already exists");
     }
 

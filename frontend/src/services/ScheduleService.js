@@ -74,6 +74,8 @@ export default class ScheduleService {
 
     let currentTaskName;
     let currentTaskDays = 0;
+    let currentPoNumber;
+    let currentOrderPickedByWarehouse;
     let currentTaskStatus;
     let currentTaskId;
     let currentIsSystem;
@@ -86,6 +88,8 @@ export default class ScheduleService {
         if (currentTaskDays > 0) {
           scheduling.push({
             taskName: currentTaskName,
+            poNumber: currentPoNumber,
+            orderPickedByWarehouse: currentOrderPickedByWarehouse,
             numberOfDays: currentTaskDays,
             status: currentTaskStatus,
             taskId: currentTaskId,
@@ -94,6 +98,9 @@ export default class ScheduleService {
         }
         if (loopIndex < allDaysWithTasks.length) {
           currentTaskName = allDaysWithTasks[loopIndex].taskName;
+          currentPoNumber = allDaysWithTasks[loopIndex].poNumber;
+          currentOrderPickedByWarehouse =
+            allDaysWithTasks[loopIndex].orderPickedByWarehouse;
           currentTaskDays = 0;
           currentTaskStatus = allDaysWithTasks[loopIndex].status;
           currentTaskId = allDaysWithTasks[loopIndex].taskId;
@@ -266,6 +273,8 @@ export default class ScheduleService {
                 currentDay.taskName = task.systemName
                   ? task.systemName
                   : task.taskName;
+                currentDay.poNumber = task.poNumber;
+                currentDay.orderPickedByWarehouse = task.orderPickedByWarehouse;
                 currentDay.taskId = task.systemName ? null : task.taskId;
                 currentDay.isSystem = task.systemName !== null;
 
@@ -301,6 +310,9 @@ export default class ScheduleService {
                 nextOpenDay.taskName = task.systemName
                   ? task.systemName
                   : task.taskName;
+                nextOpenDay.poNumber = task.poNumber;
+                nextOpenDay.orderPickedByWarehouse =
+                  task.orderPickedByWarehouse;
                 nextOpenDay.taskId = task.systemName ? null : task.taskId;
                 nextOpenDay.isSystem = task.systemName !== null;
                 dayIndex = nextOpenIndex + 1;

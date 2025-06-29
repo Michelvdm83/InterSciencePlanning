@@ -10,8 +10,9 @@ import org.springframework.stereotype.Repository;
 public interface SystemRepository extends JpaRepository<System, UUID> {
   Optional<System> findByName(String name);
 
-  List<SystemNameOnly> findFirst6SystemNamesByNameContainingIgnoreCaseOrderByNameDesc(
-      String contains);
+  List<SystemNameAndPoNumberOnly>
+      findFirst6SystemNamesByNameContainingIgnoreCaseOrPoNumberContainingIgnoreCaseOrderByNameDesc(
+          String name, String poNumber);
 
   List<System> findByDelayCheckedBySupervisorFalse();
 }
