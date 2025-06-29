@@ -229,7 +229,12 @@ public class SystemService {
       system.setEmployeeResponsible(systemPostPatchDTO.employeeResponsible());
     }
 
+    if (systemPostPatchDTO.orderPickedByWarehouse() != null) {
+      system.setOrderPickedByWarehouse(systemPostPatchDTO.orderPickedByWarehouse());
+    }
+
     system.setPoNumber(systemPostPatchDTO.poNumber());
+
     system.setSystemType(systemPostPatchDTO.systemType());
     system.setAgreedDate(systemPostPatchDTO.agreedDate());
     system.setActualDeliveryDate(systemPostPatchDTO.actualDeliveryDate());
@@ -254,6 +259,9 @@ public class SystemService {
     }
     if (dto.poNumber() != null) {
       system.setPoNumber(dto.poNumber());
+    }
+    if (dto.orderPickedByWarehouse() != null) {
+      system.setOrderPickedByWarehouse(dto.orderPickedByWarehouse());
     }
     if (dto.systemType() != null) {
       system.setSystemType(dto.systemType());

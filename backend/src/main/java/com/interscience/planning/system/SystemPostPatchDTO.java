@@ -6,6 +6,7 @@ import java.util.UUID;
 public record SystemPostPatchDTO(
     String name,
     String poNumber,
+    Boolean orderPickedByWarehouse,
     String systemType,
     String employeeResponsible,
     LocalDate agreedDate,

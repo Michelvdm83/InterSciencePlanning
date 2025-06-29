@@ -54,6 +54,8 @@ public class System {
 
   private Boolean delayCheckedBySupervisor = null;
 
+  private boolean orderPickedByWarehouse;
+
   public System(String name) {
     this.name = name;
   }
