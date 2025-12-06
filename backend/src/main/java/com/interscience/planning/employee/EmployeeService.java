@@ -180,7 +180,9 @@ public class EmployeeService {
             employee, startDate);
 
     int firstIndex = 0;
-    int queryLimit = 10;
+    //FIXME: For now i raised the queryLimit from 10 to 400, I think they run into that limit which resulted in task disappearing from the planning overview.
+    // if this is the case and it works when they run this, then this should be rewritten, or maybe the limit should just be removed all together.
+    int queryLimit = 400;
     if (possibleFirstTask.isPresent()) {
       SSPTask firstTask = possibleFirstTask.get();
       firstIndex = firstTask.getIndex();
