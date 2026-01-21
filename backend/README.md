@@ -1,0 +1,1 @@
+to build the maven project use: `mvn spring-boot:build-image`
